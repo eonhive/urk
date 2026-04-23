@@ -1,0 +1,28 @@
+{
+  "name": "@urk/core",
+  "version": "0.1.0",
+  "description": "URK kernel - canonical kernel lifecycle, explicit runtime state, registries, and event routing",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "echo 'manual validation only for this milestone'",
+    "lint": "echo 'no lint yet'"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

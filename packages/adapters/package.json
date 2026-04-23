@@ -1,0 +1,35 @@
+{
+  "name": "@urk/adapters",
+  "version": "0.1.0",
+  "description": "URK adapters - reference three, pointer, input, loading, storage, and overlay capability adapters",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "echo 'manual validation only for this milestone'",
+    "lint": "echo 'no lint yet'"
+  },
+  "peerDependencies": {
+    "@urk/core": "workspace:*",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.0",
+    "@urk/core": "workspace:*",
+    "three": "^0.184.0",
+    "typescript": "^5.3.0"
+  }
+}
