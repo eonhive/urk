@@ -1,6 +1,6 @@
 {
   "name": "@urk/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "URK kernel - canonical kernel lifecycle, explicit runtime state, registries, and event routing",
   "type": "module",
   "main": "./dist/index.js",

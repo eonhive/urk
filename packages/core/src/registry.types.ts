@@ -6,7 +6,7 @@
  * Services are generic service lookups.
  */
 
-import type { AdapterRegistration, ControllerRegistration } from './types';
+import type { AdapterRegistration, ControllerRegistration } from './types.js';
 
 export interface RegisteredAdapter<TApi = unknown> {
   id: string;

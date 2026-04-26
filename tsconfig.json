@@ -21,7 +21,9 @@
       "@urk/core": ["packages/core/src"],
       "@urk/core/*": ["packages/core/src/*"],
       "@urk/adapters": ["packages/adapters/src"],
-      "@urk/adapters/*": ["packages/adapters/src/*"]
+      "@urk/adapters/*": ["packages/adapters/src/*"],
+      "@urk/react-urk": ["packages/react-urk/src"],
+      "@urk/react-urk/*": ["packages/react-urk/src/*"]
     }
   },
   "include": ["packages/*/src"],

@@ -2,14 +2,14 @@
  * Adapter, controller, and service registries.
  */
 
-import type { RegisteredAdapter, RegisteredController, RegisteredService } from './registry.types';
+import type { RegisteredAdapter, RegisteredController, RegisteredService } from './registry.types.js';
 import type {
   AdapterRegistration,
   ControllerRegistration,
   FrameInfo,
   RuntimeContext,
   RuntimeSnapshot,
-} from './types';
+} from './types.js';
 
 function normalizeError(error: unknown, fallback: string): Error {
   if (error instanceof Error) {
@@ -283,4 +283,4 @@ export class ControllerRegistry {
   }
 }
 
-export * from './registry.types';
+export * from './registry.types.js';

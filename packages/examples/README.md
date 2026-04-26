@@ -4,10 +4,24 @@ Minimal working examples demonstrating the current URK kernel contracts.
 
 ## Included examples
 
+- `packages/examples/audio-proof.html` + `src/audio-proof.ts` - standalone DOM-first audio transport proof
 - `packages/examples/index.html` + `src/main.ts` - standalone DOM + Three picking proof
 - `packages/examples/loading-transition.html` + `src/loading-transition.ts` - standalone DOM-first loading and transition proof
 - `packages/examples/app-shell.html` + `src/app-shell.ts` - standalone DOM-first app-shell proof
+- `packages/examples/react-starter.html` + `src/react-starter.tsx` - standalone React wrapper proof around an existing URK kernel
 - `packages/examples/scrollytelling.html` + `src/scrollytelling.ts` - standalone DOM-first scrollytelling proof
+
+The audio proof proves:
+
+- boot enters `loading`
+- staged loading progress is visible and monotonic
+- the runtime reaches `ready`
+- three local proof tracks are preloaded through the audio adapter
+- no track starts automatically at `ready`
+- pointer and keyboard controls drive the same transport path
+- mute and volume stay explicit and visible
+- pause and resume freeze and restore scheduler activity plus audio playback
+- shutdown disables controls and halts further visible updates
 
 The picking proof proves:
 
@@ -47,6 +61,14 @@ The app-shell proof proves:
 - pause and resume freeze and restore scheduler-driven shell activity
 - shutdown disables controls and halts further visible updates
 
+The React starter proof proves:
+
+- `@urk/react-urk` can wrap an existing kernel instance instead of hiding kernel creation
+- `UrkProvider` can auto-boot the kernel cleanly on mount
+- `useRuntimeSnapshot()` can subscribe to `RuntimeStore` through `useSyncExternalStore`
+- `useEventBus()` can drive visible React updates from kernel/controller events
+- pause, resume, and shutdown stay kernel-owned while React remains a thin consumer
+
 The scrollytelling proof proves:
 
 - boot enters `loading`
@@ -72,10 +94,30 @@ corepack yarn dev
 
 Then open:
 
+- `/audio-proof.html` for the DOM-first audio transport proof
 - `/` for the DOM + Three picking proof
 - `/loading-transition.html` for the DOM-first loading/transition proof
 - `/app-shell.html` for the DOM-first app-shell proof
+- `/react-starter.html` for the React wrapper starter proof
 - `/scrollytelling.html` for the DOM-first scrollytelling proof
+
+## Audio proof acceptance checklist
+
+1. Load `/audio-proof.html` and confirm the phase starts in `loading`.
+2. Confirm progress only increases and stage labels advance through bootstrap, preload, and activate.
+3. Confirm the runtime reaches `ready`.
+4. Confirm no track starts automatically when the proof becomes ready.
+5. Click each track card and confirm the expected track becomes active and playback starts.
+6. Press `1`, `2`, and `3` and confirm each corresponding track starts.
+7. Press `Space` and confirm the active track pauses and resumes.
+8. Click `Mute` and press `M` and confirm mute state changes visibly.
+9. Move the volume slider and press `ArrowUp` / `ArrowDown` and confirm volume changes visibly while remaining clamped.
+10. Click `Stop` and press `S` and confirm playback stops while transport returns to `ready`.
+11. Confirm the overlay status/callout reflects the current track and playback state.
+12. Click kernel `Pause` and confirm the frame tick freezes while active playback pauses.
+13. Click kernel `Resume` and confirm the frame tick restores and the paused track resumes.
+14. Let a non-looping track finish and confirm the transport returns to `ready` with a completion update.
+15. Click `Shutdown` and confirm controls disable and no further visible updates or playback occur.
 
 ## Picking proof acceptance checklist
 
@@ -127,6 +169,17 @@ Then open:
 12. Click `Pause` and confirm the frame tick and activity tick freeze while view/layout mutations are blocked.
 13. Click `Resume` and confirm ticking and interaction restore from the paused point.
 14. Click `Shutdown` and confirm controls disable and no further visible updates occur.
+
+## React starter proof acceptance checklist
+
+1. Load `/react-starter.html` and confirm the proof boots into `loading`.
+2. Confirm staged progress is monotonic and reaches `ready`.
+3. Confirm phase, reason, loading stage, loading progress, latest event, and frame tick all render through React.
+4. Confirm the visible tick advances while the runtime is active.
+5. Click `Pause` and confirm the runtime enters `paused` and the tick stops advancing.
+6. Click `Resume` and confirm the runtime returns to `ready` and the tick resumes.
+7. Click `Shutdown` and confirm controls disable and the tick stops changing.
+8. Reload the page and confirm a fresh kernel instance boots cleanly through the same React wrapper path.
 
 ## Scrollytelling proof acceptance checklist
 

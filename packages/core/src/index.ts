@@ -9,10 +9,10 @@
  * - Scheduler and public contract types
  */
 
-export * from './events';
-export * from './kernel';
-export * from './registry';
-export * from './runtime';
-export * from './runtime-store';
-export * from './scheduler';
-export * from './types';
+export * from './events.js';
+export * from './kernel.js';
+export * from './registry.js';
+export * from './runtime.js';
+export * from './runtime-store.js';
+export * from './scheduler.js';
+export * from './types.js';

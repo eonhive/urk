@@ -8,10 +8,10 @@
  * Notes: Vibe coded with Codex.
  */
 
-import { EventBus } from './events';
-import { AdapterRegistry, ControllerRegistry, ServiceRegistry } from './registry';
-import { RuntimeStore } from './runtime-store';
-import { BrowserFrameScheduler } from './scheduler';
+import { EventBus } from './events.js';
+import { AdapterRegistry, ControllerRegistry, ServiceRegistry } from './registry.js';
+import { RuntimeStore } from './runtime-store.js';
+import { BrowserFrameScheduler } from './scheduler.js';
 import type {
   AdapterRegistration,
   ControllerRegistration,
@@ -21,7 +21,7 @@ import type {
   RuntimeContext,
   RuntimePhase,
   RuntimeSnapshot,
-} from './types';
+} from './types.js';
 
 function createKernelId(): string {
   return `urk-kernel-${Math.random().toString(36).slice(2, 10)}`;

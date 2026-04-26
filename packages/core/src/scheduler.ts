@@ -8,7 +8,7 @@
  * Notes: Vibe coded with Codex.
  */
 
-import type { FrameCallback, FrameScheduler } from './types';
+import type { FrameCallback, FrameScheduler } from './types.js';
 
 export class BrowserFrameScheduler implements FrameScheduler {
   private callback: FrameCallback | null = null;

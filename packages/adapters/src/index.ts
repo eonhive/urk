@@ -2,4 +2,4 @@
  * URK Adapters - Contract-first capability adapters.
  */
 
-export * from './adapters';
+export * from './adapters.js';

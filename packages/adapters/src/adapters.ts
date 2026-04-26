@@ -2,10 +2,11 @@
  * URK adapter exports.
  */
 
-export * from './loading';
-export * from './input';
-export * from './pointer';
-export * from './storage';
-export * from './three';
-export * from './ui-widgets';
-export * from './contracts';
+export * from './loading.js';
+export * from './audio.js';
+export * from './input.js';
+export * from './pointer.js';
+export * from './storage.js';
+export * from './three.js';
+export * from './ui-widgets.js';
+export * from './contracts.js';

@@ -1,0 +1,35 @@
+{
+  "name": "@urk/react-urk",
+  "version": "0.1.0",
+  "description": "URK React wrapper - thin provider and hooks around an existing kernel",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "echo 'manual validation only for this milestone'",
+    "lint": "echo 'no lint yet'"
+  },
+  "peerDependencies": {
+    "@urk/core": "^0.1.1",
+    "react": "^18.3.1 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@urk/core": "^0.1.1",
+    "react": "^18.3.1",
+    "typescript": "^5.3.0"
+  }
+}

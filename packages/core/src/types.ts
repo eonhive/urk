@@ -2,9 +2,9 @@
  * Core type definitions for URK runtime.
  */
 
-import type { EventBus } from './events';
-import type { AdapterRegistry, ControllerRegistry, ServiceRegistry } from './registry';
-import type { RuntimeStore } from './runtime-store';
+import type { EventBus } from './events.js';
+import type { AdapterRegistry, ControllerRegistry, ServiceRegistry } from './registry.js';
+import type { RuntimeStore } from './runtime-store.js';
 
 export type RuntimePhase = 'boot' | 'loading' | 'ready' | 'transition' | 'paused' | 'error';
 

@@ -2,8 +2,13 @@
 
 Contract-first capability adapters that prove URK's v0 kernel surface.
 
+The root `@urk/adapters` entrypoint exports every reference adapter, including
+the Three scene adapter. DOM-only consumers that do not need Three should import
+from `@urk/adapters/dom`.
+
 ## Reference adapters
 
+- `createAudioAdapter()` - manage browser-native audio transport across a small set of registered tracks
 - `createPointerAdapter()` - bind DOM targets or pointer surfaces and emit normalized pointer events
 - `createInputAdapter()` - normalize keyboard input, track pressed keys, and bind simple key handlers
 - `createStorageAdapter()` - provide namespaced local/session key-value persistence with swappable backends
@@ -16,6 +21,7 @@ Contract-first capability adapters that prove URK's v0 kernel surface.
 ```ts
 import { createKernel } from '@urk/core';
 import {
+  createAudioAdapter,
   createInputAdapter,
   createPointerAdapter,
   createStorageAdapter,
@@ -29,6 +35,7 @@ const kernel = createKernel({
     'ui:host': document.querySelector('#overlay-host'),
   },
   adapters: [
+    createAudioAdapter(),
     createPointerAdapter(),
     createInputAdapter(),
     createStorageAdapter({ namespace: 'demo' }),
@@ -40,7 +47,45 @@ const kernel = createKernel({
 await kernel.boot();
 ```
 
+## DOM-only consumers
+
+Use the `@urk/adapters/dom` subpath when a host only needs browser DOM
+capabilities and should not consume the Three adapter surface:
+
+```ts
+import { createKernel } from '@urk/core';
+import {
+  createLoadingAdapter,
+  createPointerAdapter,
+  createUiWidgetsAdapter,
+} from '@urk/adapters/dom';
+
+const kernel = createKernel({
+  services: {
+    'ui:host': document.querySelector('#overlay-host'),
+  },
+  adapters: [
+    createLoadingAdapter(),
+    createPointerAdapter(),
+    createUiWidgetsAdapter(),
+  ],
+});
+
+await kernel.boot();
+```
+
+This is the intended path for dependency-light DOM hosts such as Kivatar's
+current host shell. The DOM subpath does not export `createThreeAdapter()`.
+
 These adapters use the canonical `AdapterRegistration<TApi>` contract from `@urk/core`. They are intentionally small and exist to prove the kernel surface, not to introduce a broad adapter matrix early.
+
+`createAudioAdapter()` is deliberately transport-first in this milestone:
+
+- register a small set of browser-native media tracks
+- preload them into `HTMLAudioElement` instances
+- control playback through `play`, `pause`, `stop`, `setMuted`, and `setVolume`
+- expose one observable transport snapshot plus `audio:changed`, `audio:ended`, and `audio:error`
+- no Web Audio graph, spatial audio, playlist system, or mixer layer yet
 
 `createInputAdapter()` is deliberately keyboard-first in this milestone:
 
@@ -73,7 +118,7 @@ These adapters use the canonical `AdapterRegistration<TApi>` contract from `@urk
 
 ## Validation
 
-This package is validated for this milestone through type-check/build plus the standalone DOM + Three picking proof in `@urk/examples`.
+This package is validated for this milestone through type-check/build plus the standalone browser proofs in `@urk/examples`, including the DOM-first audio transport proof.
 
 ## Architecture
 

@@ -8,7 +8,7 @@
  * Notes: Vibe coded with Codex.
  */
 
-import type { RuntimePhase, RuntimeSnapshot, RuntimeStateListener } from './types';
+import type { RuntimePhase, RuntimeSnapshot, RuntimeStateListener } from './types.js';
 
 export class RuntimeStore {
   private snapshot: RuntimeSnapshot;

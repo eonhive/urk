@@ -9,15 +9,20 @@
  */
 
 import { resolve } from 'node:path';
+import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: './',
+  plugins: [react()],
   build: {
     rollupOptions: {
       input: {
         index: resolve(__dirname, 'index.html'),
+        audioProof: resolve(__dirname, 'audio-proof.html'),
         appShell: resolve(__dirname, 'app-shell.html'),
         loadingTransition: resolve(__dirname, 'loading-transition.html'),
+        reactStarter: resolve(__dirname, 'react-starter.html'),
         scrollytelling: resolve(__dirname, 'scrollytelling.html'),
       },
     },
