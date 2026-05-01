@@ -23,7 +23,9 @@
       "@urk/adapters": ["packages/adapters/src"],
       "@urk/adapters/*": ["packages/adapters/src/*"],
       "@urk/react-urk": ["packages/react-urk/src"],
-      "@urk/react-urk/*": ["packages/react-urk/src/*"]
+      "@urk/react-urk/*": ["packages/react-urk/src/*"],
+      "@urk/next-urk": ["packages/next-urk/src"],
+      "@urk/next-urk/*": ["packages/next-urk/src/*"]
     }
   },
   "include": ["packages/*/src"],

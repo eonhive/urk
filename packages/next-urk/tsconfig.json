@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react-jsx",
+    "paths": {
+      "@urk/core": ["packages/core/dist/index.d.ts"],
+      "@urk/react-urk": ["packages/react-urk/dist/index.d.ts"],
+      "@urk/react-urk/*": ["packages/react-urk/dist/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

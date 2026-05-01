@@ -1,9 +1,11 @@
 node_modules/
 dist/
+.next/
 *.tsbuildinfo
 .DS_Store
 .env
 .env.local
 .vscode/
+.codex/
 *.swp
 *.swo

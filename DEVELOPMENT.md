@@ -4,68 +4,43 @@
 
 This is a TypeScript monorepo using Yarn workspaces.
 
-### Prerequisites
-
-- Node.js 18+
-- Yarn 3.x+
-
-### Install dependencies
-
 ```bash
 corepack enable
 corepack yarn install
 ```
 
-### Build all packages
+## Common commands
 
 ```bash
 corepack yarn build
-```
-
-### Watch mode for development
-
-```bash
 corepack yarn dev
+corepack yarn workspace @urk/next-proof dev
 ```
 
-## Project Structure
+`corepack yarn dev` starts the private `examples/` workspace. The Next proof remains separate under `apps/next-proof`.
 
-- `packages/core` - Main runtime kernel
-- `packages/adapters` - Capability adapters
-- `packages/examples` - Standalone DOM proof example
+## Project structure
 
-## Running examples
-
-```bash
-corepack yarn workspace @urk/examples dev
-```
-
-## Type checking
-
-TypeScript is configured at the root with paths for `@urk/core` and `@urk/adapters` shortcuts.
+- `packages/core` - publishable kernel runtime
+- `packages/adapters` - publishable reference adapters
+- `packages/react-urk` - publishable React wrapper
+- `packages/next-urk` - publishable Next wrapper
+- `examples` - private proof workspace with one folder per proof
+- `apps/next-proof` - private Next App Router proof app
 
 ## Architecture
 
-The runtime is built around:
+See:
 
-1. **Kernel** - core lifecycle and context
-2. **Adapters** - contract-based capability injection
-3. **Controllers** - orchestration and state management
-4. **EventBus** - event routing and pub/sub
-5. **Update loop** - frame-synchronized execution
+- [docs/BOUNDARY.md](./docs/BOUNDARY.md)
+- [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+- [docs/DECISIONS.md](./docs/DECISIONS.md)
+- [docs/EXAMPLES.md](./docs/EXAMPLES.md)
 
-See [docs/07_URK/URK_ARCHITECTURE.md](./docs/07_URK/URK_ARCHITECTURE.md) for detailed architecture.
+## Validation
 
-## Testing
+Current validation in this repo is intentionally narrow and honest:
 
-Current validation for this milestone is:
-
-- `corepack yarn build` for package-level builds
-- direct `tsc --noEmit` checks when needed
-- manual browser acceptance in `@urk/examples`
-
-The root `corepack yarn test` command is intentionally honest rather than broad. It reports that this milestone is still manually validated.
-
-## Contributing
-
-See [CONTRIBUTING](./CONTRIBUTING.md) for guidelines (coming soon).
+- `corepack yarn build`
+- targeted `npm pack --dry-run` checks for publishable packages
+- manual browser checks for the private proofs

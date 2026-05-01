@@ -43,60 +43,71 @@ export function UrkProvider({
   children,
 }: UrkProviderProps) {
   const stableKernelRef = useRef(kernel);
-  const bootRequestedRef = useRef(false);
+  const bootStartedRef = useRef(false);
+  const bootOwnershipRef = useRef(false);
   const bootOwnedByProviderRef = useRef(false);
+  const bootPromiseRef = useRef<Promise<void> | null>(null);
+  const pendingShutdownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   if (stableKernelRef.current !== kernel) {
     throw new Error('UrkProvider does not support replacing the kernel instance after mount.');
   }
 
   useEffect(() => {
-    let disposed = false;
     const currentKernel = stableKernelRef.current;
 
-    if (!autoBoot || bootRequestedRef.current) {
+    if (pendingShutdownTimerRef.current) {
+      clearTimeout(pendingShutdownTimerRef.current);
+      pendingShutdownTimerRef.current = null;
+    }
+
+    if (!autoBoot) {
       return () => undefined;
     }
 
-    bootRequestedRef.current = true;
-    const bootOwnedByProvider = currentKernel.getState().phase === 'boot';
-    emitLifecycleEvent(currentKernel, 'react-urk:boot-requested', bootReason);
+    if (!bootStartedRef.current) {
+      bootStartedRef.current = true;
+      bootOwnershipRef.current = currentKernel.getState().phase === 'boot';
+      emitLifecycleEvent(currentKernel, 'react-urk:boot-requested', bootReason);
 
-    void currentKernel
-      .boot()
-      .then(() => {
-        if (disposed) {
-          if (bootOwnedByProvider) {
-            emitLifecycleEvent(currentKernel, 'react-urk:shutdown-requested', shutdownReason);
-            void currentKernel.shutdown(shutdownReason).catch((error: unknown) => {
-              reportLifecycleError('shutdown', error);
-            });
-          }
+      const bootPromise = currentKernel.boot();
+      bootPromiseRef.current = bootPromise;
 
-          return;
-        }
-
-        bootOwnedByProviderRef.current = bootOwnedByProvider;
-        emitLifecycleEvent(currentKernel, 'react-urk:booted', bootReason);
-      })
-      .catch((error: unknown) => {
-        const bootError: unknown = error;
-        bootRequestedRef.current = false;
-        reportLifecycleError('boot', bootError);
-      });
+      void bootPromise
+        .then(() => {
+          bootOwnedByProviderRef.current = bootOwnershipRef.current;
+          emitLifecycleEvent(currentKernel, 'react-urk:booted', bootReason);
+        })
+        .catch((error: unknown) => {
+          bootStartedRef.current = false;
+          reportLifecycleError('boot', error);
+        });
+    }
 
     return () => {
-      disposed = true;
-
-      if (!bootOwnedByProviderRef.current) {
+      if (!bootOwnershipRef.current) {
         return;
       }
 
-      bootOwnedByProviderRef.current = false;
-      emitLifecycleEvent(currentKernel, 'react-urk:shutdown-requested', shutdownReason);
-      void currentKernel.shutdown(shutdownReason).catch((error: unknown) => {
-        reportLifecycleError('shutdown', error);
-      });
+      pendingShutdownTimerRef.current = setTimeout(() => {
+        pendingShutdownTimerRef.current = null;
+
+        void (async () => {
+          if (bootPromiseRef.current) {
+            try {
+              await bootPromiseRef.current;
+            } catch {
+              // Ignore boot errors here and still attempt shutdown for cleanup.
+            }
+          }
+
+          bootOwnedByProviderRef.current = false;
+          emitLifecycleEvent(currentKernel, 'react-urk:shutdown-requested', shutdownReason);
+          await currentKernel.shutdown(shutdownReason);
+        })().catch((error: unknown) => {
+          reportLifecycleError('shutdown', error);
+        });
+      }, 0);
     };
   }, [autoBoot, bootReason, shutdownReason]);
 

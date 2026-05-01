@@ -1,0 +1,113 @@
+<!--
+  Company: EonHive Inc.
+  Title: URK Loading Transition Proof
+  Purpose: Mount the DOM-first loading and transition proof for the v0 kernel contracts.
+  Author: Stan Nesi
+  Created: 2026-04-22
+  Updated: 2026-04-22
+  Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URK Loading Transition Proof</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+<main class="proof-shell">
+      <section class="proof-panel">
+        <header class="proof-heading">
+          <h1>URK Loading Transition Proof</h1>
+          <p>Standalone kernel, explicit runtime phases, staged loading, a timed transition veil, and a replayable handoff into ready without any scene or framework complexity.</p>
+        </header>
+
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span>Runtime Phase</span>
+            <strong data-role="phase-value">boot</strong>
+          </article>
+          <article class="metric-card">
+            <span>Phase Reason</span>
+            <strong data-role="reason-value">kernel:init</strong>
+          </article>
+          <article class="metric-card">
+            <span>Latest Event</span>
+            <strong data-role="event-value">waiting</strong>
+          </article>
+          <article class="metric-card">
+            <span>Frame Tick</span>
+            <strong data-role="frame-value">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Stage Label</span>
+            <strong data-role="stage-value">Waiting</strong>
+          </article>
+          <article class="metric-card">
+            <span>Transition Countdown</span>
+            <strong data-role="countdown-value">n/a</strong>
+          </article>
+        </div>
+
+        <section class="progress-shell">
+          <div class="metric-card">
+            <span>Loading Progress</span>
+            <strong data-role="progress-value">0%</strong>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" data-role="progress-fill"></div>
+          </div>
+          <div class="metric-card">
+            <span>Flow Message</span>
+            <strong data-role="message-value">Waiting to start</strong>
+          </div>
+        </section>
+
+        <div class="control-row">
+          <button type="button" data-role="pause-button">Pause</button>
+          <button type="button" data-role="resume-button">Resume</button>
+          <button type="button" data-role="replay-button">Replay Flow</button>
+          <button type="button" data-role="shutdown-button">Shutdown</button>
+        </div>
+
+        <section class="proof-help">
+          <h2>Flow Proof</h2>
+          <ul>
+            <li><code>Loading</code> progresses through named stages with visible progress and stage labels.</li>
+            <li><code>Transition</code> activates a veil and countdown before the shell settles into <code>ready</code>.</li>
+            <li><code>Pause</code> and <code>Resume</code> freeze and restore the frame tick and transition countdown.</li>
+            <li><code>Replay Flow</code> reruns the loading and transition handoff without refreshing the page.</li>
+          </ul>
+        </section>
+      </section>
+
+      <section class="proof-stage">
+        <div class="stage-shell">
+          <article class="stage-card">
+            <div class="stage-meta">DOM-first runtime shell</div>
+            <h2 data-role="shell-title">Booting kernel</h2>
+            <p data-role="shell-body">Waiting for controllers to start the staged loading flow.</p>
+          </article>
+        </div>
+
+        <div class="transition-veil" data-role="transition-veil" data-visible="false">
+          <div class="transition-copy">
+            <strong>Transition active</strong>
+            <span data-role="transition-label">Preparing the ready handoff.</span>
+          </div>
+        </div>
+
+        <section class="ready-panel" data-role="ready-panel" hidden>
+          <strong>Ready state visible</strong>
+          <p data-role="ready-body">The shell reached ready. Use Replay Flow to run the handoff again without a refresh.</p>
+        </section>
+
+        <div class="ui-host" data-role="ui-host"></div>
+      </section>
+    </main>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

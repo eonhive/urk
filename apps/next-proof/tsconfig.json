@@ -1,0 +1,42 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "incremental": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "paths": {
+      "@urk/core": [
+        "../../packages/core/dist/index.d.ts"
+      ],
+      "@urk/adapters": [
+        "../../packages/adapters/dist/index.d.ts"
+      ],
+      "@urk/adapters/dom": [
+        "../../packages/adapters/dist/dom.d.ts"
+      ],
+      "@urk/react-urk": [
+        "../../packages/react-urk/dist/index.d.ts"
+      ],
+      "@urk/next-urk": [
+        "../../packages/next-urk/dist/index.d.ts"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "allowJs": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

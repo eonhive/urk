@@ -1,0 +1,437 @@
+/*
+ * Company: EonHive Inc.
+ * Title: Audio Proof Styles
+ * Purpose: Keep the audio proof styles separate from the runtime logic.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+    :root {
+      color-scheme: light;
+      font-family: "IBM Plex Sans", "Avenir Next", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.12), transparent 36%),
+        #f4f7fb;
+      color: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #app {
+      min-height: 100vh;
+      padding: 28px;
+    }
+
+    .audio-proof {
+      width: min(1260px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: 340px minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .audio-panel,
+    .audio-stage {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 30px;
+      box-shadow: 0 18px 46px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .audio-panel {
+      padding: 22px;
+      display: grid;
+      gap: 18px;
+      position: sticky;
+      top: 28px;
+    }
+
+    .audio-panel h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 2.4vw, 2.3rem);
+      line-height: 1.02;
+      letter-spacing: -0.05em;
+    }
+
+    .audio-panel p {
+      margin: 10px 0 0;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .audio-track-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .audio-track-card {
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 24px;
+      padding: 16px;
+      text-align: left;
+      background: #f8fafc;
+      color: #0f172a;
+      transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    .audio-track-card:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .audio-track-card[data-active="true"] {
+      border-color: rgba(14, 165, 233, 0.32);
+      box-shadow: 0 14px 28px rgba(14, 165, 233, 0.12);
+      background: rgba(14, 165, 233, 0.08);
+    }
+
+    .audio-track-card:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .audio-track-card__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.08);
+      color: #0f172a;
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .audio-track-card strong {
+      display: block;
+      margin-top: 14px;
+      font-size: 1.08rem;
+      letter-spacing: -0.03em;
+    }
+
+    .audio-track-card p {
+      margin: 8px 0 0;
+      color: #475569;
+      line-height: 1.55;
+      font-size: 0.94rem;
+    }
+
+    .audio-track-card__status {
+      display: block;
+      margin-top: 12px;
+      color: #0f766e;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .audio-controls {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .audio-control-button {
+      border: 0;
+      border-radius: 18px;
+      padding: 12px 14px;
+      background: #0f172a;
+      color: #f8fafc;
+      transition: transform 120ms ease, opacity 120ms ease;
+    }
+
+    .audio-control-button[data-role="play-button"] {
+      background: #0f766e;
+    }
+
+    .audio-control-button[data-role="pause-button"] {
+      background: #1d4ed8;
+    }
+
+    .audio-control-button[data-role="mute-button"] {
+      background: #334155;
+    }
+
+    .audio-control-button[data-role="shutdown-button"] {
+      background: #7f1d1d;
+    }
+
+    .audio-control-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .audio-control-button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .audio-volume {
+      padding: 16px;
+      border-radius: 22px;
+      background: #f8fafc;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      display: grid;
+      gap: 12px;
+    }
+
+    .audio-volume__copy {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .audio-volume input[type="range"] {
+      width: 100%;
+      accent-color: #0f766e;
+    }
+
+    .audio-help {
+      padding: 16px;
+      border-radius: 20px;
+      background: #f8fafc;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .audio-help h2 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .audio-help ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      color: #334155;
+      line-height: 1.55;
+    }
+
+    .audio-help code {
+      font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+      font-size: 0.88em;
+      color: #0f172a;
+      background: rgba(148, 163, 184, 0.12);
+      padding: 2px 6px;
+      border-radius: 999px;
+    }
+
+    .audio-stage {
+      position: relative;
+      min-height: 760px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top, rgba(14, 165, 233, 0.12), transparent 42%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.02), rgba(15, 23, 42, 0.08)),
+        #f8fafc;
+      padding: 22px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+      isolation: isolate;
+    }
+
+    .audio-stage:focus {
+      outline: 2px solid rgba(37, 99, 235, 0.28);
+      outline-offset: -2px;
+    }
+
+    .audio-stage__header h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 2.5vw, 2.1rem);
+      letter-spacing: -0.04em;
+      line-height: 1.04;
+    }
+
+    .audio-stage__header p {
+      margin: 10px 0 0;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .audio-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .audio-metric {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      min-height: 96px;
+    }
+
+    .audio-metric span {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+    }
+
+    .audio-metric strong {
+      display: block;
+      line-height: 1.45;
+      font-size: 1rem;
+      word-break: break-word;
+    }
+
+    .audio-progress-card,
+    .audio-transport-card {
+      padding: 16px 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      position: relative;
+      z-index: 1;
+    }
+
+    .audio-progress-card {
+      display: grid;
+      gap: 10px;
+    }
+
+    .audio-progress-card__copy {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #475569;
+      font-size: 0.95rem;
+    }
+
+    .audio-progress-card__track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(148, 163, 184, 0.2);
+    }
+
+    .audio-progress-card__fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #0ea5e9, #10b981);
+      transition: width 140ms linear;
+    }
+
+    .audio-transport-card__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.08);
+      color: #0f172a;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .audio-transport-card h2 {
+      margin: 14px 0 10px;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+    }
+
+    .audio-transport-card p {
+      margin: 0;
+      color: #475569;
+      line-height: 1.6;
+      max-width: 62ch;
+    }
+
+    .audio-loading-veil {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(248, 250, 252, 0.72);
+      backdrop-filter: blur(12px);
+      z-index: 3;
+    }
+
+    .audio-loading-veil[hidden] {
+      display: none;
+    }
+
+    .audio-loading-card {
+      width: min(440px, 100%);
+      padding: 24px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      box-shadow: 0 20px 44px rgba(15, 23, 42, 0.08);
+    }
+
+    .audio-loading-card h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: -0.03em;
+    }
+
+    .audio-loading-card p {
+      margin: 12px 0 0;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .audio-ui-host {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1080px) {
+      .audio-proof {
+        grid-template-columns: 1fr;
+      }
+
+      .audio-panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 760px) {
+      #app {
+        padding: 16px;
+      }
+
+      .audio-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .audio-controls {
+        grid-template-columns: 1fr;
+      }
+    }
+  

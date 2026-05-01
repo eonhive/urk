@@ -1,0 +1,154 @@
+<!--
+  Company: EonHive Inc.
+  Title: URK Audio Proof
+  Purpose: Provide a standalone DOM-first audio transport proof for URK.
+  Author: Stan Nesi
+  Created: 2026-04-23
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URK Audio Proof</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <main class="audio-proof">
+        <aside class="audio-panel">
+          <div>
+            <h1>URK Audio Flow</h1>
+            <p>
+              DOM-first audio transport proof for staged loading, explicit playback state, pointer
+              and keyboard control, and lifecycle-safe pause, resume, and shutdown.
+            </p>
+          </div>
+
+          <section class="audio-track-grid" data-role="track-grid" aria-label="Audio tracks"></section>
+
+          <div class="audio-controls">
+            <button type="button" class="audio-control-button" data-role="play-button">Play</button>
+            <button type="button" class="audio-control-button" data-role="pause-track-button">
+              Pause Track
+            </button>
+            <button type="button" class="audio-control-button" data-role="stop-button">Stop</button>
+            <button type="button" class="audio-control-button" data-role="mute-button">Mute</button>
+            <button type="button" class="audio-control-button" data-role="pause-button">Pause</button>
+            <button type="button" class="audio-control-button" data-role="resume-button">Resume</button>
+            <button type="button" class="audio-control-button" data-role="shutdown-button">
+              Shutdown
+            </button>
+          </div>
+
+          <label class="audio-volume">
+            <div class="audio-volume__copy">
+              <span>Volume</span>
+              <strong data-role="volume-slider-value">100%</strong>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value="1"
+              data-role="volume-slider"
+            />
+          </label>
+
+          <section class="audio-help">
+            <h2>Keyboard</h2>
+            <ul>
+              <li><code>1</code>, <code>2</code>, and <code>3</code> start the three proof tracks.</li>
+              <li><code>Space</code> toggles play and pause on the active track.</li>
+              <li><code>M</code> toggles mute and <code>S</code> stops the active track.</li>
+              <li><code>ArrowUp</code> and <code>ArrowDown</code> adjust volume in 10% steps.</li>
+            </ul>
+          </section>
+        </aside>
+
+        <section class="audio-stage" data-role="proof-stage" tabindex="-1">
+          <header class="audio-stage__header">
+            <h2>Audio transport proof</h2>
+            <p>
+              One transport adapter, three local proof tracks, and one explicit runtime shell that
+              keeps phase, playback state, and lifecycle behavior visible.
+            </p>
+          </header>
+
+          <div class="audio-metrics">
+            <div class="audio-metric">
+              <span>Phase</span>
+              <strong data-role="phase-value">boot</strong>
+            </div>
+            <div class="audio-metric">
+              <span>Reason</span>
+              <strong data-role="reason-value">kernel:init</strong>
+            </div>
+            <div class="audio-metric">
+              <span>Active Track</span>
+              <strong data-role="active-track-value">None</strong>
+            </div>
+            <div class="audio-metric">
+              <span>Transport Status</span>
+              <strong data-role="transport-value">Idle</strong>
+            </div>
+            <div class="audio-metric">
+              <span>Volume</span>
+              <strong data-role="volume-value">100%</strong>
+            </div>
+            <div class="audio-metric">
+              <span>Muted</span>
+              <strong data-role="muted-value">No</strong>
+            </div>
+            <div class="audio-metric">
+              <span>Latest Event</span>
+              <strong data-role="event-value">kernel:init</strong>
+            </div>
+            <div class="audio-metric">
+              <span>Frame Tick</span>
+              <strong data-role="frame-value">0</strong>
+            </div>
+            <div class="audio-metric">
+              <span>Latest Action</span>
+              <strong data-role="action-value">Booting audio proof</strong>
+            </div>
+          </div>
+
+          <div class="audio-progress-card">
+            <div class="audio-progress-card__copy">
+              <strong data-role="loading-stage-value">Waiting</strong>
+              <span data-role="loading-progress-value">0%</span>
+            </div>
+            <div class="audio-progress-card__track">
+              <div class="audio-progress-card__fill" data-role="loading-progress-fill"></div>
+            </div>
+          </div>
+
+          <article class="audio-transport-card">
+            <span class="audio-transport-card__eyebrow">Transport</span>
+            <h2 data-role="transport-title">No active track</h2>
+            <p data-role="transport-body">
+              Select a track or use 1, 2, and 3 to begin playback after the proof reaches ready.
+            </p>
+          </article>
+
+          <div class="audio-loading-veil" data-role="loading-veil">
+            <div class="audio-loading-card">
+              <h3 data-role="loading-title">Preparing audio proof</h3>
+              <p data-role="loading-body">
+                The proof is staging the runtime shell, preloading local tracks, and activating
+                transport controls.
+              </p>
+            </div>
+          </div>
+
+          <div class="audio-ui-host" data-role="ui-host"></div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

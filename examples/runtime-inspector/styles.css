@@ -1,0 +1,329 @@
+/*
+ * Company: EonHive Inc.
+ * Title: Runtime Inspector Styles
+ * Purpose: Keep the runtime inspector styles separate from the runtime logic.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+    :root {
+      color-scheme: light;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 12%, rgba(56, 189, 248, 0.18), transparent 28%),
+        radial-gradient(circle at 84% 18%, rgba(249, 115, 22, 0.12), transparent 24%),
+        linear-gradient(180deg, #eef4fb, #f8fafc 58%);
+      color: #102033;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    #app {
+      min-height: 100vh;
+      padding: 28px;
+    }
+
+    .inspector-shell {
+      width: min(1320px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 22px;
+    }
+
+    .inspector-hero,
+    .inspector-card {
+      border-radius: 30px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(14px);
+    }
+
+    .inspector-hero {
+      padding: 28px;
+      display: grid;
+      gap: 20px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(240, 249, 255, 0.82)),
+        rgba(255, 255, 255, 0.82);
+    }
+
+    .inspector-eyebrow,
+    .inspector-card__label,
+    .inspector-help__tag {
+      display: inline-flex;
+      align-items: center;
+      width: max-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: #102033;
+      background: rgba(226, 232, 240, 0.78);
+    }
+
+    .inspector-hero h1,
+    .inspector-card h2 {
+      margin: 0;
+      font-family: "Trebuchet MS", "Avenir Next", sans-serif;
+      letter-spacing: -0.04em;
+      color: #0f172a;
+    }
+
+    .inspector-hero h1 {
+      font-size: clamp(2.7rem, 6vw, 4.5rem);
+      line-height: 0.95;
+    }
+
+    .inspector-hero p,
+    .inspector-card p,
+    .inspector-list__meta,
+    .inspector-events__meta {
+      margin: 0;
+      line-height: 1.68;
+      color: #475569;
+    }
+
+    .inspector-hero__subhead {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: #475569;
+      font-size: 0.95rem;
+    }
+
+    .inspector-hero__subhead code {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.12);
+      color: #0f172a;
+      font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+    }
+
+    .inspector-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .inspector-button {
+      min-width: 138px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      background: #102033;
+      color: #f8fafc;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 140ms ease, background 140ms ease, opacity 140ms ease;
+    }
+
+    .inspector-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: #0f766e;
+    }
+
+    .inspector-button--secondary {
+      background: rgba(255, 255, 255, 0.92);
+      color: #102033;
+    }
+
+    .inspector-button--danger {
+      background: #8b1e3f;
+    }
+
+    .inspector-button:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .inspector-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .inspector-column {
+      display: grid;
+      gap: 20px;
+    }
+
+    .inspector-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .inspector-card {
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .inspector-metric {
+      border-radius: 22px;
+      padding: 16px;
+      background: rgba(248, 250, 252, 0.86);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      display: grid;
+      gap: 8px;
+    }
+
+    .inspector-metric__name {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #64748b;
+    }
+
+    .inspector-metric__value {
+      font-size: 1.26rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+    }
+
+    .inspector-lists {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .inspector-list,
+    .inspector-events {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .inspector-list li,
+    .inspector-events li {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(248, 250, 252, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .inspector-list strong,
+    .inspector-events strong {
+      display: block;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .inspector-events {
+      max-height: 640px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .inspector-events__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      font-size: 0.9rem;
+    }
+
+    .inspector-events__payload {
+      display: block;
+      margin-top: 8px;
+      font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+      font-size: 0.83rem;
+      line-height: 1.5;
+      color: #184361;
+      word-break: break-word;
+    }
+
+    .inspector-note {
+      border-radius: 22px;
+      padding: 16px 18px;
+      background: rgba(15, 23, 42, 0.04);
+      color: #475569;
+      line-height: 1.68;
+    }
+
+    .inspector-help {
+      display: grid;
+      gap: 10px;
+    }
+
+    .inspector-help ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .inspector-help li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(248, 250, 252, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .inspector-help code {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+      background: rgba(148, 163, 184, 0.12);
+      color: #0f172a;
+    }
+
+    @media (max-width: 1180px) {
+      .inspector-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .inspector-metrics,
+      .inspector-lists {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      #app {
+        padding: 18px;
+      }
+
+      .inspector-hero,
+      .inspector-card {
+        border-radius: 24px;
+      }
+
+      .inspector-hero {
+        padding: 22px;
+      }
+
+      .inspector-metrics,
+      .inspector-lists {
+        grid-template-columns: 1fr;
+      }
+
+      .inspector-help li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  

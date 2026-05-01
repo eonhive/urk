@@ -16,3 +16,11 @@ export * from './runtime.js';
 export * from './runtime-store.js';
 export * from './scheduler.js';
 export * from './types.js';
+export type {
+  InspectableAdapter,
+  InspectableController,
+  InspectableService,
+  RuntimeInspector,
+  RuntimeInspectorListener,
+  RuntimeInspectorSnapshot,
+} from './runtime-inspector.js';

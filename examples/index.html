@@ -1,0 +1,58 @@
+<!--
+  Company: EonHive Inc.
+  Title: URK Examples Router
+  Purpose: Mount the examples landing page that links to each standalone URK proof route.
+  Author: Stan Nesi
+  Created: 2026-04-12
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URK Examples</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <main class="examples-shell">
+        <section class="examples-hero">
+          <div class="examples-hero__copy">
+            <span class="examples-hero__eyebrow">Standalone-first examples</span>
+            <h1>URK Example Routes</h1>
+            <p>
+              One index, seven focused proofs, and one stable picking route for deeper browser
+              verification. Use this page as the navigation surface instead of memorizing
+              individual example paths.
+            </p>
+          </div>
+
+          <div class="examples-hero__stats">
+            <div class="examples-stat">
+              <strong>7 proofs</strong>
+              <span>Audio, scene, lifecycle, shell, wrapper, story, and diagnostics flows.</span>
+            </div>
+            <div class="examples-stat">
+              <strong>/picking/</strong>
+              <span>Direct path for the DOM + Three proof and duplicate-registration checks.</span>
+            </div>
+            <div class="examples-stat">
+              <strong>CSS previews</strong>
+              <span>Preview imagery stays lightweight and maintenance-free.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="examples-grid" data-role="examples-grid"></section>
+
+        <section class="examples-note">
+          Open <code>/picking/</code> when you need the existing scene proof directly. That route
+          keeps the current dev hook and duplicate-registration browser workflow unchanged.
+        </section>
+      </main>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

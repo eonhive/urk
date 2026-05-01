@@ -1,0 +1,125 @@
+<!--
+  Company: EonHive Inc.
+  Title: URK Picking Proof
+  Purpose: Mount the standalone DOM + Three picking proof for the v0 kernel contracts.
+  Author: Stan Nesi
+  Created: 2026-04-29
+  Updated: 2026-04-29
+  Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URK Picking Proof</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+<main class="proof-shell">
+      <section class="proof-panel">
+        <header class="proof-heading">
+          <h1>URK Picking Proof</h1>
+          <p>Standalone kernel, explicit runtime phases, real registries, and six small adapters proving loading, pointer, raycast picking, input, storage, scene sync, and overlay coordination.</p>
+        </header>
+
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span>Runtime Phase</span>
+            <strong data-role="phase-value">boot</strong>
+          </article>
+          <article class="metric-card">
+            <span>Phase Reason</span>
+            <strong data-role="reason-value">kernel:init</strong>
+          </article>
+          <article class="metric-card">
+            <span>Latest Event</span>
+            <strong data-role="event-value">waiting</strong>
+          </article>
+          <article class="metric-card">
+            <span>Frame Tick</span>
+            <strong data-role="frame-value">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Target Positions</span>
+            <strong data-role="position-value">A x -72px, y 10px | B x 72px, y -10px</strong>
+          </article>
+          <article class="metric-card">
+            <span>Last Input</span>
+            <strong data-role="input-value">waiting</strong>
+          </article>
+          <article class="metric-card">
+            <span>Storage Status</span>
+            <strong data-role="storage-value">local empty | session empty</strong>
+          </article>
+        </div>
+
+        <section class="progress-shell">
+          <div class="metric-card">
+            <span>Loading Progress</span>
+            <strong data-role="progress-value">0%</strong>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" data-role="progress-fill"></div>
+          </div>
+          <div class="metric-card">
+            <span>Loading Message</span>
+            <strong data-role="message-value">Waiting to start</strong>
+          </div>
+        </section>
+
+        <div class="control-row">
+          <button type="button" data-role="pause-button">Pause</button>
+          <button type="button" data-role="resume-button">Resume</button>
+          <button type="button" data-role="shutdown-button">Shutdown</button>
+        </div>
+
+        <div class="control-row storage-actions">
+          <button type="button" data-role="save-local-button">Save Local</button>
+          <button type="button" data-role="load-local-button">Load Local</button>
+          <button type="button" data-role="save-session-button">Save Session</button>
+          <button type="button" data-role="load-session-button">Load Session</button>
+          <button type="button" data-role="clear-saved-button">Clear Saved</button>
+        </div>
+
+        <section class="proof-help">
+          <h2>Scene Picking Proof</h2>
+          <ul>
+            <li><code>Hover</code> or <code>Click</code> the DOM pills to compare direct target interaction against the scene path.</li>
+            <li><code>Hover</code> or <code>Click</code> the Three meshes to prove raycast-driven picking through the shared interaction controller.</li>
+            <li><code>Arrow Keys</code> move the selected target, or <code>Pulse Node A</code> when nothing is selected.</li>
+            <li><code>Enter</code>, <code>Space</code>, and <code>Escape</code> control selection through the input adapter.</li>
+            <li><code>Save</code> and <code>Load</code> prove local/session persistence for both targets.</li>
+          </ul>
+        </section>
+      </section>
+
+      <section class="proof-stage">
+        <div class="three-host" data-role="three-host"></div>
+        <div class="scene-content">
+          <button
+            class="scene-target"
+            type="button"
+            data-role="scene-target-a"
+            data-target-id="pulse-node-a"
+          >
+            Pulse Node A
+          </button>
+          <button
+            class="scene-target"
+            type="button"
+            data-role="scene-target-b"
+            data-target-id="pulse-node-b"
+          >
+            Pulse Node B
+          </button>
+          <p class="scene-caption">When the runtime reaches ready, compare direct DOM picking against Three surface raycasts, move the selected target with the keyboard, and watch both the DOM pills and scene meshes stay synchronized.</p>
+        </div>
+        <div class="ui-host" data-role="ui-host"></div>
+      </section>
+    </main>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

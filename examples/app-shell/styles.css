@@ -1,0 +1,478 @@
+/*
+ * Company: EonHive Inc.
+ * Title: App Shell Styles
+ * Purpose: Keep the app shell styles separate from the runtime logic.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+    :root {
+      color-scheme: light;
+      font-family: "IBM Plex Sans", "Avenir Next", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.14), transparent 38%),
+        #f4f7fb;
+      color: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #app {
+      min-height: 100vh;
+      padding: 32px;
+    }
+
+    .shell-proof {
+      width: min(1280px, 100%);
+      margin: 0 auto;
+    }
+
+    .shell-frame {
+      min-height: 760px;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .shell-sidebar {
+      display: grid;
+      align-content: start;
+      gap: 18px;
+      padding: 24px 18px;
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.9)),
+        #0f172a;
+      color: #e2e8f0;
+      transition: width 160ms ease, padding 160ms ease;
+    }
+
+    .shell-sidebar[data-collapsed="true"] {
+      width: 96px;
+      padding-inline: 12px;
+    }
+
+    .shell-sidebar__heading h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    .shell-sidebar__heading p {
+      margin: 10px 0 0;
+      color: rgba(226, 232, 240, 0.78);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .shell-sidebar[data-collapsed="true"] .shell-sidebar__heading p,
+    .shell-sidebar[data-collapsed="true"] .shell-sidebar__note {
+      display: none;
+    }
+
+    .shell-nav {
+      display: grid;
+      gap: 10px;
+    }
+
+    .shell-nav__button,
+    .shell-toolbar__button,
+    .shell-control__button {
+      border: 0;
+      border-radius: 18px;
+      padding: 12px 14px;
+      text-align: left;
+      transition: transform 120ms ease, background 120ms ease, opacity 120ms ease;
+    }
+
+    .shell-nav__button {
+      background: rgba(51, 65, 85, 0.55);
+      color: #e2e8f0;
+    }
+
+    .shell-nav__button[data-active="true"] {
+      background: rgba(16, 185, 129, 0.22);
+      color: #f8fafc;
+      box-shadow: inset 0 0 0 1px rgba(110, 231, 183, 0.24);
+    }
+
+    .shell-sidebar[data-collapsed="true"] .shell-nav__button {
+      text-align: center;
+      padding-inline: 8px;
+      font-size: 0.88rem;
+    }
+
+    .shell-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .shell-toolbar__button {
+      background: rgba(248, 250, 252, 0.12);
+      color: #f8fafc;
+    }
+
+    .shell-sidebar__note {
+      margin: 0;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(30, 41, 59, 0.55);
+      color: rgba(226, 232, 240, 0.9);
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .shell-stage {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      background:
+        radial-gradient(circle at top, rgba(16, 185, 129, 0.12), transparent 42%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.02), rgba(15, 23, 42, 0.06)),
+        #f8fafc;
+      isolation: isolate;
+    }
+
+    .shell-header {
+      padding: 22px 24px 18px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      display: grid;
+      gap: 16px;
+    }
+
+    .shell-header__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .shell-header__title h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2.6vw, 2rem);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+
+    .shell-header__title p {
+      margin: 8px 0 0;
+      color: #475569;
+      line-height: 1.55;
+    }
+
+    .shell-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .shell-metric {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      min-height: 92px;
+    }
+
+    .shell-metric span {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+    }
+
+    .shell-metric strong {
+      display: block;
+      line-height: 1.45;
+      font-size: 1rem;
+      word-break: break-word;
+    }
+
+    .shell-progress {
+      display: grid;
+      gap: 8px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .shell-progress__copy {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: #475569;
+      font-size: 0.95rem;
+    }
+
+    .shell-progress__track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(148, 163, 184, 0.2);
+    }
+
+    .shell-progress__fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #0ea5e9, #10b981);
+      transition: width 140ms linear;
+    }
+
+    .shell-main {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 20px;
+      padding: 22px 24px 24px;
+      align-items: start;
+    }
+
+    .shell-content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .shell-panel {
+      display: none;
+      gap: 16px;
+    }
+
+    .shell-panel[data-active="true"] {
+      display: grid;
+    }
+
+    .shell-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    .shell-card h3 {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+
+    .shell-card p,
+    .shell-card li {
+      color: #334155;
+      line-height: 1.6;
+    }
+
+    .shell-card ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .shell-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .shell-kv {
+      padding: 14px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .shell-kv span {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+    }
+
+    .shell-kv strong {
+      display: block;
+      line-height: 1.5;
+      font-size: 0.98rem;
+      word-break: break-word;
+    }
+
+    .shell-inspector {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.96);
+      color: #e2e8f0;
+      border: 1px solid rgba(51, 65, 85, 0.28);
+      min-height: 100%;
+    }
+
+    .shell-inspector[hidden] {
+      display: none;
+    }
+
+    .shell-inspector h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .shell-inspector p {
+      margin: 0;
+      color: rgba(226, 232, 240, 0.78);
+      line-height: 1.55;
+    }
+
+    .shell-inspector .shell-kv {
+      background: rgba(30, 41, 59, 0.82);
+      border-color: rgba(71, 85, 105, 0.34);
+    }
+
+    .shell-inspector .shell-kv span {
+      color: rgba(148, 163, 184, 0.82);
+    }
+
+    .shell-inspector .shell-kv strong {
+      color: #f8fafc;
+    }
+
+    .shell-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .shell-control__button {
+      background: #0f172a;
+      color: #f8fafc;
+    }
+
+    .shell-control__button[data-role="reset-button"] {
+      background: #0f766e;
+    }
+
+    .shell-control__button[data-role="resume-button"] {
+      background: #2563eb;
+    }
+
+    .shell-nav__button:hover:not(:disabled),
+    .shell-toolbar__button:hover:not(:disabled),
+    .shell-control__button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .shell-nav__button:disabled,
+    .shell-toolbar__button:disabled,
+    .shell-control__button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .shell-loading-veil {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(248, 250, 252, 0.76);
+      backdrop-filter: blur(10px);
+      z-index: 2;
+    }
+
+    .shell-loading-veil[hidden] {
+      display: none;
+    }
+
+    .shell-loading-card {
+      width: min(420px, 100%);
+      padding: 24px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+    }
+
+    .shell-loading-card h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: -0.03em;
+    }
+
+    .shell-loading-card p {
+      margin: 12px 0 0;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .shell-ui-host {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1080px) {
+      .shell-frame {
+        grid-template-columns: 1fr;
+      }
+
+      .shell-sidebar {
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      }
+
+      .shell-main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      #app {
+        padding: 18px;
+      }
+
+      .shell-header__top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .shell-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .shell-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  

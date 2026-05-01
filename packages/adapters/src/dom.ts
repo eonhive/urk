@@ -8,9 +8,9 @@
  * Notes: Vibe coded with Codex.
  */
 
-export * from './loading.js';
-export * from './input.js';
-export * from './pointer.js';
-export * from './storage.js';
-export * from './ui-widgets.js';
+export * from './loading/index.js';
+export * from './input/index.js';
+export * from './pointer/index.js';
+export * from './storage/index.js';
+export * from './ui-widgets/index.js';
 export * from './contracts.js';

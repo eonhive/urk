@@ -1,0 +1,158 @@
+<!--
+  Company: EonHive Inc.
+  Title: URK Runtime Inspector Proof
+  Purpose: Mount the standalone DOM-first runtime inspector proof for URK.
+  Author: Stan Nesi
+  Created: 2026-04-30
+  Updated: 2026-04-30
+  Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URK Runtime Inspector Proof</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+<main class="inspector-shell">
+      <section class="inspector-hero">
+        <div>
+          <span class="inspector-eyebrow">Kernel-facing diagnostics starter</span>
+          <h1>Runtime Inspector Proof</h1>
+        </div>
+
+        <p>
+          This proof reads one bounded inspector snapshot from <code>kernel.getInspector()</code>
+          and keeps loading state separate. The goal is visibility into lifecycle, scheduler
+          activity, registries, services, and recent events without starting a separate devtools
+          package.
+        </p>
+
+        <div class="inspector-hero__subhead">
+          <span>Route: <code>/runtime-inspector/</code></span>
+          <span>Runtime id: <code data-role="runtime-id">pending</code></span>
+        </div>
+
+        <div class="inspector-actions">
+          <button class="inspector-button" data-role="emit-marker" type="button">Emit Marker</button>
+          <button class="inspector-button inspector-button--secondary" data-role="pause" type="button">Pause</button>
+          <button class="inspector-button inspector-button--secondary" data-role="resume" type="button">Resume</button>
+          <button class="inspector-button inspector-button--danger" data-role="shutdown" type="button">Shutdown</button>
+        </div>
+      </section>
+
+      <section class="inspector-grid">
+        <div class="inspector-column">
+          <section class="inspector-card">
+            <div>
+              <span class="inspector-card__label">Runtime metrics</span>
+              <h2>Lifecycle and scheduler state</h2>
+            </div>
+
+            <div class="inspector-metrics">
+              <article class="inspector-metric">
+                <span class="inspector-metric__name">Phase</span>
+                <span class="inspector-metric__value" data-role="phase">boot</span>
+              </article>
+              <article class="inspector-metric">
+                <span class="inspector-metric__name">Reason</span>
+                <span class="inspector-metric__value" data-role="reason">kernel:init</span>
+              </article>
+              <article class="inspector-metric">
+                <span class="inspector-metric__name">Booted</span>
+                <span class="inspector-metric__value" data-role="booted">no</span>
+              </article>
+              <article class="inspector-metric">
+                <span class="inspector-metric__name">Disposed</span>
+                <span class="inspector-metric__value" data-role="disposed">no</span>
+              </article>
+              <article class="inspector-metric">
+                <span class="inspector-metric__name">Scheduler</span>
+                <span class="inspector-metric__value" data-role="scheduler">stopped</span>
+              </article>
+              <article class="inspector-metric">
+                <span class="inspector-metric__name">Frame count</span>
+                <span class="inspector-metric__value" data-role="frame-count">0</span>
+              </article>
+              <article class="inspector-metric">
+                <span class="inspector-metric__name">Loading stage</span>
+                <span class="inspector-metric__value" data-role="loading-stage">Waiting to start</span>
+              </article>
+              <article class="inspector-metric">
+                <span class="inspector-metric__name">Loading progress</span>
+                <span class="inspector-metric__value" data-role="loading-progress">0%</span>
+              </article>
+            </div>
+          </section>
+
+          <section class="inspector-card">
+            <div>
+              <span class="inspector-card__label">Registry view</span>
+              <h2>Adapters, controllers, and services</h2>
+              <p>Service values stay hidden. Only service names and safe kind summaries are exposed.</p>
+            </div>
+
+            <div class="inspector-lists">
+              <div>
+                <h2>Adapters</h2>
+                <ul class="inspector-list" data-role="adapters-list"></ul>
+              </div>
+              <div>
+                <h2>Controllers</h2>
+                <ul class="inspector-list" data-role="controllers-list"></ul>
+              </div>
+              <div>
+                <h2>Services</h2>
+                <ul class="inspector-list" data-role="services-list"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="inspector-card">
+            <div>
+              <span class="inspector-card__label">Proof notes</span>
+              <h2>Scope</h2>
+            </div>
+
+            <div class="inspector-note">
+              This is a thin read-only diagnostics surface. It does not filter, persist, export,
+              replay, or remote-stream runtime data. It exists to prove that the kernel can expose
+              bounded, inspectable runtime state without coupling the public API to a full devtools
+              platform.
+            </div>
+          </section>
+        </div>
+
+        <div class="inspector-column">
+          <section class="inspector-card">
+            <div>
+              <span class="inspector-card__label">Recent events</span>
+              <h2>Event stream</h2>
+              <p>Total captured events: <strong data-role="event-count">0</strong></p>
+            </div>
+
+            <ul class="inspector-events" data-role="events-list"></ul>
+          </section>
+
+          <section class="inspector-card inspector-help">
+            <div>
+              <span class="inspector-help__tag">Keyboard help</span>
+              <h2>Runtime controls</h2>
+            </div>
+
+            <ul>
+              <li><code>KeyM</code><span>Emit a custom marker event without changing runtime phase.</span></li>
+              <li><code>KeyP</code><span>Pause the kernel when the proof is interactive.</span></li>
+              <li><code>KeyR</code><span>Resume the kernel when the proof is paused.</span></li>
+            </ul>
+          </section>
+        </div>
+      </section>
+    </main>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "@urk/next-proof",
+  "version": "0.1.0",
+  "private": true,
+  "description": "URK Next proof - minimal App Router proof for the next-urk wrapper",
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev --hostname 127.0.0.1 --port 3002",
+    "start": "next start --hostname 127.0.0.1 --port 3002",
+    "test": "echo 'manual browser acceptance only for this milestone'",
+    "lint": "echo 'no lint yet'"
+  },
+  "dependencies": {
+    "@urk/adapters": "workspace:*",
+    "@urk/core": "workspace:*",
+    "@urk/next-urk": "workspace:*",
+    "next": "^14.2.30",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.3.0"
+  }
+}

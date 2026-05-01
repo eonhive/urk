@@ -2,6 +2,9 @@
 
 Thin React bindings for consuming an existing URK kernel instance.
 
+If you are consuming URK inside a Next App Router client boundary, prefer `@urk/next-urk`
+on top of this package instead of rebuilding that boundary yourself.
+
 This package stays wrapper-only:
 
 - it accepts an existing `Kernel`
@@ -14,7 +17,12 @@ This package stays wrapper-only:
 - `UrkProvider`
 - `useKernel()`
 - `useRuntimeSnapshot()`
+- `useRuntimePhase()`
+- `useRuntimeInspector()`
+- `useRuntimeInspectorSnapshot()`
 - `useEventBus()`
+- `useKernelEvent()`
+- `KernelEventListener`
 
 ## Usage
 
@@ -22,11 +30,17 @@ This package stays wrapper-only:
 import { useMemo } from 'react';
 import { createKernel } from '@urk/core';
 import { createLoadingAdapter } from '@urk/adapters/dom';
-import { UrkProvider, useRuntimeSnapshot } from '@urk/react-urk';
+import { UrkProvider, useKernelEvent, useRuntimeInspectorSnapshot, useRuntimePhase } from '@urk/react-urk';
 
 function RuntimeView() {
-  const snapshot = useRuntimeSnapshot();
-  return <div>{snapshot.phase}</div>;
+  const phase = useRuntimePhase();
+  const inspector = useRuntimeInspectorSnapshot();
+
+  useKernelEvent('runtime:paused', (event) => {
+    console.log(event.type);
+  });
+
+  return <div>{phase} / {inspector.frameCount}</div>;
 }
 
 export function App() {
@@ -46,5 +60,4 @@ export function App() {
 
 `UrkProvider` auto-boots by default. It only shuts the kernel down on unmount when the provider was responsible for booting the kernel in the first place.
 
-This package is intended to be validated for this milestone through type-check/build plus the standalone React proof in `@urk/examples`.
-The implementation is landed, but full validation still depends on installing the added React dependencies in the workspace.
+This package is validated through type-check/build plus the private React proof route in `examples/react-starter/`, including wrapper-facing runtime inspector consumption.

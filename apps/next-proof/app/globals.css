@@ -1,0 +1,302 @@
+/**
+ * Company: EonHive Inc.
+ * Title: URK Next Proof Styles
+ * Purpose: Provide the DOM-only visual shell for the standalone Next App Router proof.
+ * Author: Stan Nesi
+ * Created: 2026-04-30
+ * Updated: 2026-04-30
+ * Notes: Vibe coded with Codex.
+ */
+
+:root {
+  color-scheme: light;
+  font-family: "IBM Plex Sans", "Avenir Next", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.14), transparent 38%),
+    linear-gradient(180deg, #f6fafc 0%, #eef4fb 100%);
+  color: #0f172a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.next-proof {
+  min-height: 100vh;
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 36px;
+  display: grid;
+  gap: 22px;
+}
+
+.next-proof__hero,
+.next-proof__panel,
+.next-proof__detail {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 28px;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.next-proof__hero {
+  padding: 28px 30px;
+  display: grid;
+  gap: 12px;
+}
+
+.next-proof__eyebrow {
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #0369a1;
+  font-weight: 700;
+}
+
+.next-proof__hero h1,
+.next-proof__detail h2,
+.next-proof__event-history h2 {
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.next-proof__hero h1 {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+}
+
+.next-proof__hero p,
+.next-proof__detail p,
+.next-proof__meta-card p,
+.next-proof__progress p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.next-proof__status {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(14, 165, 233, 0.1);
+  color: #075985;
+  font-weight: 700;
+}
+
+.next-proof__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.9fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.next-proof__panel,
+.next-proof__detail {
+  padding: 24px;
+  display: grid;
+  gap: 18px;
+}
+
+.next-proof__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.next-proof__meta-card {
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(241, 245, 249, 0.94), rgba(255, 255, 255, 0.98));
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  display: grid;
+  gap: 8px;
+}
+
+.next-proof__meta-card span {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.next-proof__meta-card strong {
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.next-proof__progress {
+  display: grid;
+  gap: 10px;
+}
+
+.next-proof__progress-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.next-proof__progress-track {
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.92);
+  overflow: hidden;
+}
+
+.next-proof__progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0ea5e9, #38bdf8, #22c55e);
+  transition: width 160ms linear;
+}
+
+.next-proof__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.next-proof__controls button {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  background: #0f172a;
+  transition: transform 140ms ease, opacity 140ms ease;
+}
+
+.next-proof__controls button[data-tone="active"] {
+  background: #0369a1;
+}
+
+.next-proof__controls button[data-tone="danger"] {
+  background: #b91c1c;
+}
+
+.next-proof__controls button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.next-proof__controls button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.next-proof__event-history {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(248, 250, 252, 0.86);
+}
+
+.next-proof__event-history h2 {
+  font-size: 1rem;
+}
+
+.next-proof__event-history ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.next-proof__event-history li {
+  display: grid;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.next-proof__event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.next-proof__event-history small,
+.next-proof__event-payload {
+  color: #64748b;
+  overflow-wrap: anywhere;
+}
+
+.next-proof__event-payload {
+  color: #1e3a5f;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+}
+
+.next-proof__detail {
+  align-content: start;
+}
+
+.next-proof__detail strong {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #0369a1;
+}
+
+.next-proof__detail h2 {
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+}
+
+.next-proof__inspector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.next-proof__registry-summary {
+  color: #1e3a5f;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+@media (max-width: 920px) {
+  .next-proof {
+    width: min(100%, calc(100% - 24px));
+    padding: 18px 0 24px;
+  }
+
+  .next-proof__grid,
+  .next-proof__metrics,
+  .next-proof__inspector-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .next-proof__hero,
+  .next-proof__panel,
+  .next-proof__detail {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,309 @@
+/*
+ * Company: EonHive Inc.
+ * Title: Picking Proof Styles
+ * Purpose: Keep the picking proof styles separate from the runtime logic.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+    :root {
+      color-scheme: light;
+      font-family: "IBM Plex Sans", "Avenir Next", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 36%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.14), transparent 34%),
+        #f4f7fb;
+      color: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #app {
+      min-height: 100vh;
+      padding: 32px;
+    }
+
+    .proof-shell {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    }
+
+    .proof-panel,
+    .proof-stage {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 28px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .proof-panel {
+      padding: 22px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .proof-stage {
+      position: relative;
+      min-height: 560px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.16), transparent 42%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.04), rgba(15, 23, 42, 0.1)),
+        #f8fafc;
+    }
+
+    .proof-heading h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .proof-heading p {
+      margin: 10px 0 0;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .metric-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .metric-card {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .metric-card span {
+      display: block;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    .metric-card strong {
+      display: block;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .proof-help {
+      padding: 16px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .proof-help h2 {
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+      letter-spacing: -0.02em;
+    }
+
+    .proof-help ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .proof-help code {
+      font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+      font-size: 0.88em;
+      color: #0f172a;
+      background: rgba(148, 163, 184, 0.12);
+      padding: 2px 6px;
+      border-radius: 999px;
+    }
+
+    .progress-shell {
+      display: grid;
+      gap: 10px;
+    }
+
+    .progress-track {
+      overflow: hidden;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.2);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #0ea5e9, #22c55e);
+      transition: width 140ms linear;
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .control-row button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: #0f172a;
+      color: #f8fafc;
+      transition: transform 120ms ease, opacity 120ms ease;
+    }
+
+    .control-row button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .control-row button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .storage-actions button {
+      background: #164e63;
+    }
+
+    .three-host {
+      position: absolute;
+      inset: 0;
+    }
+
+    .three-host canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    .scene-content {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, rgba(14, 165, 233, 0.18), transparent 32%),
+        radial-gradient(circle at bottom, rgba(34, 197, 94, 0.14), transparent 34%);
+    }
+
+    .scene-caption {
+      position: absolute;
+      left: 24px;
+      bottom: 24px;
+      margin: 0;
+      max-width: 380px;
+      color: #334155;
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .scene-target {
+      --scene-target-x: 0px;
+      --scene-target-y: 0px;
+      --scene-target-scale: 1;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      min-width: 132px;
+      height: 44px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 999px;
+      color: #f8fafc;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      pointer-events: auto;
+      transform:
+        translate(
+          calc(-50% + var(--scene-target-x)),
+          calc(-50% + var(--scene-target-y))
+        )
+        scale(var(--scene-target-scale));
+      box-shadow:
+        0 18px 28px rgba(15, 23, 42, 0.18),
+        inset 0 -10px 16px rgba(15, 23, 42, 0.16);
+      transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+    }
+
+    .scene-target[data-target-id="pulse-node-a"] {
+      background: linear-gradient(180deg, #38bdf8, #0f766e);
+    }
+
+    .scene-target[data-target-id="pulse-node-b"] {
+      background: linear-gradient(180deg, #fb923c, #9a3412);
+    }
+
+    .scene-target:hover:not(:disabled),
+    .scene-target[data-hovered="true"] {
+      box-shadow:
+        0 22px 34px rgba(15, 23, 42, 0.24),
+        0 0 0 6px rgba(255, 255, 255, 0.42),
+        inset 0 -10px 16px rgba(15, 23, 42, 0.16);
+    }
+
+    .scene-target[data-selected="true"] {
+      box-shadow:
+        0 24px 36px rgba(15, 23, 42, 0.28),
+        0 0 0 7px rgba(34, 197, 94, 0.24),
+        inset 0 -10px 16px rgba(15, 23, 42, 0.18);
+    }
+
+    .scene-target:disabled {
+      filter: saturate(0.55);
+      cursor: not-allowed;
+    }
+
+    .ui-host {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    @media (max-width: 920px) {
+      #app {
+        padding: 20px;
+      }
+
+      .proof-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .proof-stage {
+        min-height: 460px;
+      }
+    }
+  

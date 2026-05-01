@@ -9,7 +9,8 @@ Kernel bootstrap, runtime lifecycle, explicit phase state, registries, service l
 - `createKernel(config?)` - factory helper
 - `RuntimeStore` - explicit phase store with subscriptions
 - `AdapterRegistry`, `ControllerRegistry`, `ServiceRegistry`
-- `EventBus`
+- `EventBus` with targeted listeners plus `onAny(...)`
+- `RuntimeInspector` via `kernel.getInspector()`
 - `BrowserFrameScheduler`
 
 ## Runtime phases
@@ -46,10 +47,33 @@ await kernel.shutdown();
 
 Controllers resolve capability APIs through `ctx.adapters.require(...)` and service dependencies through `ctx.services.require(...)`. The scheduler is kernel-owned, and shutdown is disposal rather than another runtime phase.
 
+The runtime inspector exposes a bounded read-only view of:
+
+- runtime phase and reason
+- scheduler running state
+- cumulative frame count
+- registered adapters, controllers, and services
+- recent emitted events with raw payloads preserved
+
+Service values stay hidden in inspector snapshots. Only service names and safe kind summaries are exposed.
+
+## Internal structure
+
+The implementation now mirrors the canonical runtime layers:
+
+- `src/kernel/`
+- `src/runtime/`
+- `src/events/`
+- `src/adapters/`
+- `src/controllers/`
+- `src/scheduler/`
+
+Root `src/*.ts` files stay as stable public re-export surfaces.
+
 ## Validation
 
-This package is manually validated for this milestone through type-check/build plus the standalone DOM proof in `@urk/examples`.
+This package is validated through type-check/build plus the private proof routes under `examples/`, including `/runtime-inspector/`.
 
 ## Architecture
 
-See `/docs/07_URK/URK_ARCHITECTURE.md`
+See `/docs/ARCHITECTURE.md`

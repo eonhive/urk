@@ -1,0 +1,145 @@
+<!--
+  Company: EonHive Inc.
+  Title: URK Scrollytelling Proof
+  Purpose: Provide a standalone DOM-first scrollytelling proof for URK.
+  Author: Stan Nesi
+  Created: 2026-04-23
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URK Scrollytelling Proof</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="story-proof">
+        <aside class="story-panel">
+          <div>
+            <h1>URK Story Flow</h1>
+            <p>
+              DOM-first scrollytelling proof for section orchestration, explicit runtime state,
+              pointer/input navigation, and pause-safe motion control.
+            </p>
+          </div>
+
+          <nav class="story-nav" data-role="story-nav" aria-label="Story sections"></nav>
+
+          <div class="story-controls">
+            <button type="button" class="story-controls__button" data-role="pause-button">
+              Pause
+            </button>
+            <button type="button" class="story-controls__button" data-role="resume-button">
+              Resume
+            </button>
+            <button type="button" class="story-controls__button" data-role="top-button">
+              Back To Top
+            </button>
+            <button type="button" class="story-controls__button" data-role="shutdown-button">
+              Shutdown
+            </button>
+          </div>
+
+          <section class="story-help">
+            <h2>Keyboard</h2>
+            <ul>
+              <li><code>1</code> to <code>4</code> jump to sections directly.</li>
+              <li><code>ArrowDown</code> and <code>ArrowUp</code> move section-to-section.</li>
+              <li><code>Pause</code> freezes motion and scroll mutation until <code>Resume</code>.</li>
+            </ul>
+          </section>
+        </aside>
+
+        <section class="story-stage" data-role="story-stage" tabindex="-1">
+          <header class="story-header">
+            <div class="story-header__title">
+              <h2>Scrollytelling orchestration proof</h2>
+              <p>
+                One internal scroll surface, one explicit story state, and one overlay bridge that
+                stays kernel-facing instead of drifting into product-shell behavior.
+              </p>
+            </div>
+
+            <div class="story-metrics">
+              <div class="story-metric">
+                <span>Phase</span>
+                <strong data-role="phase-value">boot</strong>
+              </div>
+              <div class="story-metric">
+                <span>Reason</span>
+                <strong data-role="reason-value">kernel:init</strong>
+              </div>
+              <div class="story-metric">
+                <span>Active Section</span>
+                <strong data-role="section-value">Intro</strong>
+              </div>
+              <div class="story-metric">
+                <span>Frame Tick</span>
+                <strong data-role="frame-value">0</strong>
+              </div>
+              <div class="story-metric">
+                <span>Motion Tick</span>
+                <strong data-role="motion-value">0</strong>
+              </div>
+              <div class="story-metric">
+                <span>Latest Action</span>
+                <strong data-role="action-value">Booting scrollytelling proof</strong>
+              </div>
+              <div class="story-metric">
+                <span>Latest Event</span>
+                <strong data-role="event-value">kernel:init</strong>
+              </div>
+            </div>
+
+            <div class="story-progress-grid">
+              <div class="story-progress-card">
+                <div class="story-progress-card__copy">
+                  <strong data-role="loading-stage-value">Waiting</strong>
+                  <span data-role="loading-progress-value">0%</span>
+                </div>
+                <div class="story-progress-card__track">
+                  <div
+                    class="story-progress-card__fill"
+                    data-role="loading-progress-fill"
+                  ></div>
+                </div>
+              </div>
+
+              <div class="story-progress-card">
+                <div class="story-progress-card__copy">
+                  <strong>Section progress</strong>
+                  <span data-role="section-progress-value">0%</span>
+                </div>
+                <div class="story-progress-card__track">
+                  <div
+                    class="story-progress-card__fill"
+                    data-role="section-progress-fill"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="story-scroll" data-role="scroll-container" data-locked="true"></div>
+
+          <div class="story-loading-veil" data-role="loading-veil">
+            <div class="story-loading-card">
+              <h3 data-role="loading-title">Preparing story</h3>
+              <p data-role="loading-body">
+                The proof is staging the runtime shell, binding the scroll surface, and activating
+                section navigation.
+              </p>
+            </div>
+          </div>
+
+          <div class="story-ui-host" data-role="ui-host"></div>
+        </section>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

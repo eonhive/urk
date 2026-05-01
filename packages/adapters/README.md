@@ -16,6 +16,14 @@ from `@urk/adapters/dom`.
 - `createThreeAdapter()` - mount a small Three scene surface onto a host element and expose render primitives
 - `createUiWidgetsAdapter()` - mount a small overlay shell with status and callout surfaces
 
+Each adapter now lives in its own source folder under `src/<adapter>/` with a local `README.md`
+that documents:
+
+- purpose
+- required services
+- public API
+- the proof route that demonstrates it
+
 ## Usage
 
 ```ts
@@ -118,8 +126,8 @@ These adapters use the canonical `AdapterRegistration<TApi>` contract from `@urk
 
 ## Validation
 
-This package is validated for this milestone through type-check/build plus the standalone browser proofs in `@urk/examples`, including the DOM-first audio transport proof.
+This package is validated through type-check/build plus the private proof routes under `examples/`, including `/audio-proof/` and `/picking/`.
 
 ## Architecture
 
-See `/docs/07_URK/URK_ARCHITECTURE.md`
+See `/docs/ARCHITECTURE.md`
