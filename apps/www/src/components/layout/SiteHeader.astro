@@ -1,0 +1,66 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Site Header
+ * Purpose: Render the primary public navigation for the URK marketing, examples, and packages pages.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+
+import BrandLogo from '@/components/visuals/BrandLogo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { primaryNavigation } from '@/data/navigation';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+function isActive(href: string): boolean {
+  return href === '/'
+    ? currentPath === '/'
+    : currentPath === href || currentPath.startsWith(`${href}/`);
+}
+---
+
+<header class="site-header">
+  <div class="site-shell site-header__inner">
+    <a class="site-brand" href="/">
+      <BrandLogo variant="wordmark" className="site-brand__wordmark" />
+    </a>
+
+    <nav class="site-nav" aria-label="Primary">
+      {
+        primaryNavigation.map((item) => (
+          (() => {
+            const active = !item.external && isActive(item.href);
+
+            return (
+              <a
+                class="site-nav__link"
+                href={item.href}
+                aria-current={active ? 'page' : undefined}
+                aria-label={item.external ? `${item.label} (opens in a new tab)` : undefined}
+                data-active={item.external ? undefined : String(active)}
+                target={item.external ? '_blank' : undefined}
+                rel={item.external ? 'noreferrer' : undefined}
+              >
+                {item.label}
+              </a>
+            );
+          })()
+        ))
+      }
+    </nav>
+
+    <div class="site-header__actions">
+      <ThemeToggle />
+      <a class="site-button site-button--primary" href="/docs/getting-started">
+        Get started
+      </a>
+    </div>
+  </div>
+</header>

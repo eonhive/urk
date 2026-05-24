@@ -1,0 +1,52 @@
+---
+title: Build a minimal runtime example
+description: Recreate the smallest useful URK runtime surface.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Minimal Runtime Example Guide
+  Purpose: Walk through the canonical first URK runtime proof.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Build a minimal runtime example
+
+The minimal runtime example should prove the kernel model without hiding everything inside a framework component.
+
+## File shape
+
+Use a static shell and a small runtime mount:
+
+```text
+index.html
+main.ts
+styles.css
+```
+
+The page shell should live in HTML and CSS. TypeScript should wire the runtime, not render the whole page shell.
+
+## Runtime flow
+
+1. Resolve the host element.
+2. Create the kernel.
+3. Register the adapters.
+4. Register the controller.
+5. Boot the kernel.
+6. Subscribe to state and events for visible panels.
+7. Shutdown on teardown.
+
+## Current proof
+
+The public website consumes the current `minimal-runtime` demo from the private `@urk/examples` workspace.
+
+Use the demo to learn behavior, not as a stable package API.
+
+## Next
+
+- [Minimal standalone runtime](/docs/examples/minimal-standalone-runtime/)
+- [Create your first runtime](/docs/getting-started/create-your-first-runtime/)
+- [View runtime events](/docs/getting-started/view-runtime-events/)

@@ -552,6 +552,54 @@
       background: rgba(56, 189, 248, 0.84);
     }
 
+    .examples-preview--generated {
+      background:
+        radial-gradient(circle at 22% 26%, rgba(34, 197, 94, 0.18), transparent 28%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(239, 246, 255, 0.86)),
+        #f8fafc;
+    }
+
+    .examples-preview__generated-frame {
+      inset: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
+    }
+
+    .examples-preview__generated-line {
+      left: 34px;
+      right: 76px;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.24);
+    }
+
+    .examples-preview__generated-line--1 {
+      top: 42px;
+    }
+
+    .examples-preview__generated-line--2 {
+      top: 72px;
+      right: 106px;
+    }
+
+    .examples-preview__generated-line--3 {
+      top: 102px;
+      right: 140px;
+      background: rgba(59, 130, 246, 0.24);
+    }
+
+    .examples-preview__generated-orb {
+      right: 32px;
+      bottom: 30px;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #22c55e, #0ea5e9);
+      box-shadow: 0 18px 30px rgba(14, 165, 233, 0.22);
+    }
+
     .examples-note {
       padding: 18px 20px;
       border-radius: 24px;

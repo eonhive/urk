@@ -1,0 +1,48 @@
+---
+title: Register an adapter
+description: Add a browser capability to a URK runtime.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Register An Adapter
+  Purpose: Show how capabilities enter the runtime through adapter registration.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Register an adapter
+
+Adapters expose capabilities to the runtime context.
+
+The loading adapter is a small first adapter because it has an obvious state surface and emits visible events.
+
+```ts
+import { createKernel } from '@urk/core';
+import { createLoadingAdapter } from '@urk/adapters/dom';
+
+const kernel = createKernel({
+  adapters: [createLoadingAdapter()],
+});
+
+await kernel.boot();
+```
+
+## Lookup
+
+Controllers and runtime code resolve capabilities through the adapter registry.
+
+```ts
+const ctx = kernel.getContext();
+const loading = ctx.adapters.require('loading');
+```
+
+The registry is explicit. A runtime should not assume every adapter exists.
+
+## Next
+
+- [Register a controller](/docs/getting-started/register-a-controller/)
+- [Adapter contracts](/docs/concepts/adapters/)
+- [Adapter capability lookup](/docs/concepts/adapter-capability-lookup/)

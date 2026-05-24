@@ -1,0 +1,48 @@
+---
+title: Decisions
+description: Summarize accepted URK architectural decisions for public docs readers.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Project Decisions Docs
+  Purpose: Point readers to accepted URK decisions without duplicating the full decision log.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-15
+  Notes: Vibe coded with Codex.
+*/}
+
+# Decisions
+
+The canonical decision log is `docs/DECISIONS.md` in the repository.
+
+## Accepted decisions
+
+| ID | Decision | Public implication |
+| --- | --- | --- |
+| D-001 | URK is a runtime kernel, not a product shell. | Product logic belongs above URK, not in `@urk/core`. |
+| D-002 | Standalone-first is mandatory. | Framework wrappers are conveniences around the kernel, not architecture anchors. |
+| D-003 | Adapters and controllers are the core pattern. | Adapters expose capability contracts; controllers orchestrate runtime behavior; state stays explicit. |
+| D-004 | Kivatar remains separate. | URK must not own identity, avatar behavior, packs, dashboards, or monetization. |
+| D-005 | One strong proof example beats many vague examples. | Public examples should teach focused runtime concepts and stay readable. |
+| D-006 | Do not overbuild early. | Marketplace, no-code builder, large devtools suite, and speculative framework matrices stay deferred. |
+
+## Change discipline
+
+Architecture changes should update the canonical docs and examples. Do not drift the product boundary through casual implementation changes.
+
+Public docs should summarize accepted decisions, but the root files remain the source of truth:
+
+- `docs/DECISIONS.md`
+- `docs/BOUNDARY.md`
+- `docs/ARCHITECTURE.md`
+- `docs/DEFERRED.md`
+
+`docs/07_URK/` remains archive/reference material, not the primary onboarding path.
+
+## Next
+
+- [Deferred features](/docs/project/deferred-features/)
+- [Contributing](/docs/project/contributing/)
+- [Architecture](/docs/project/architecture/)

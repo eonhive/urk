@@ -1,0 +1,45 @@
+---
+title: Event types
+description: Reference current URK event shape and listener APIs.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Event Types Reference
+  Purpose: Summarize the current event bus and kernel event shape.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Event types
+
+Runtime events use `KernelEvent` from `@urk/core`.
+
+```ts
+export interface KernelEvent {
+  type: string;
+  timestamp: number;
+  source: string;
+  payload?: unknown;
+}
+```
+
+## Event bus
+
+```ts
+const offType = ctx.events.on('runtime:phase-changed', (event) => {
+  console.log(event.payload);
+});
+
+const offAny = ctx.events.onAny((event) => {
+  console.log(event.type);
+});
+```
+
+## Next
+
+- [Event routing](/docs/concepts/event-routing/)
+- [Route events](/docs/guides/route-events/)
+- [Error types](/docs/reference/error-types/)

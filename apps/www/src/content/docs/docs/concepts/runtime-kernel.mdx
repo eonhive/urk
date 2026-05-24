@@ -1,0 +1,79 @@
+---
+title: Runtime Kernel
+description: Explain what the URK runtime kernel owns and why the kernel boundary matters.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Runtime Kernel Concept
+  Purpose: Explain the URK kernel as the runtime center of gravity rather than a framework replacement.
+  Author: Stan Nesi
+  Created: 2026-05-01
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+*/}
+
+import CodeBlock from '@/components/docs/CodeBlock.astro';
+
+# Runtime Kernel
+
+The runtime kernel is the core of URK. It owns live runtime coordination for a browser surface.
+
+It owns the parts of a browser experience that need to stay explicit while the surface is live:
+
+- bootstrap
+- lifecycle
+- runtime context
+- explicit runtime state
+- shared registries
+- event routing foundations
+- scheduler ownership
+
+## Lifecycle
+
+The kernel creates a runtime context, registers adapters and controllers, starts the runtime loop, and keeps the current phase visible.
+
+Typical early phases are:
+
+- `boot`
+- `loading`
+- `ready`
+- `transition`
+- `paused`
+- `error`
+
+<CodeBlock
+  title="Mental model"
+  language="ts"
+  code={`createKernel({
+  adapters: [...],
+  controllers: [...],
+  services: {...},
+});`}/>
+
+## Public lifecycle API
+
+The current kernel exposes a small lifecycle surface:
+
+- `boot()` starts the runtime.
+- `pause()` stops frame updates and records a paused phase.
+- `resume()` restarts frame updates.
+- `shutdown()` disposes controllers and adapters.
+- `getContext()`, `getState()`, `getEventBus()`, and `getInspector()` expose runtime visibility.
+
+## What the kernel does not do
+
+The kernel is **not**:
+
+- the full application framework
+- the product shell
+- the business logic owner
+- the design system
+
+That boundary matters. URK stays credible by staying small.
+
+## Next
+
+- [Runtime context](/docs/concepts/runtime-context/)
+- [Explicit runtime state](/docs/concepts/explicit-runtime-state/)
+- [@urk/core reference](/docs/reference/core/)

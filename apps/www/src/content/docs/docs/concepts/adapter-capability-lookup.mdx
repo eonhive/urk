@@ -1,0 +1,43 @@
+---
+title: Adapter Capability Lookup
+description: Explain explicit capability discovery through the URK adapter registry.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Adapter Capability Lookup Concept
+  Purpose: Explain required and optional capability lookup in the runtime context.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Adapter Capability Lookup
+
+Adapters are resolved through the runtime context.
+
+Lookup can be optional or required.
+
+```ts
+const optionalLoading = ctx.adapters.get<LoadingAdapterApi>('loading');
+const loading = ctx.adapters.require<LoadingAdapterApi>('loading');
+```
+
+## Why lookup is explicit
+
+Not every runtime has every capability. Explicit lookup makes missing dependencies visible during development and in examples.
+
+`require()` should be used when a controller cannot run without the capability. `get()` should be used when behavior can degrade safely.
+
+## Missing capabilities
+
+Required lookup throws if the adapter is missing.
+
+That failure is useful. It exposes an incorrect runtime composition instead of letting the browser surface fail silently later.
+
+## Next
+
+- [Register an adapter](/docs/getting-started/register-an-adapter/)
+- [Adapter contracts](/docs/concepts/adapters/)
+- [Create an adapter](/docs/guides/create-adapter/)

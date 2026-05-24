@@ -1,0 +1,481 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Brand Identity Board
+ * Purpose: Publish the canonical public brand system for URK with logo assets, tokens, typography, and usage guidance.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import CodeBlock from '@/components/docs/CodeBlock.astro';
+import HeroRuntimeDiagram from '@/components/marketing/HeroRuntimeDiagram.astro';
+import BrandLogo from '@/components/visuals/BrandLogo.astro';
+import {
+  brandApprovedPhrases,
+  brandIcons,
+  brandLogoDownloads,
+  brandLogoRules,
+  brandMisuseNotes,
+  brandPalettes,
+  brandTypography,
+  brandUiPrimitives,
+  brandUsageNotes,
+} from '@/data/brand';
+---
+
+<BaseLayout
+  title="Brand"
+  description="Canonical URK brand identity system with logos, tokens, icons, voice, and usage guidance."
+>
+  <section class="site-section site-section--tight">
+    <div class="site-shell site-grid gap-6">
+      <span class="site-kicker">Brand identity</span>
+      <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+        <div class="site-grid gap-4">
+          <h1 class="site-heading">uRK / URK</h1>
+          <p class="site-subheading">
+            URK is a public open-source runtime kernel for browser-native interactive experiences.
+            The brand system keeps that boundary visible across the public site, docs, examples,
+            and package surfaces.
+          </p>
+          <div class="site-chip-row">
+            <span class="site-chip">Technical</span>
+            <span class="site-chip">Precise</span>
+            <span class="site-chip">Modular</span>
+            <span class="site-chip">Runtime-native</span>
+            <span class="site-chip">Developer-first</span>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a class="site-button site-button--primary" href="/brand/logos/urk-lockup-horizontal-on-dark.svg" download>
+              Download lockup
+            </a>
+            <a class="site-button site-button--secondary" href="/brand/logos/urk-app-icon.svg" download>
+              Download app icon
+            </a>
+          </div>
+        </div>
+
+        <div class="site-card brand-preview brand-preview--dark p-6">
+          <div class="site-grid gap-4">
+            <BrandLogo variant="horizontal" theme="dark" className="w-full max-w-[22rem]" />
+            <p class="m-0 text-sm leading-7 text-[var(--urk-muted)]">
+              The runtime kernel for interactive browser experiences.
+            </p>
+            <div class="site-grid gap-2">
+              {
+                brandApprovedPhrases.slice(0, 3).map((phrase) => (
+                  <div class="font-[var(--urk-font-code)] text-sm text-[var(--urk-muted)]">{phrase}</div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Logo and wordmark</span>
+        <h2 class="site-section-title">A modular mark with a clear kernel center.</h2>
+        <p class="site-section-copy">
+          The primary mark is the `uRK` wordmark. The supporting monogram is a strict node-grid
+          kernel symbol with one violet center node. The app icon uses the same symbol on a dark
+          rounded square.
+        </p>
+      </div>
+
+      <div class="brand-logo-grid">
+        <article class="site-card brand-logo-card brand-preview brand-preview--dark p-6">
+          <div class="brand-card-label">Primary wordmark</div>
+          <BrandLogo variant="wordmark" theme="dark" className="w-full max-w-[14rem]" />
+          <p class="site-section-copy text-sm">Use for primary brand expression on dark surfaces.</p>
+        </article>
+
+        <article class="site-card brand-logo-card brand-preview brand-preview--light p-6">
+          <div class="brand-card-label">Primary wordmark on light</div>
+          <BrandLogo variant="wordmark" theme="light" className="w-full max-w-[14rem]" />
+          <p class="site-section-copy text-sm">Use on off-white, stone, or pale documentation backgrounds.</p>
+        </article>
+
+        <article class="site-card brand-logo-card brand-preview brand-preview--dark p-6">
+          <div class="brand-card-label">Horizontal lockup</div>
+          <BrandLogo variant="horizontal" theme="dark" className="w-full max-w-[22rem]" />
+          <p class="site-section-copy text-sm">The full lockup uses `uRK — Universal Runtime Kernel`.</p>
+        </article>
+
+        <article class="site-card brand-logo-card brand-preview brand-preview--light p-6">
+          <div class="brand-card-label">Stacked lockup</div>
+          <BrandLogo variant="stacked" theme="light" className="w-full max-w-[11rem]" />
+          <p class="site-section-copy text-sm">Use when the composition needs a centered or vertical mark.</p>
+        </article>
+
+        <article class="site-card brand-logo-card brand-preview brand-preview--dark p-6">
+          <div class="brand-card-label">Monogram</div>
+          <BrandLogo variant="monogram" theme="dark" className="w-20" />
+          <p class="site-section-copy text-sm">Use for compact navigation, runtime nodes, and constrained marks.</p>
+        </article>
+
+        <article class="site-card brand-logo-card brand-preview brand-preview--light p-6">
+          <div class="brand-card-label">App icon</div>
+          <BrandLogo variant="app-icon" theme="light" className="w-20" />
+          <p class="site-section-copy text-sm">Dark rounded square with the violet center kernel node.</p>
+        </article>
+      </div>
+
+      <div class="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+        <article class="site-card p-6">
+          <div class="brand-card-label">Rules</div>
+          <div class="site-grid gap-4">
+            <p class="site-section-copy">{brandLogoRules.clearSpace}</p>
+            <ul class="m-0 grid gap-2 pl-5 text-sm leading-7 text-[var(--urk-foreground)]">
+              {brandLogoRules.minimumSizes.map((rule) => <li>{rule}</li>)}
+            </ul>
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="brand-card-label">Downloads</div>
+          <div class="site-grid gap-3">
+            {brandLogoDownloads.map((entry) => (
+              <a class="brand-download-item" href={entry.href} download>
+                <strong>{entry.label}</strong>
+                <span>{entry.note}</span>
+              </a>
+            ))}
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Brand concept</span>
+        <h2 class="site-section-title">Schema and data flow through the kernel into a live browser surface.</h2>
+        <p class="site-section-copy">
+          The visual metaphor is explicit: schema and data enter the runtime kernel, then registry,
+          adapters, controllers, state, and events coordinate what becomes a live browser User
+          Interface.
+        </p>
+      </div>
+      <HeroRuntimeDiagram />
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Color system</span>
+        <h2 class="site-section-title">Dark-first, light-supported, structurally tokenized.</h2>
+        <p class="site-section-copy">
+          Dark is the flagship expression. Light remains first-class for documentation, reference,
+          and long-form reading surfaces.
+        </p>
+      </div>
+
+      <div class="grid gap-4 xl:grid-cols-2">
+        {(['dark', 'light'] as const).map((theme) => (
+          <article class={`site-card brand-preview p-6 ${theme === 'dark' ? 'brand-preview--dark' : 'brand-preview--light'}`}>
+            <div class="mb-5 flex items-center justify-between gap-3">
+              <div>
+                <div class="brand-card-label">{theme === 'dark' ? 'Dark theme' : 'Light theme'}</div>
+                <strong class="text-xl">{theme === 'dark' ? 'Midnight runtime shell' : 'Off-white documentation shell'}</strong>
+              </div>
+              <BrandLogo variant="monogram" theme={theme} className="w-12" />
+            </div>
+            <div class="brand-token-grid">
+              {brandPalettes[theme].map((token) => (
+                <article class="brand-token-card">
+                  <span class="brand-token-swatch" style={`background:${token.value};`} aria-hidden="true"></span>
+                  <strong>{token.label}</strong>
+                  <code>{token.token}</code>
+                  <span>{token.value}</span>
+                  <p>{token.role}</p>
+                </article>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+      <div class="site-grid gap-6">
+        <div class="site-grid gap-3">
+          <span class="site-kicker">Typography</span>
+          <h2 class="site-section-title">Geometric display, readable UI body, disciplined mono.</h2>
+          <p class="site-section-copy">
+            The type system is built for technical surfaces, code, and runtime-facing product
+            language rather than generic SaaS marketing.
+          </p>
+        </div>
+
+        <article class="site-card p-6">
+          <div class="brand-card-label">Type rules</div>
+          <ul class="m-0 grid gap-2 pl-5 text-sm leading-7 text-[var(--urk-foreground)]">
+            <li><strong>Display:</strong> {brandTypography.display}</li>
+            <li><strong>Body:</strong> {brandTypography.body}</li>
+            <li><strong>Code:</strong> {brandTypography.code}</li>
+          </ul>
+          <ul class="mt-5 m-0 grid gap-2 pl-5 text-sm leading-7 text-[var(--urk-muted)]">
+            {brandTypography.rules.map((rule) => <li>{rule}</li>)}
+          </ul>
+        </article>
+      </div>
+
+      <article class="site-card p-6">
+        <div class="brand-card-label">Type samples</div>
+        <div class="site-grid gap-5">
+          <div>
+            <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Hero heading</div>
+            <div class="site-heading text-[clamp(2.6rem,5vw,4rem)]">The runtime kernel for interactive browser experiences.</div>
+          </div>
+          <div>
+            <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Section heading</div>
+            <div class="site-section-title">Declarative layouts. Runtime execution. Interactive UI.</div>
+          </div>
+          <div>
+            <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Body paragraph</div>
+            <p class="site-section-copy">
+              URK turns declarative runtime structures, adapters, controllers, state, and events
+              into live browser surfaces without pretending to be the full application framework.
+            </p>
+          </div>
+          <div>
+            <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Navigation and badges</div>
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="site-chip">Browser-native</span>
+              <span class="site-chip">Open-source</span>
+              <span class="site-status-badge site-status-badge--current">Current</span>
+            </div>
+          </div>
+          <CodeBlock title="Code snippet" language="ts" code={`createKernel({\n  adapters: [loadingAdapter],\n  controllers: [surfaceController],\n});`} />
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">UI primitives</span>
+        <h2 class="site-section-title">Structural primitives for docs, runtime shells, and package surfaces.</h2>
+        <p class="site-section-copy">
+          The brand primitives are meant to feel modular, technical, and production-ready. They
+          support public content pages and runtime-first demo surfaces without splitting into two
+          visual languages.
+        </p>
+      </div>
+
+      <div class="brand-primitive-grid">
+        <article class="site-card p-6">
+          <div class="brand-card-label">Buttons</div>
+          <div class="flex flex-wrap gap-3">
+            <a class="site-button site-button--primary" href="/docs/getting-started">Get started</a>
+            <a class="site-button site-button--secondary" href="/examples">View examples</a>
+            <button class="site-button site-button--ghost" type="button">Ghost action</button>
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="brand-card-label">Navigation bar</div>
+          <div class="brand-nav-sample">
+            <span class="brand-nav-sample__brand">uRK</span>
+            <span class="brand-nav-sample__link brand-nav-sample__link--active">Docs</span>
+            <span class="brand-nav-sample__link">Examples</span>
+            <span class="brand-nav-sample__link">Packages</span>
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="brand-card-label">Input and select</div>
+          <div class="site-grid gap-3">
+            <input class="brand-field" type="text" value="runtime://surface/minimal" aria-label="Runtime field sample" />
+            <select class="brand-field" aria-label="Theme sample">
+              <option>Dark theme</option>
+              <option>Light theme</option>
+            </select>
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="brand-card-label">Callout</div>
+          <div class="brand-callout">
+            <strong>Not another framework.</strong>
+            <p>URK owns lifecycle, adapters, controllers, state, and events. Product behavior still lives above the kernel.</p>
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="brand-card-label">Tabs and sidebar</div>
+          <div class="site-grid gap-4">
+            <div class="brand-tabs">
+              <span class="brand-tab brand-tab--active">Overview</span>
+              <span class="brand-tab">Examples</span>
+              <span class="brand-tab">Events</span>
+            </div>
+            <div class="brand-sidebar-item brand-sidebar-item--active">
+              <span class="brand-sidebar-item__dot"></span>
+              <span>Runtime Kernel</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="brand-card-label">Event log item</div>
+          <div class="runtime-log-item">
+            <div class="runtime-log-item__meta">
+              <span>17:42:12</span>
+              <span>controller</span>
+            </div>
+            <strong>surface:ready</strong>
+            <span>Preview mounted after the loading adapter resolved runtime progress.</span>
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="brand-card-label">Runtime panel</div>
+          <div class="site-grid gap-3">
+            <div class="site-status-badge site-status-badge--current">Live runtime</div>
+            <div class="runtime-preview-track">
+              <div class="runtime-preview-track__fill" style="width:74%;"></div>
+            </div>
+            <div class="brand-meta-grid">
+              <span>Phase</span>
+              <strong>ready</strong>
+              <span>Latest event</span>
+              <strong>kernel:tick</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="brand-card-label">Sample primitives list</div>
+          <ul class="m-0 grid gap-2 pl-5 text-sm leading-7 text-[var(--urk-muted)]">
+            {brandUiPrimitives.map((primitive) => <li>{primitive}</li>)}
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Dark and light examples</span>
+        <h2 class="site-section-title">The same brand system must work in both reading and runtime modes.</h2>
+        <p class="site-section-copy">
+          Dark is the primary system expression. Light keeps long-form reading and reference pages
+          comfortable without drifting into a separate visual language.
+        </p>
+      </div>
+
+      <div class="grid gap-4 xl:grid-cols-2">
+        <article class="site-card brand-preview brand-preview--dark p-6">
+          <div class="brand-card-label">Dark runtime composition</div>
+          <div class="site-grid gap-4">
+            <BrandLogo variant="horizontal" theme="dark" className="w-full max-w-[20rem]" />
+            <div class="flex flex-wrap gap-3">
+              <span class="site-chip">Open-source</span>
+              <span class="site-chip">Browser-native</span>
+            </div>
+            <div class="brand-callout">
+              <strong>Data in. Experience out.</strong>
+              <p>Runtime-first surfaces emphasize the kernel, live state, and event visibility.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="site-card brand-preview brand-preview--light p-6">
+          <div class="brand-card-label">Light documentation composition</div>
+          <div class="site-grid gap-4">
+            <BrandLogo variant="horizontal" theme="light" className="w-full max-w-[20rem]" />
+            <div class="brand-sidebar-item brand-sidebar-item--active">
+              <span class="brand-sidebar-item__dot"></span>
+              <span>Getting Started</span>
+            </div>
+            <CodeBlock title="Reference" language="bash" code={`pnpm add @urk/core @urk/adapters`} />
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Iconography</span>
+        <h2 class="site-section-title">Simple orthogonal line icons for the runtime model.</h2>
+        <p class="site-section-copy">
+          All icons use a 24px grid, monoline structure, and orthogonal geometry. The violet center
+          node is reserved for kernel-active marks.
+        </p>
+      </div>
+
+      <div class="brand-icon-grid">
+        {brandIcons.map((icon) => (
+          <article class="site-card brand-icon-card p-5">
+            <div class="brand-icon-stage">
+              <img src={icon.href} alt="" aria-hidden="true" />
+            </div>
+            <strong>{icon.label}</strong>
+            <p>{icon.note}</p>
+            <a href={icon.href} download>Download SVG</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell grid gap-6 xl:grid-cols-[1fr_1fr]">
+      <article class="site-card p-6">
+        <div class="brand-card-label">Motif system</div>
+        <div class="site-grid gap-4">
+          <div class="brand-motif brand-motif--grid">
+            <div class="brand-motif__kernel"></div>
+          </div>
+          <ul class="m-0 grid gap-2 pl-5 text-sm leading-7 text-[var(--urk-muted)]">
+            <li>Connected nodes</li>
+            <li>Grid dots</li>
+            <li>Directional flow lines</li>
+            <li>Schema-to-interface diagrams</li>
+            <li>One emphasized violet kernel node per composition</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="site-card p-6">
+        <div class="brand-card-label">Voice and usage notes</div>
+        <div class="site-grid gap-5">
+          <div>
+            <div class="mb-3 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Approved phrases</div>
+            <ul class="m-0 grid gap-2 pl-5 text-sm leading-7 text-[var(--urk-foreground)]">
+              {brandApprovedPhrases.map((phrase) => <li>{phrase}</li>)}
+            </ul>
+          </div>
+          <div>
+            <div class="mb-3 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Usage notes</div>
+            <ul class="m-0 grid gap-2 pl-5 text-sm leading-7 text-[var(--urk-muted)]">
+              {brandUsageNotes.map((note) => <li>{note}</li>)}
+            </ul>
+          </div>
+          <div>
+            <div class="mb-3 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Misuse to avoid</div>
+            <ul class="m-0 grid gap-2 pl-5 text-sm leading-7 text-[var(--urk-muted)]">
+              {brandMisuseNotes.map((note) => <li>{note}</li>)}
+            </ul>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

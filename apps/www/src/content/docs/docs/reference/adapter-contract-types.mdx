@@ -1,0 +1,44 @@
+---
+title: Adapter contract types
+description: Reference the current adapter registration contract.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Adapter Contract Types Reference
+  Purpose: Summarize the current adapter contract shape for adapter authors.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Adapter contract types
+
+Adapter contracts come from `@urk/core` and are re-exported by `@urk/adapters`.
+
+```ts
+export interface AdapterRegistration<TApi> {
+  id: string;
+  capability: string;
+  dependsOn?: string[];
+  isSupported?: (ctx: RuntimeContext) => boolean;
+  setup(ctx: RuntimeContext): Promise<TApi> | TApi;
+  dispose?(ctx: RuntimeContext, api: TApi): Promise<void> | void;
+}
+```
+
+## Lookup
+
+Adapters can be resolved by id or capability.
+
+```ts
+const adapter = ctx.adapters.get('loading');
+const required = ctx.adapters.require('loading');
+```
+
+## Next
+
+- [Adapter contracts](/docs/concepts/adapters/)
+- [Adapter capability lookup](/docs/concepts/adapter-capability-lookup/)
+- [Create an adapter](/docs/guides/create-adapter/)

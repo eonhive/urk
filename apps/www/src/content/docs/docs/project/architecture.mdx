@@ -1,0 +1,65 @@
+---
+title: Architecture
+description: Summarize the canonical URK architecture layers.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Project Architecture Docs
+  Purpose: Summarize the canonical URK architecture for public docs readers.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-15
+  Notes: Vibe coded with Codex.
+*/}
+
+# Architecture
+
+The canonical source is `docs/ARCHITECTURE.md` in the repository. This page mirrors the current public architecture so readers do not need to start in archived notes.
+
+## Package ownership
+
+```text
+apps/www                 public website and docs shell
+packages/core            runtime kernel
+packages/adapters        capability adapters
+packages/examples        private website-consumed examples
+packages/cli             developer tooling
+packages/react-urk       React integration wrapper
+packages/next-urk        Next.js integration wrapper
+examples/                repo-only proofs
+apps/next-proof          repo-only Next.js proof
+```
+
+## Canonical layers
+
+| Layer | Owns | Current package surface |
+| --- | --- | --- |
+| Kernel | Bootstrap, lifecycle, runtime context, scheduler ownership, disposal, and error guards. | `packages/core` |
+| Adapters | Capability contracts, setup, runtime access, fallback behavior, and teardown. | `packages/core`, `packages/adapters` |
+| Controllers | Runtime orchestration that coordinates adapters, state, services, and events. | `packages/core` contracts, examples implement controllers |
+| Runtime state | Explicit phases, snapshots, transitions, and visibility. | `packages/core` |
+| Scene/experience | Concrete experience composition and surface coordination. | Examples and host apps |
+| UI bridge | Overlay, panel, loading UI, and cross-surface synchronization. | Adapters plus examples |
+| Wrappers | Outer framework compatibility. | `packages/react-urk`, `packages/next-urk` |
+
+## Dependency direction
+
+Website and examples can import runtime packages. Runtime packages must not import website code.
+
+```text
+apps/www -> @urk/examples -> @urk/core + @urk/adapters
+apps/www -> @urk/core + @urk/adapters
+```
+
+Wrappers wrap the kernel. They must not define the kernel architecture.
+
+## Proof direction
+
+URK proves the architecture through focused runtime examples instead of broad speculative surfaces. The current public examples cover the minimal runtime, adapter registration, controller orchestration, runtime state, event routing, scene/User Interface coordination, pointer/input overlay behavior, and embedded docs runtime islands.
+
+## Next
+
+- [Core mental model](/docs/introduction/core-mental-model/)
+- [Boundary](/docs/project/boundary/)
+- [Roadmap](/docs/project/roadmap/)

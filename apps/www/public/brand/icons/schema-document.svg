@@ -1,0 +1,6 @@
+<!-- Company: EonHive Inc. | Title: Schema Document Icon | Purpose: Icon asset for schema and declarative runtime input. | Author: Stan Nesi | Created: 2026-05-01 | Updated: 2026-05-01 | Notes: Vibe coded with Codex. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <path d="M7 4h7l4 4v12H7z" stroke="#E8ECF3" stroke-width="1.75" stroke-linejoin="miter"/>
+  <path d="M14 4v4h4M10 10h5M10 14h5" stroke="#E8ECF3" stroke-width="1.75" stroke-linecap="square" opacity=".72"/>
+  <circle cx="10" cy="10" r="1.15" fill="#7B61FF"/>
+</svg>

@@ -8,17 +8,19 @@
  * Notes: Vibe coded with Codex.
  */
 
-type ExampleId =
+type ExamplePreview =
   | 'picking'
   | 'audio'
-  | 'loading-transition'
-  | 'app-shell'
-  | 'react-starter'
-  | 'scrollytelling'
-  | 'runtime-inspector';
+  | 'loading'
+  | 'shell'
+  | 'react'
+  | 'story'
+  | 'inspector'
+  | 'generated';
 
 type ExampleEntry = {
-  id: ExampleId;
+  id: string;
+  preview: ExamplePreview;
   title: string;
   category: string;
   description: string;
@@ -30,6 +32,7 @@ type ExampleEntry = {
 const EXAMPLES: ExampleEntry[] = [
   {
     id: 'picking',
+    preview: 'picking',
     title: 'Picking Proof',
     category: 'Scene + UI',
     description:
@@ -40,6 +43,7 @@ const EXAMPLES: ExampleEntry[] = [
   },
   {
     id: 'audio',
+    preview: 'audio',
     title: 'Audio Proof',
     category: 'Transport',
     description:
@@ -50,6 +54,7 @@ const EXAMPLES: ExampleEntry[] = [
   },
   {
     id: 'loading-transition',
+    preview: 'loading',
     title: 'Loading Transition',
     category: 'Lifecycle',
     description:
@@ -60,6 +65,7 @@ const EXAMPLES: ExampleEntry[] = [
   },
   {
     id: 'app-shell',
+    preview: 'shell',
     title: 'App Shell',
     category: 'Orchestration',
     description:
@@ -70,6 +76,7 @@ const EXAMPLES: ExampleEntry[] = [
   },
   {
     id: 'react-starter',
+    preview: 'react',
     title: 'React Starter',
     category: 'Wrapper',
     description:
@@ -80,6 +87,7 @@ const EXAMPLES: ExampleEntry[] = [
   },
   {
     id: 'scrollytelling',
+    preview: 'story',
     title: 'Scrollytelling',
     category: 'Motion',
     description:
@@ -90,6 +98,7 @@ const EXAMPLES: ExampleEntry[] = [
   },
   {
     id: 'runtime-inspector',
+    preview: 'inspector',
     title: 'Runtime Inspector',
     category: 'Diagnostics',
     description:
@@ -98,6 +107,7 @@ const EXAMPLES: ExampleEntry[] = [
     routeLabel: '/runtime-inspector/',
     tags: ['inspection', 'loading', 'input', 'events'],
   },
+  // URK CLI: example entries
 ];
 
 
@@ -110,7 +120,7 @@ function assertElement<T extends Element>(value: T | null, label: string): T {
 }
 
 function renderPreview(entry: ExampleEntry): string {
-  switch (entry.id) {
+  switch (entry.preview) {
     case 'picking':
       return `
         <div class="examples-preview examples-preview--picking" aria-hidden="true">
@@ -131,7 +141,7 @@ function renderPreview(entry: ExampleEntry): string {
           <span class="examples-preview__bar examples-preview__bar--4"></span>
         </div>
       `;
-    case 'loading-transition':
+    case 'loading':
       return `
         <div class="examples-preview examples-preview--loading" aria-hidden="true">
           <span class="examples-preview__track"></span>
@@ -140,7 +150,7 @@ function renderPreview(entry: ExampleEntry): string {
           <span class="examples-preview__panel"></span>
         </div>
       `;
-    case 'app-shell':
+    case 'shell':
       return `
         <div class="examples-preview examples-preview--shell" aria-hidden="true">
           <span class="examples-preview__sidebar"></span>
@@ -150,7 +160,7 @@ function renderPreview(entry: ExampleEntry): string {
           <span class="examples-preview__card examples-preview__card--c"></span>
         </div>
       `;
-    case 'react-starter':
+    case 'react':
       return `
         <div class="examples-preview examples-preview--react" aria-hidden="true">
           <span class="examples-preview__halo"></span>
@@ -159,7 +169,7 @@ function renderPreview(entry: ExampleEntry): string {
           <span class="examples-preview__component examples-preview__component--c"></span>
         </div>
       `;
-    case 'scrollytelling':
+    case 'story':
       return `
         <div class="examples-preview examples-preview--story" aria-hidden="true">
           <span class="examples-preview__rail"></span>
@@ -168,7 +178,7 @@ function renderPreview(entry: ExampleEntry): string {
           <span class="examples-preview__chapter examples-preview__chapter--3"></span>
         </div>
       `;
-    case 'runtime-inspector':
+    case 'inspector':
       return `
         <div class="examples-preview examples-preview--inspector" aria-hidden="true">
           <span class="examples-preview__console"></span>
@@ -178,6 +188,16 @@ function renderPreview(entry: ExampleEntry): string {
           <span class="examples-preview__log examples-preview__log--1"></span>
           <span class="examples-preview__log examples-preview__log--2"></span>
           <span class="examples-preview__log examples-preview__log--3"></span>
+        </div>
+      `;
+    case 'generated':
+      return `
+        <div class="examples-preview examples-preview--generated" aria-hidden="true">
+          <span class="examples-preview__generated-frame"></span>
+          <span class="examples-preview__generated-line examples-preview__generated-line--1"></span>
+          <span class="examples-preview__generated-line examples-preview__generated-line--2"></span>
+          <span class="examples-preview__generated-line examples-preview__generated-line--3"></span>
+          <span class="examples-preview__generated-orb"></span>
         </div>
       `;
   }
@@ -219,6 +239,12 @@ function main(): void {
     app.querySelector<HTMLElement>('[data-role="examples-grid"]'),
     'examples grid',
   );
+  const proofCount = assertElement(
+    app.querySelector<HTMLElement>('[data-role="proof-count"]'),
+    'proof count',
+  );
+
+  proofCount.textContent = `${EXAMPLES.length} proofs`;
   renderExampleCards(examplesGrid);
 }
 

@@ -1,0 +1,40 @@
+---
+title: Controller orchestration
+description: Explain the live example for controller lifecycle and coordination.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Controller Orchestration Example Docs
+  Purpose: Explain the current controller orchestration example and its coordination behavior.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-08
+  Notes: Vibe coded with Codex.
+*/}
+
+# Controller orchestration
+
+Status: current.
+
+This example shows two controllers using lifecycle hooks and events to coordinate adapter capability, runtime state, and teardown.
+
+Open the runnable example: [Controller Orchestration](/examples/controller-orchestration/).
+
+## What it teaches
+
+- initialize a controller
+- start orchestration after boot
+- coordinate between controllers through a runtime event
+- respond to runtime state changes
+- dispose cleanly
+
+## Boundary
+
+The example is consumed by the website from private `@urk/examples` internals. It demonstrates current runtime behavior, but the website example package is still private and unstable.
+
+## Next
+
+- [Register a controller](/docs/getting-started/register-a-controller/)
+- [Controller lifecycle](/docs/concepts/controllers/)
+- [Create a controller](/docs/guides/create-controller/)

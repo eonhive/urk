@@ -1,0 +1,63 @@
+---
+title: Why URK?
+description: Explain the runtime problem URK solves and when it is useful.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Why URK
+  Purpose: Explain why explicit runtime coordination is useful for browser experiences.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Why URK?
+
+Interactive browser surfaces often grow hidden runtime behavior:
+
+- loading stages
+- input state
+- browser capabilities
+- controller flows
+- scene and overlay coordination
+- event logs
+- cleanup rules
+
+URK makes those parts explicit instead of hiding them inside component state, framework glue, or one-off utilities.
+
+## The problem
+
+Small demos often start clean and become hard to reason about once they need real lifecycle.
+
+Without a runtime boundary, loading logic, input handlers, adapter setup, UI updates, and cleanup can end up in the same file.
+
+## The URK answer
+
+URK separates runtime responsibilities:
+
+- the kernel owns lifecycle and context
+- adapters expose browser capabilities
+- controllers orchestrate behavior
+- runtime state records the current phase
+- events make behavior inspectable
+
+```ts
+const kernel = createKernel({
+  adapters: [createLoadingAdapter()],
+  controllers: [loadingController],
+});
+```
+
+## When to use it
+
+Use URK when the browser surface has real runtime coordination and should stay readable across frameworks.
+
+Do not use URK just to render static content. Static Site Generation (SSG), Markdown with JSX-style components (MDX), and normal UI components are better for content-first pages.
+
+## Next
+
+- [What URK is not](/docs/introduction/what-urk-is-not/)
+- [Runtime kernel](/docs/concepts/runtime-kernel/)
+- [Embed URK in a static website](/docs/guides/static-website-embed/)

@@ -1,0 +1,45 @@
+---
+title: Getting Started
+description: Start with a small URK runtime surface and keep the kernel boundary clear.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Getting Started
+  Purpose: Provide the stable entry route for the first URK implementation path.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+import LiveURKExample from '@/components/urk-runtime/LiveURKExample.astro';
+
+# Getting Started
+
+Start with one runtime surface.
+
+The goal is not to scaffold a whole product shell. The goal is to prove a browser surface with explicit lifecycle, capability registration, runtime state, and event visibility.
+
+## Path
+
+1. [Install the packages](/docs/getting-started/installation/)
+2. [Create your first runtime](/docs/getting-started/create-your-first-runtime/)
+3. [Register an adapter](/docs/getting-started/register-an-adapter/)
+4. [Register a controller](/docs/getting-started/register-a-controller/)
+5. [Mount a runtime surface](/docs/getting-started/mount-a-runtime-surface/)
+6. [View runtime events](/docs/getting-started/view-runtime-events/)
+
+## Live runtime proof
+
+This docs page can embed a real URK surface without turning the docs shell into the runtime framework.
+
+The internal example mount contract is private and unstable. Public consumers should start with `@urk/core` and `@urk/adapters`.
+
+<LiveURKExample example="minimal-runtime" />
+
+## Next
+
+- [Runtime kernel](/docs/concepts/runtime-kernel/)
+- [Build a minimal runtime example](/docs/guides/minimal-runtime-example/)
+- [Minimal Runtime example](/examples/minimal-runtime/)

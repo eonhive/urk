@@ -1,0 +1,51 @@
+---
+title: View runtime events
+description: Use the URK event bus to inspect runtime behavior.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: View Runtime Events
+  Purpose: Teach event visibility as part of the first URK implementation path.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# View runtime events
+
+Runtime events make live behavior inspectable.
+
+Every `KernelEvent` has a type, timestamp, source, and optional payload.
+
+```ts
+const unsubscribe = kernel.getEventBus().onAny((event) => {
+  console.log(event.type, event.source, event.payload);
+});
+```
+
+Use events for runtime coordination that should be visible across the surface. Do not route every local UI state change through the event bus.
+
+## Useful early events
+
+- `runtime:booted`
+- `runtime:phase-changed`
+- `adapter:registered`
+- `controller:registered`
+- adapter-specific events such as `loading:changed`
+
+## Cleanup
+
+Unsubscribe event listeners when the surface is disposed.
+
+```ts
+unsubscribe();
+await kernel.shutdown('surface:dispose');
+```
+
+## Next
+
+- [Event routing](/docs/concepts/event-routing/)
+- [Route events](/docs/guides/route-events/)
+- [Event types](/docs/reference/event-types/)

@@ -1,0 +1,72 @@
+---
+title: State and Events
+description: Preserve the original state and events route while pointing to the split concept pages.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: State and Events Concept
+  Purpose: Explain why URK keeps runtime phases and emitted events explicit instead of hiding them in framework state.
+  Author: Stan Nesi
+  Created: 2026-05-01
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+*/}
+
+import CodeBlock from '@/components/docs/CodeBlock.astro';
+
+# State and Events
+
+URK keeps runtime state and events explicit.
+
+This page preserves the original concept route. For the canonical split, read [Explicit runtime state](/docs/concepts/explicit-runtime-state/) and [Event routing](/docs/concepts/event-routing/).
+
+## Runtime state
+
+The runtime state model starts small:
+
+- `boot`
+- `loading`
+- `ready`
+- `transition`
+- `paused`
+- `error`
+
+## Events
+
+Events make runtime behavior inspectable.
+
+They can describe:
+
+- capability changes
+- controller actions
+- lifecycle transitions
+- browser-surface activity
+
+<CodeBlock
+  title="Event routing foundation"
+  language="ts"
+  code={`ctx.events.emit({
+  type: 'runtime:phase-changed',
+  source: 'state',
+  payload: { next, previous },
+  timestamp: Date.now(),
+});`}/>
+
+## Why this is useful
+
+Explicit state and events are valuable for:
+
+- debugging
+- docs examples
+- interactive demos
+- platform tooling
+- runtime inspection
+
+They are part of why URK is a runtime kernel instead of just another state helper.
+
+## Next
+
+- [Explicit runtime state](/docs/concepts/explicit-runtime-state/)
+- [Event routing](/docs/concepts/event-routing/)
+- [Runtime state panel](/docs/examples/runtime-state-panel/)

@@ -1,0 +1,50 @@
+---
+title: What URK is not
+description: Set the public boundary around URK before developers adopt it.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: What URK Is Not
+  Purpose: Prevent category mistakes by stating the URK boundary early.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# What URK is not
+
+URK is intentionally narrow.
+
+It is a runtime kernel, not a replacement for every layer in a browser product.
+
+## Not a full application framework
+
+URK does not own routing, data fetching policy, page rendering, layouts, forms, auth, or product shell decisions.
+
+Use your app framework for the app. Use URK for the interactive runtime surface.
+
+## Not a product shell
+
+URK should not contain business rules, product-specific dashboards, account flows, or editorial content structure.
+
+Those belong above the runtime kernel.
+
+## Not a no-code builder
+
+URK can power demos and a future playground, but the kernel itself is not a no-code product.
+
+The current playground direction is experimental and should not be treated as a stable product API.
+
+## Not React-only
+
+React and Next.js wrappers exist as integration layers. They do not define the core architecture.
+
+The standalone runtime model remains canonical.
+
+## Next
+
+- [Core mental model](/docs/introduction/core-mental-model/)
+- [Boundary](/docs/project/boundary/)
+- [Integration wrappers](/docs/concepts/integration-wrappers/)

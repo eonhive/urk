@@ -1,0 +1,6 @@
+<!-- Company: EonHive Inc. | Title: Event Bus Icon | Purpose: Icon asset for routed event flow. | Author: Stan Nesi | Created: 2026-05-01 | Updated: 2026-05-01 | Notes: Vibe coded with Codex. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <path d="M4 12h16" stroke="#E8ECF3" stroke-width="1.75" stroke-linecap="square"/>
+  <path d="M8 8l4 4-4 4M16 8l4 4-4 4" stroke="#E8ECF3" stroke-width="1.75" stroke-linecap="square" opacity=".72"/>
+  <circle cx="12" cy="12" r="1.8" fill="#7B61FF" stroke="#E8ECF3" stroke-width="1.25"/>
+</svg>

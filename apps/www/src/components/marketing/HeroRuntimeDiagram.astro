@@ -1,0 +1,76 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Hero Runtime Diagram
+ * Purpose: Render a dark-first runtime pipeline visual for the URK landing page hero without requiring a client runtime.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+---
+
+<section class="site-card runtime-node-grid p-4 md:p-6" aria-labelledby="hero-runtime-diagram-title">
+  <h2 id="hero-runtime-diagram-title" class="sr-only">Runtime pipeline diagram</h2>
+  <div class="runtime-node-grid__lane">
+    <div class="runtime-node-grid__column">
+      <div class="runtime-node-grid__chip">
+        <div class="mb-2 text-xs uppercase tracking-[0.12em] text-[var(--urk-muted)]">Schema / Data</div>
+        <strong>Declarative input</strong>
+      </div>
+      <div class="flex gap-2" aria-hidden="true">
+        <span class="runtime-node-grid__dot"></span>
+        <span class="runtime-node-grid__dot"></span>
+        <span class="runtime-node-grid__dot"></span>
+      </div>
+    </div>
+
+    <div class="runtime-node-grid__column">
+      <div class="runtime-node-grid__chip runtime-node-grid__chip--kernel">
+        <div class="mb-2 text-xs uppercase tracking-[0.12em] text-[var(--urk-muted)]">URK Runtime Kernel</div>
+        <strong>Lifecycle + orchestration</strong>
+      </div>
+      <div class="flex gap-2" aria-hidden="true">
+        <span class="runtime-node-grid__dot"></span>
+        <span class="runtime-node-grid__dot runtime-node-grid__dot--primary"></span>
+        <span class="runtime-node-grid__dot"></span>
+      </div>
+    </div>
+
+    <div class="runtime-node-grid__column">
+      <div class="runtime-node-grid__chip">
+        <div class="mb-2 text-xs uppercase tracking-[0.12em] text-[var(--urk-muted)]">Registry / State / Events</div>
+        <strong>Explicit runtime visibility</strong>
+      </div>
+      <div class="flex gap-2" aria-hidden="true">
+        <span class="runtime-node-grid__dot"></span>
+        <span class="runtime-node-grid__dot"></span>
+        <span class="runtime-node-grid__dot"></span>
+      </div>
+    </div>
+
+    <div class="runtime-node-grid__column">
+      <div class="runtime-node-grid__chip">
+        <div class="mb-2 text-xs uppercase tracking-[0.12em] text-[var(--urk-muted)]">Adapters</div>
+        <strong>Browser capability bridges</strong>
+      </div>
+      <div class="flex gap-2" aria-hidden="true">
+        <span class="runtime-node-grid__dot"></span>
+        <span class="runtime-node-grid__dot"></span>
+        <span class="runtime-node-grid__dot"></span>
+      </div>
+    </div>
+
+    <div class="runtime-node-grid__column">
+      <div class="runtime-node-grid__chip">
+        <div class="mb-2 text-xs uppercase tracking-[0.12em] text-[var(--urk-muted)]">Live Browser UI</div>
+        <strong>Mounted runtime surface</strong>
+      </div>
+      <div class="flex gap-2" aria-hidden="true">
+        <span class="runtime-node-grid__dot"></span>
+        <span class="runtime-node-grid__dot"></span>
+        <span class="runtime-node-grid__dot"></span>
+      </div>
+    </div>
+  </div>
+</section>

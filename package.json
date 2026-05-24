@@ -8,16 +8,21 @@
   "workspaces": [
     "packages/core",
     "packages/adapters",
+    "packages/examples",
     "packages/react-urk",
     "packages/next-urk",
+    "packages/cli",
     "examples",
+    "apps/www",
     "apps/next-proof"
   ],
   "scripts": {
-    "build": "corepack yarn workspace @urk/core build && corepack yarn workspace @urk/adapters build && corepack yarn workspace @urk/react-urk build && corepack yarn workspace @urk/next-urk build && corepack yarn workspace urk-examples build && corepack yarn workspace @urk/next-proof build",
-    "dev": "corepack yarn workspace urk-examples dev",
-    "test": "corepack yarn workspace @urk/core test && corepack yarn workspace @urk/adapters test && corepack yarn workspace @urk/react-urk test && corepack yarn workspace @urk/next-urk test && corepack yarn workspace urk-examples test && corepack yarn workspace @urk/next-proof test",
-    "lint": "corepack yarn workspace @urk/core lint && corepack yarn workspace @urk/adapters lint && corepack yarn workspace @urk/react-urk lint && corepack yarn workspace @urk/next-urk lint && corepack yarn workspace urk-examples lint && corepack yarn workspace @urk/next-proof lint"
+    "build": "corepack yarn workspace @urk/core build && corepack yarn workspace @urk/adapters build && corepack yarn workspace @urk/examples build && corepack yarn workspace @urk/react-urk build && corepack yarn workspace @urk/next-urk build && corepack yarn workspace @urk/cli build && corepack yarn workspace urk-examples build && corepack yarn workspace @urk/www build && corepack yarn workspace @urk/next-proof build",
+    "dev": "corepack yarn workspace @urk/www dev",
+    "dev:examples": "corepack yarn workspace urk-examples dev",
+    "dev:next-proof": "corepack yarn workspace @urk/next-proof dev",
+    "test": "corepack yarn workspace @urk/core test && corepack yarn workspace @urk/adapters test && corepack yarn workspace @urk/examples test && corepack yarn workspace @urk/react-urk test && corepack yarn workspace @urk/next-urk test && corepack yarn workspace @urk/cli test && corepack yarn workspace urk-examples test && corepack yarn workspace @urk/www test && corepack yarn workspace @urk/next-proof test",
+    "lint": "corepack yarn workspace @urk/core lint && corepack yarn workspace @urk/adapters lint && corepack yarn workspace @urk/examples lint && corepack yarn workspace @urk/react-urk lint && corepack yarn workspace @urk/next-urk lint && corepack yarn workspace @urk/cli lint && corepack yarn workspace urk-examples lint && corepack yarn workspace @urk/www lint && corepack yarn workspace @urk/next-proof lint"
   },
   "devDependencies": {
     "@types/three": "^0.184.0",

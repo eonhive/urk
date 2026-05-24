@@ -1,0 +1,41 @@
+---
+title: Integration Wrappers
+description: Explain React and Next.js wrappers as thin integrations around the standalone URK runtime.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Integration Wrappers Concept
+  Purpose: Keep React and Next.js integration guidance aligned with standalone-first URK architecture.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Integration Wrappers
+
+Integration wrappers connect URK to framework lifecycles.
+
+They should not redefine the kernel, adapter contracts, controller lifecycle, runtime state, or event model.
+
+## Current packages
+
+- `@urk/react-urk` is the React integration package.
+- `@urk/next-urk` is the Next.js integration package.
+
+Both are publishable experimental wrappers. Treat them as downstream helpers around the standalone runtime.
+
+## Wrapper boundary
+
+A wrapper may own framework-specific mount and cleanup mechanics. It should not own core runtime semantics.
+
+```text
+framework component -> host element -> URK kernel -> adapters/controllers
+```
+
+## Next
+
+- [Use URK with React](/docs/guides/react-later/)
+- [Use URK with Next.js](/docs/guides/next-later/)
+- [Architecture](/docs/project/architecture/)

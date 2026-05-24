@@ -1,0 +1,33 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Feature Card
+ * Purpose: Present a single value proposition for the URK landing page in a compact reusable card.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+interface Props {
+  title: string;
+  body: string;
+  accent?: 'primary' | 'success' | 'warning';
+}
+
+const { title, body, accent = 'primary' } = Astro.props;
+const accentColor =
+  accent === 'success'
+    ? 'var(--urk-success)'
+    : accent === 'warning'
+      ? 'var(--urk-warning)'
+      : 'var(--urk-primary)';
+---
+
+<article class="site-card p-6">
+  <div class="mb-4 h-2 rounded-full" style={`background:${accentColor}; width: 4.5rem;`}></div>
+  <h3 class="mb-3 font-[var(--urk-font-display)] text-2xl font-semibold tracking-[-0.04em]">
+    {title}
+  </h3>
+  <p class="site-section-copy">{body}</p>
+</article>

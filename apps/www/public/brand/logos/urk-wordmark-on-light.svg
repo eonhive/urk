@@ -1,0 +1,18 @@
+<!--
+  Company: EonHive Inc.
+  Title: URK Wordmark On Light
+  Purpose: Primary uRK wordmark for light public-site surfaces.
+  Author: Stan Nesi
+  Created: 2026-05-01
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 214 64" fill="none">
+  <g stroke="#161C28" stroke-width="8.5" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M20 16v22c0 8 6 14 14 14h6c8 0 14-6 14-14V16"/>
+    <path d="M92 52V12h18c12 0 20 7 20 18s-8 18-20 18H92"/>
+    <path d="M110 34l22 18"/>
+    <path d="M164 12v40"/>
+    <path d="M194 12l-30 20 30 20"/>
+  </g>
+</svg>

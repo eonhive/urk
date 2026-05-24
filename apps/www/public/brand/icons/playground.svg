@@ -1,0 +1,6 @@
+<!-- Company: EonHive Inc. | Title: Playground Icon | Purpose: Icon asset for experimental runtime workspaces. | Author: Stan Nesi | Created: 2026-05-01 | Updated: 2026-05-01 | Notes: Vibe coded with Codex. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <rect x="3.5" y="5" width="17" height="14" rx="2" stroke="#E8ECF3" stroke-width="1.75"/>
+  <path d="M8 9h8M8 12h3m2 0h3M8 15h8" stroke="#E8ECF3" stroke-width="1.75" stroke-linecap="square" opacity=".72"/>
+  <circle cx="11" cy="12" r="1.25" fill="#7B61FF"/>
+</svg>

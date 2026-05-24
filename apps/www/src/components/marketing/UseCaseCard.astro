@@ -1,0 +1,26 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Use Case Card
+ * Purpose: Present a practical team-facing URK use case on the public landing page.
+ * Author: Stan Nesi
+ * Created: 2026-05-03
+ * Updated: 2026-05-03
+ * Notes: Vibe coded with Codex.
+ */
+
+interface Props {
+  title: string;
+  body: string;
+}
+
+const { title, body } = Astro.props;
+---
+
+<article class="site-card flex h-full flex-col gap-4 p-6">
+  <div class="h-2 w-12 rounded-full bg-[var(--urk-border-strong)]"></div>
+  <h3 class="font-[var(--urk-font-display)] text-2xl font-semibold tracking-[-0.04em]">
+    {title}
+  </h3>
+  <p class="site-section-copy text-sm">{body}</p>
+</article>

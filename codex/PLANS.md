@@ -1,0 +1,21 @@
+# PLANS.md
+
+Every implementation task must update `codex/SESSION_HANDOFF.md` before stopping.
+
+The handoff update must record current status, completed work, in-progress work, changed files, commands run, tests or verification, known issues, next recommended task, important decisions, and work that should not be redone.
+
+## Task log
+
+- 2026-05-08: Promoted `runtime-state` from planned metadata to the fourth current public runtime example. Next incomplete example catalog item: `event-routing`.
+- 2026-05-08: Promoted `event-routing` from planned metadata to the fifth current public runtime example. Next incomplete example catalog item: `scene-ui-bridge`.
+- 2026-05-08: Promoted `scene-ui-bridge` from planned metadata to the sixth current public runtime example. Next incomplete example catalog item: `pointer-input-overlay`.
+- 2026-05-09: Promoted `pointer-input-overlay` from planned metadata to the seventh current public runtime example. Next incomplete example catalog item: `embedded-docs-demo`.
+- 2026-05-09: Promoted `embedded-docs-demo` from planned metadata to the eighth current public runtime example. No planned example catalog entries remain; next work should audit remaining stale planned-example docs or choose the next public-site roadmap item before adding new runtime surface scope.
+- 2026-05-14: Completed the focused public-docs status audit for stale planned-example language. No incomplete example-catalog work remains; choose the next public-site roadmap item explicitly before adding new scope.
+- 2026-05-14: Completed the focused public-site accessibility and responsive QA pass for the shell, examples index, runtime panels, and shared example progress semantics. Next work should choose a new explicit roadmap item, likely playground hardening or a deeper accessibility audit.
+- 2026-05-14: Hardened `/playground/` into an experimental known-example config shell with JSON validation, metadata-backed preview panels, reset, and custom-code rejection. Next work should choose a new explicit roadmap item, likely canon docs sync or a deeper accessibility audit.
+- 2026-05-15: Synced public Project docs with root canonical docs for architecture, boundary, decisions, deferred scope, and roadmap status. Next work should focus on production readiness hardening: resolve the Vite chunk warning, run package publish dry-runs, and do a final docs/link audit.
+- 2026-05-18: Completed production readiness hardening. The private proof workspace now splits intentional vendor code and builds without the Vite chunk-size warning; `@urk/www` check/build and full workspace build pass under Node 22; publish dry-runs passed for `@urk/core`, `@urk/adapters`, `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`; generated-site link audit passed with `missing: []`. Next work should be final release hygiene only: review the dirty diff, choose release commit/version/publish/deploy steps, and do not add runtime API or package-export scope without a new plan.
+- 2026-05-22: Completed the first final-release hygiene step. Added `codex/RELEASE_HYGIENE.md` to separate release-intended source changes, explicit staging decisions, generated/local-only artifacts, validation baseline, and remaining release blockers; reran `corepack yarn install --immutable` under Node 22 and it passed with warnings only. Next work should be intentional staging/release decision-making, not source changes.
+- 2026-05-23: Completed release-candidate cleanup after staged diff review. Removed unintended `"default"` export conditions from package metadata, kept `.yarn/install-state.gz` unstaged by decision, reran builds and publish dry-runs, and restaged only the edited manifests and codex docs. Next work should be release commit review, then version/changelog/publish/deploy decisions.
+- 2026-05-23: Completed the final staged release-candidate review and selected the commit-only path. Package versions stay unchanged, `.yarn/install-state.gz` stays unstaged, and the release candidate should be committed locally with `chore: prepare URK public release candidate`; versioning, changelog, npm publish, tags, push, and site deploy remain separate follow-up decisions.

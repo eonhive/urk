@@ -1,0 +1,7 @@
+<!-- Company: EonHive Inc. | Title: Layout Tree Icon | Purpose: Icon asset for hierarchical layout structure. | Author: Stan Nesi | Created: 2026-05-01 | Updated: 2026-05-01 | Notes: Vibe coded with Codex. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <path d="M12 6v4M7 18v-4h10v4M12 10H7M12 10h5" stroke="#E8ECF3" stroke-width="1.75" stroke-linecap="square"/>
+  <rect x="10" y="4" width="4" height="4" rx="1" fill="#7B61FF" stroke="#E8ECF3" stroke-width="1.25"/>
+  <rect x="5" y="14" width="4" height="4" rx="1" stroke="#E8ECF3" stroke-width="1.25"/>
+  <rect x="15" y="14" width="4" height="4" rx="1" stroke="#E8ECF3" stroke-width="1.25"/>
+</svg>

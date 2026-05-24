@@ -1,0 +1,51 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Runtime Pipeline
+ * Purpose: Explain the core URK data-to-runtime-to-browser flow in a readable step-based section.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+const steps = [
+  {
+    label: '01',
+    title: 'Schema / Data',
+    body: 'Describe the runtime surface as structured input rather than hard-coding every behavior into one rendering path.',
+  },
+  {
+    label: '02',
+    title: 'Runtime Kernel',
+    body: 'Boot the kernel, establish lifecycle, and create a runtime context that stays explicit while the browser surface is live.',
+  },
+  {
+    label: '03',
+    title: 'Registry',
+    body: 'Register capabilities and resolve them through named lookup instead of hidden global wiring.',
+  },
+  {
+    label: '04',
+    title: 'State / Events',
+    body: 'Track runtime phases, transitions, controller actions, and emitted events so behavior remains inspectable.',
+  },
+  {
+    label: '05',
+    title: 'Browser UI',
+    body: 'Mount the live interface: docs panels, app shells, internal tools, demos, or coordinated scene and UI surfaces.',
+  },
+];
+---
+
+<div class="site-grid md:grid-cols-5">
+  {
+    steps.map((step) => (
+      <article class="site-card p-5">
+        <div class="mb-4 font-[var(--urk-font-code)] text-sm text-[var(--urk-primary)]">{step.label}</div>
+        <h3 class="mb-3 font-[var(--urk-font-display)] text-xl font-semibold tracking-[-0.04em]">{step.title}</h3>
+        <p class="site-section-copy text-sm">{step.body}</p>
+      </article>
+    ))
+  }
+</div>

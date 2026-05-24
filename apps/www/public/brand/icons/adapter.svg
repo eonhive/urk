@@ -1,0 +1,6 @@
+<!-- Company: EonHive Inc. | Title: Adapter Icon | Purpose: Icon asset for URK adapter capability bridges. | Author: Stan Nesi | Created: 2026-05-01 | Updated: 2026-05-01 | Notes: Vibe coded with Codex. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <path d="M5 12h5m4 0h5M8 9v6m8-6v6" stroke="#E8ECF3" stroke-width="1.75" stroke-linecap="square"/>
+  <rect x="10" y="9" width="4" height="6" rx="1" stroke="#E8ECF3" stroke-width="1.75"/>
+  <circle cx="12" cy="12" r="1.4" fill="#7B61FF" stroke="#E8ECF3" stroke-width="1.25"/>
+</svg>

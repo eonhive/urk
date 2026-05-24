@@ -1,0 +1,247 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Example Detail Page
+ * Purpose: Render the shared URK example page template for current and planned runtime proofs.
+ * Author: Stan Nesi
+ * Created: 2026-05-05
+ * Updated: 2026-05-05
+ * Notes: Vibe coded with Codex.
+ */
+
+import { exampleCatalog, getExampleMeta, type ExampleMeta } from '@urk/examples';
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import LiveURKExample from '@/components/urk-runtime/LiveURKExample.astro';
+
+interface Props {
+  example: ExampleMeta;
+}
+
+export function getStaticPaths() {
+  return exampleCatalog.map((example) => ({
+    params: { slug: example.slug },
+    props: { example },
+  }));
+}
+
+const { example } = Astro.props;
+const isRunnable = example.status === 'current';
+const nextExample = example.nextExampleId ? getExampleMeta(example.nextExampleId) : null;
+const statusLabel =
+  example.status === 'current'
+    ? 'Current'
+    : example.status === 'experimental'
+      ? 'Experimental'
+      : 'Planned';
+const difficultyLabel =
+  example.difficulty === 'intro'
+    ? 'Intro'
+    : example.difficulty === 'intermediate'
+      ? 'Intermediate'
+      : 'Advanced';
+const statusClass =
+  example.status === 'current'
+    ? 'site-status-badge--current'
+    : example.status === 'experimental'
+      ? 'site-status-badge--experimental'
+      : 'site-status-badge--planned';
+---
+
+<BaseLayout title={example.title} description={example.summary}>
+  <section class="site-section">
+    <div class="site-shell site-grid gap-8">
+      <div class="site-grid gap-4">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="site-kicker">Example</span>
+          <span class={`site-status-badge ${statusClass}`}>{statusLabel}</span>
+          <span class="site-status-badge site-status-badge--planned">{difficultyLabel}</span>
+        </div>
+
+        <div class="site-grid gap-3">
+          <h1 class="site-section-title">{example.title}</h1>
+          <p class="site-subheading">{example.purpose}</p>
+          <p class="site-section-copy">{example.summary}</p>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-3">
+        <article class="site-card p-5">
+          <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Difficulty</div>
+          <strong class="text-xl">{difficultyLabel}</strong>
+        </article>
+        <article class="site-card p-5">
+          <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Adapters</div>
+          <strong class="text-xl">{example.adapters.join(', ') || 'None'}</strong>
+        </article>
+        <article class="site-card p-5">
+          <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Controllers</div>
+          <strong class="text-xl">{example.controllers.join(', ') || 'None'}</strong>
+        </article>
+      </div>
+
+      <section class="site-card p-6">
+        <div class="site-grid gap-4">
+          <div>
+            <span class="site-kicker">What this teaches</span>
+            <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+              Runtime behavior this example proves
+            </h2>
+          </div>
+          <div class="grid gap-3 md:grid-cols-2">
+            {
+              example.teaches.map((item) => (
+                <div class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4 text-sm leading-7 text-[var(--urk-foreground)]">
+                  {item}
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      {
+        isRunnable ? (
+          <LiveURKExample exampleId={example.id} schemaSource={example.schemaSource} />
+        ) : (
+          <section class="site-grid gap-6">
+            <div class="site-card flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <div class="font-[var(--urk-font-code)] text-xs uppercase tracking-[0.16em] text-[var(--urk-muted)]">
+                  Runtime controls
+                </div>
+                <p class="m-0 mt-2 text-sm leading-7 text-[var(--urk-muted)]">
+                  Reset will use teardown plus remount once this example becomes runnable.
+                </p>
+              </div>
+              <button class="site-button site-button--secondary" type="button" disabled>
+                Reset / restart
+              </button>
+            </div>
+
+            <div class="site-grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+              <section class="site-card flex h-full flex-col gap-4 p-6">
+                <div>
+                  <div class="site-kicker">Schema / config panel</div>
+                  <h2 class="mt-4 text-2xl font-semibold">Planned declarative input</h2>
+                </div>
+                <pre class="site-code-block m-0 flex-1"><code>{example.schemaSource}</code></pre>
+              </section>
+
+              <section class="site-card flex h-full flex-col gap-5 p-6">
+                <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <div class="site-kicker">Live preview</div>
+                    <h2 class="mt-4 text-2xl font-semibold">Runtime island planned</h2>
+                  </div>
+                  <span class={`site-status-badge ${statusClass}`}>{statusLabel}</span>
+                </div>
+                <p class="site-section-copy">
+                  This route exists now so the example has a clear target page. The live runtime mount will be added in
+                  `packages/examples` before this status moves out of planned.
+                </p>
+
+                <div class="grid gap-3 md:grid-cols-2">
+                  <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+                    <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Runtime state panel</div>
+                    <strong>phase: planned</strong>
+                  </article>
+                  <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+                    <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Adapter list</div>
+                    <strong>{example.adapters.join(', ') || 'None'}</strong>
+                  </article>
+                </div>
+              </section>
+            </div>
+
+            <section class="site-card flex flex-col gap-4 p-6">
+              <div>
+                <div class="site-kicker">Event log</div>
+                <h2 class="mt-4 text-2xl font-semibold">Runtime events will appear here</h2>
+              </div>
+              <ol class="site-grid m-0 list-none p-0">
+                <li class="runtime-log-item">
+                  <div class="runtime-log-item__meta">
+                    <span>--:--:--</span>
+                    <span>{example.id}</span>
+                  </div>
+                  <strong>example:planned</strong>
+                  <span>Runnable event telemetry will be added with the example mount.</span>
+                </li>
+              </ol>
+            </section>
+          </section>
+        )
+      }
+
+      <section class="site-card p-6">
+        <div class="site-grid gap-4">
+          <div>
+            <span class="site-kicker">Source code</span>
+            <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+              Files that matter
+            </h2>
+          </div>
+          <div class="site-grid gap-4">
+            {
+              example.sourceFiles.map((file) => (
+                <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+                  <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <strong>{file.label}</strong>
+                    <code class="font-[var(--urk-font-code)] text-xs text-[var(--urk-muted)]">
+                      {file.path}
+                    </code>
+                  </div>
+                  <pre class="site-code-block m-0"><code>{file.excerpt}</code></pre>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="site-card p-6">
+        <div class="site-grid gap-4 lg:grid-cols-[1fr_0.8fr]">
+          <div class="site-grid gap-3">
+            <span class="site-kicker">Explanation</span>
+            <h2 class="font-[var(--urk-font-display)] text-3xl font-semibold">How the example works</h2>
+            <p class="site-section-copy">{example.explanation}</p>
+            <div class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+              <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Boundary</div>
+              <p class="m-0 text-sm leading-7 text-[var(--urk-foreground)]">{example.boundary}</p>
+            </div>
+          </div>
+
+          <aside class="site-grid gap-4">
+            <div>
+              <div class="mb-3 font-[var(--urk-font-code)] text-xs uppercase tracking-[0.16em] text-[var(--urk-muted)]">
+                Related docs
+              </div>
+              <div class="site-grid gap-2">
+                {
+                  example.relatedDocs.map((doc) => (
+                    <a class="site-button site-button--secondary justify-start" href={doc.href}>
+                      {doc.title}
+                    </a>
+                  ))
+                }
+              </div>
+            </div>
+
+            {
+              nextExample && (
+                <div>
+                  <div class="mb-3 font-[var(--urk-font-code)] text-xs uppercase tracking-[0.16em] text-[var(--urk-muted)]">
+                    Next example
+                  </div>
+                  <a class="site-button site-button--primary justify-start" href={`/examples/${nextExample.slug}`}>
+                    {nextExample.title}
+                  </a>
+                </div>
+              )
+            }
+          </aside>
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>

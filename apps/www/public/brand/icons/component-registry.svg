@@ -1,0 +1,6 @@
+<!-- Company: EonHive Inc. | Title: Component Registry Icon | Purpose: Icon asset for capability registration and lookup. | Author: Stan Nesi | Created: 2026-05-01 | Updated: 2026-05-01 | Notes: Vibe coded with Codex. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <rect x="4" y="4" width="16" height="16" rx="2" stroke="#E8ECF3" stroke-width="1.75"/>
+  <path d="M8 9h8M8 15h4M15 14v4M13 16h4" stroke="#E8ECF3" stroke-width="1.75" stroke-linecap="square"/>
+  <circle cx="9" cy="15" r="1.2" fill="#7B61FF" stroke="#E8ECF3" stroke-width="1.25"/>
+</svg>

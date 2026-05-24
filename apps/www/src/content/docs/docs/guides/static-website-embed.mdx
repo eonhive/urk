@@ -1,0 +1,54 @@
+---
+title: Embed URK in a static website
+description: Mount URK as a runtime island inside a static content shell.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Static Website Embed Guide
+  Purpose: Explain how URK fits into static website pages without owning the shell.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-09
+  Notes: Vibe coded with Codex.
+*/}
+
+# Embed URK in a static website
+
+A static website should own content, routes, layout, and Search Engine Optimization (SEO).
+
+URK should own only the live runtime surface inside a host element.
+
+```html
+<section>
+  <h2>Runtime proof</h2>
+  <div id="urk-runtime-host">Runtime loading...</div>
+</section>
+```
+
+```ts
+const host = document.querySelector<HTMLElement>('#urk-runtime-host');
+
+if (!host) {
+  throw new Error('Missing URK runtime host.');
+}
+
+const runtime = await mountRuntime(host);
+
+window.addEventListener('beforeunload', () => {
+  void runtime.teardown();
+});
+```
+
+## Failure boundary
+
+The page should still render if the runtime island fails. Show a local error state for the live surface instead of blocking the full page.
+
+The current public proof is [Embedded Docs Demo](/examples/embedded-docs-demo/), which shows this boundary inside an Astro/Starlight documentation shell.
+
+## Next
+
+- [Mount a runtime surface](/docs/getting-started/mount-a-runtime-surface/)
+- [Use URK inside Astro docs](/docs/guides/astro-docs-embed/)
+- [Embedded Docs Demo](/examples/embedded-docs-demo/)
+- [Minimal standalone runtime](/docs/examples/minimal-standalone-runtime/)

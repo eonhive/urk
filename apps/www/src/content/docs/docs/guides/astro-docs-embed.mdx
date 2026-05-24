@@ -1,0 +1,41 @@
+---
+title: Use URK inside Astro docs
+description: Embed live URK examples in Astro and Starlight documentation safely.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Astro Docs Embed Guide
+  Purpose: Explain how the public site embeds URK runtime islands inside docs pages.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-09
+  Notes: Vibe coded with Codex.
+*/}
+
+# Use URK inside Astro docs
+
+Astro and Starlight own the documentation shell. URK owns live runtime islands inside that shell.
+
+Markdown with JSX-style components (MDX) can host a component that mounts a runtime on the client.
+
+```mdx
+import LiveURKExample from '@/components/urk-runtime/LiveURKExample.astro';
+
+<LiveURKExample example="embedded-docs-demo" />
+```
+
+Status: current. The runnable public proof is [Embedded Docs Demo](/examples/embedded-docs-demo/).
+
+## Rules
+
+- docs content must render before the runtime island starts
+- runtime island failures must stay local to the island
+- `@urk/examples` remains private and unstable
+
+## Next
+
+- [Embed URK in a static website](/docs/guides/static-website-embed/)
+- [Embedded Docs Demo](/examples/embedded-docs-demo/)
+- [Minimal standalone runtime](/docs/examples/minimal-standalone-runtime/)
+- [@urk/examples reference](/docs/reference/examples/)

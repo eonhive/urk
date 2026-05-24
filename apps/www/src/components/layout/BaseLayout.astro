@@ -1,0 +1,55 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Base Layout
+ * Purpose: Provide the shared HTML shell, metadata, and public site framing for non-docs URK pages.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+
+import SiteFooter from './SiteFooter.astro';
+import SiteHeader from './SiteHeader.astro';
+import { siteMetadata } from '@/data/site';
+import { themeInitScript } from '@/lib/theme';
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = siteMetadata.description } = Astro.props;
+const currentPath = Astro.url.pathname;
+const pageTitle = title === siteMetadata.title ? title : `${title} · ${siteMetadata.title}`;
+const canonicalUrl = new URL(currentPath, Astro.site ?? siteMetadata.githubUrl).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content="/og-default.svg" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <title>{pageTitle}</title>
+    <script is:inline set:html={themeInitScript}></script>
+  </head>
+  <body class="site-body">
+    <a class="site-skip-link" href="#content">
+      Skip to content
+    </a>
+    <SiteHeader currentPath={currentPath} />
+    <main id="content">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

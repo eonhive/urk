@@ -4,7 +4,7 @@
  * Purpose: Ensure example HTML entrypoints are included in the production build.
  * Author: Stan Nesi
  * Created: 2026-04-22
- * Updated: 2026-04-30
+ * Updated: 2026-05-18
  * Notes: Vibe coded with Codex.
  */
 
@@ -16,6 +16,7 @@ export default defineConfig({
   base: './',
   plugins: [react()],
   build: {
+    chunkSizeWarningLimit: 650,
     rollupOptions: {
       input: [
         resolve(__dirname, 'index.html'),
@@ -27,6 +28,32 @@ export default defineConfig({
         resolve(__dirname, 'runtime-inspector/index.html'),
         resolve(__dirname, 'scrollytelling/index.html'),
       ],
+      output: {
+        manualChunks(id) {
+          const normalizedId = id.replaceAll('\\', '/');
+
+          if (normalizedId.includes('/node_modules/three/')) {
+            return 'vendor-three';
+          }
+
+          if (
+            normalizedId.includes('/node_modules/react/') ||
+            normalizedId.includes('/node_modules/react-dom/')
+          ) {
+            return 'vendor-react';
+          }
+
+          if (
+            normalizedId.includes('/packages/core/') ||
+            normalizedId.includes('/packages/adapters/') ||
+            normalizedId.includes('/packages/react-urk/')
+          ) {
+            return 'vendor-urk';
+          }
+
+          return undefined;
+        },
+      },
     },
   },
 });

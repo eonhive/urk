@@ -1,6 +1,33 @@
 # URK Examples
 
-URK proves its API through repo-only examples, not through published example packages.
+URK has two example surfaces with different jobs.
+
+- `packages/examples` contains private, internal, unstable runtime examples consumed by the public website in `apps/www`.
+- `examples/` contains private repo proof routes used for broader manual validation and developer understanding.
+
+Neither example surface is published as a stable public npm API.
+
+## Website examples package
+
+The website examples package lives at `packages/examples/` and is imported by `apps/www` as `@urk/examples`.
+
+Current role:
+
+- provide the runtime example catalog for public website pages
+- provide the mount contract used by runtime islands
+- keep non-current entries labeled as planned or experimental if new entries are added
+- keep demo behavior out of Astro presentation components
+
+Current runnable public examples:
+
+- `/examples/minimal-runtime/` in `apps/www`
+- `/examples/adapter-registration/` in `apps/www`
+- `/examples/controller-orchestration/` in `apps/www`
+- `/examples/runtime-state/` in `apps/www`
+- `/examples/event-routing/` in `apps/www`
+- `/examples/scene-ui-bridge/` in `apps/www`
+- `/examples/pointer-input-overlay/` in `apps/www`
+- `/examples/embedded-docs-demo/` in `apps/www`
 
 ## Private proof workspace
 

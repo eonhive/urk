@@ -1,0 +1,491 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Playground MVP Shell
+ * Purpose: Provide the experimental URK playground shell for known-example config validation.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+
+import { exampleCatalog, type ExampleMeta } from '@urk/examples';
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import StatusBadge from '@/components/visuals/StatusBadge.astro';
+
+type PlaygroundExample = {
+  id: ExampleMeta['id'];
+  title: string;
+  summary: string;
+  difficulty: ExampleMeta['difficulty'];
+  boundary: string;
+  href: string;
+  adapters: string[];
+  controllers: string[];
+};
+
+const playgroundExamples: PlaygroundExample[] = exampleCatalog
+  .filter((example) => example.status === 'current')
+  .map((example) => ({
+    id: example.id,
+    title: example.title,
+    summary: example.summary,
+    difficulty: example.difficulty,
+    boundary: example.boundary,
+    href: `/examples/${example.slug}/`,
+    adapters: example.adapters,
+    controllers: example.controllers,
+  }));
+
+const defaultExample = playgroundExamples.find((example) => example.id === 'minimal-runtime') ?? playgroundExamples[0];
+
+if (!defaultExample) {
+  throw new Error('The playground requires at least one current URK example.');
+}
+
+function createPlaygroundConfig(example: PlaygroundExample) {
+  return {
+    example: example.id,
+    surface: 'playground-preview',
+    editable: {
+      schema: true,
+      state: false,
+      code: false,
+    },
+    adapters: example.adapters,
+    controllers: example.controllers,
+  };
+}
+
+const starterConfig = JSON.stringify(createPlaygroundConfig(defaultExample), null, 2);
+const playgroundExampleData = JSON.stringify(playgroundExamples);
+---
+
+<BaseLayout
+  title="Playground"
+  description="Experimental URK playground shell for known-example runtime config validation."
+>
+  <section class="site-section">
+    <div class="site-shell site-grid gap-8">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Playground</span>
+        <div class="flex flex-wrap items-center gap-3">
+          <h1 class="site-section-title">Runtime playground</h1>
+          <StatusBadge label="Experimental" tone="experimental" />
+        </div>
+        <p class="site-section-copy">
+          The playground is a runtime lab for known URK examples. It validates schema/config,
+          previews the selected example surface, and keeps arbitrary JavaScript execution out of
+          scope.
+        </p>
+      </div>
+
+      <div class="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+        <section class="site-card flex min-h-[34rem] flex-col gap-4 p-6">
+          <div>
+            <div class="site-kicker">Editable schema / config</div>
+            <h2 class="mt-4 text-2xl font-semibold">Known-example input only</h2>
+          </div>
+          <p class="site-section-copy text-sm">
+            Editing is limited to the current example catalog. The shell checks JSON shape, known
+            example IDs, adapters, controllers, and the no-custom-code boundary.
+          </p>
+
+          <label class="site-field">
+            <span class="site-field__label">Current example</span>
+            <select
+              class="site-select"
+              data-playground-example-select
+              aria-label="Choose a known URK example"
+            >
+              {playgroundExamples.map((example) => (
+                <option value={example.id} selected={example.id === defaultExample.id}>
+                  {example.title}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <textarea
+            class="site-textarea min-h-[22rem] flex-1"
+            aria-label="Editable playground schema and config"
+            aria-describedby="playground-validation"
+            data-playground-config
+            spellcheck="false"
+          >{starterConfig}</textarea>
+
+          <p
+            id="playground-validation"
+            class="playground-validation"
+            data-playground-validation
+            data-tone="valid"
+            role="status"
+            aria-live="polite"
+          >
+            Config valid for {defaultExample.title}. Known-example sandboxing is active.
+          </p>
+
+          <div class="flex flex-wrap gap-3" role="group" aria-label="Playground config controls">
+            <button class="site-button site-button--primary" type="button" data-playground-validate>
+              Validate config
+            </button>
+            <button class="site-button site-button--secondary" type="button" data-playground-reset>
+              Reset config
+            </button>
+            <a class="site-button site-button--ghost" href={defaultExample.href} data-playground-open>
+              Open live example
+            </a>
+          </div>
+        </section>
+
+        <section class="site-grid gap-6">
+          <div class="site-card p-6 playground-preview-surface" data-playground-preview>
+            <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div>
+                <div class="site-kicker">Selected preview</div>
+                <h2 class="mt-4 text-2xl font-semibold" data-playground-title>{defaultExample.title}</h2>
+              </div>
+              <StatusBadge label="Known example" tone="current" />
+            </div>
+            <p class="site-section-copy" data-playground-summary>
+              {defaultExample.summary}
+            </p>
+            <div class="site-chip-row mt-5">
+              <span class="site-chip" data-playground-route>{defaultExample.href}</span>
+              <span class="site-chip" data-playground-difficulty>{defaultExample.difficulty}</span>
+            </div>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-2">
+            <article class="site-card p-5">
+              <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">State viewer</div>
+              <strong data-playground-phase aria-live="polite">config:valid</strong>
+              <p class="mt-3 text-sm leading-7 text-[var(--urk-muted)]">
+                Selected example: <span data-playground-selected-example>{defaultExample.id}</span>.
+                Runtime execution still happens on the dedicated example route.
+              </p>
+            </article>
+            <article class="site-card p-5">
+              <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Adapter list</div>
+              <ul class="runtime-entity-list" data-playground-adapters aria-label="Configured adapters">
+                {defaultExample.adapters.map((adapter) => (
+                  <li class="runtime-entity-pill">{adapter}</li>
+                ))}
+              </ul>
+              <p class="mt-3 text-sm leading-7 text-[var(--urk-muted)]">
+                The shell rejects adapter names outside the selected example metadata.
+              </p>
+            </article>
+          </div>
+
+          <article class="site-card p-5">
+            <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Controller list</div>
+            <ul class="runtime-entity-list" data-playground-controllers aria-label="Configured controllers">
+              {defaultExample.controllers.map((controller) => (
+                <li class="runtime-entity-pill">{controller}</li>
+              ))}
+            </ul>
+            <p class="mt-3 text-sm leading-7 text-[var(--urk-muted)]">
+              Controllers stay tied to known examples; the playground does not run custom controller code.
+            </p>
+          </article>
+
+          <section class="site-card p-6">
+            <div class="mb-4">
+              <div class="site-kicker">Event log</div>
+              <h2 class="mt-4 text-2xl font-semibold">Playground events</h2>
+            </div>
+            <ol class="site-grid m-0 list-none p-0" data-playground-events aria-label="Playground validation events">
+              <li class="runtime-log-item">
+                <div class="runtime-log-item__meta">
+                  <span>--:--:--</span>
+                  <span>playground</span>
+                </div>
+                <strong>playground:ready</strong>
+                <span>Config validation is ready for known URK examples.</span>
+              </li>
+            </ol>
+          </section>
+        </section>
+      </div>
+
+      <section class="site-card p-6">
+        <div class="site-grid gap-4 md:grid-cols-3">
+          <article>
+            <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">No login required</div>
+            <p class="m-0 text-sm leading-7 text-[var(--urk-foreground)]">
+              The playground runs locally in the browser without accounts or hosted projects.
+            </p>
+          </article>
+          <article>
+            <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Safe sandboxing</div>
+            <p class="m-0 text-sm leading-7 text-[var(--urk-foreground)]">
+              MVP accepts config for known examples only. Custom code execution stays out of scope.
+            </p>
+          </article>
+          <article>
+            <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Shareable later</div>
+            <p class="m-0 text-sm leading-7 text-[var(--urk-foreground)]">
+              Shareable examples can use encoded config later, without introducing hosted user projects.
+            </p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <script type="application/json" id="playground-example-data" set:html={playgroundExampleData} is:inline></script>
+  <script is:inline>
+    const dataElement = document.getElementById('playground-example-data');
+    const examples = JSON.parse(dataElement?.textContent ?? '[]');
+    const exampleById = new Map(examples.map((example) => [example.id, example]));
+    const defaultExample = exampleById.get('minimal-runtime') ?? examples[0];
+
+    const select = document.querySelector('[data-playground-example-select]');
+    const textarea = document.querySelector('[data-playground-config]');
+    const validateButton = document.querySelector('[data-playground-validate]');
+    const resetButton = document.querySelector('[data-playground-reset]');
+    const validation = document.querySelector('[data-playground-validation]');
+    const openLink = document.querySelector('[data-playground-open]');
+    const eventLog = document.querySelector('[data-playground-events]');
+
+    const getTextTarget = (role) => document.querySelector(`[data-playground-${role}]`);
+
+    function hasOwn(value, key) {
+      return Object.prototype.hasOwnProperty.call(value, key);
+    }
+
+    function buildConfig(example) {
+      return {
+        example: example.id,
+        surface: 'playground-preview',
+        editable: {
+          schema: true,
+          state: false,
+          code: false,
+        },
+        adapters: example.adapters,
+        controllers: example.controllers,
+      };
+    }
+
+    function formatConfig(example) {
+      return JSON.stringify(buildConfig(example), null, 2);
+    }
+
+    function setText(role, value) {
+      const target = getTextTarget(role);
+
+      if (target) {
+        target.textContent = value;
+      }
+    }
+
+    function renderPills(container, items, emptyText) {
+      if (!container) {
+        return;
+      }
+
+      container.replaceChildren();
+
+      if (items.length === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'runtime-entity-list__empty';
+        empty.textContent = emptyText;
+        container.append(empty);
+        return;
+      }
+
+      for (const item of items) {
+        const pill = document.createElement('li');
+        pill.className = 'runtime-entity-pill';
+        pill.textContent = item;
+        container.append(pill);
+      }
+    }
+
+    function appendEvent(type, message) {
+      if (!eventLog) {
+        return;
+      }
+
+      const item = document.createElement('li');
+      item.className = 'runtime-log-item';
+
+      const meta = document.createElement('div');
+      meta.className = 'runtime-log-item__meta';
+
+      const time = document.createElement('span');
+      time.textContent = new Intl.DateTimeFormat(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }).format(new Date());
+
+      const source = document.createElement('span');
+      source.textContent = 'playground';
+
+      const eventType = document.createElement('strong');
+      eventType.textContent = type;
+
+      const detail = document.createElement('span');
+      detail.textContent = message;
+
+      meta.append(time, source);
+      item.append(meta, eventType, detail);
+      eventLog.prepend(item);
+
+      while (eventLog.children.length > 6) {
+        eventLog.lastElementChild?.remove();
+      }
+    }
+
+    function setValidation(tone, message) {
+      if (validation) {
+        validation.dataset.tone = tone;
+        validation.textContent = message;
+      }
+
+      textarea?.setAttribute('aria-invalid', tone === 'error' ? 'true' : 'false');
+      setText('phase', tone === 'error' ? 'config:error' : 'config:valid');
+    }
+
+    function normalizeStringList(value, fallback) {
+      if (!Array.isArray(value)) {
+        return fallback;
+      }
+
+      return value.filter((item) => typeof item === 'string');
+    }
+
+    function renderExample(example, adapters, controllers) {
+      setText('title', example.title);
+      setText('summary', example.summary);
+      setText('route', example.href);
+      setText('difficulty', example.difficulty);
+      setText('selected-example', example.id);
+
+      if (select) {
+        select.value = example.id;
+      }
+
+      if (openLink) {
+        openLink.setAttribute('href', example.href);
+      }
+
+      renderPills(
+        document.querySelector('[data-playground-adapters]'),
+        adapters,
+        'No adapters configured.',
+      );
+      renderPills(
+        document.querySelector('[data-playground-controllers]'),
+        controllers,
+        'No controllers configured.',
+      );
+    }
+
+    function failValidation(message, shouldLog) {
+      setValidation('error', message);
+
+      if (shouldLog) {
+        appendEvent('playground:config-error', message);
+      }
+
+      return false;
+    }
+
+    function validateConfig({ log = true } = {}) {
+      if (!textarea) {
+        return false;
+      }
+
+      let parsed;
+
+      try {
+        parsed = JSON.parse(textarea.value);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Invalid JSON.';
+        return failValidation(`Invalid JSON: ${message}`, log);
+      }
+
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return failValidation('Config must be a JSON object.', log);
+      }
+
+      if (typeof parsed.example !== 'string') {
+        return failValidation('Config must include a string "example" ID.', log);
+      }
+
+      const example = exampleById.get(parsed.example);
+
+      if (!example) {
+        return failValidation(`Unknown or non-current example: ${parsed.example}.`, log);
+      }
+
+      const editable = parsed.editable && typeof parsed.editable === 'object' ? parsed.editable : {};
+      const requestsCustomCode =
+        (hasOwn(parsed, 'code') && parsed.code !== false) ||
+        (hasOwn(editable, 'code') && editable.code !== false);
+
+      if (requestsCustomCode) {
+        return failValidation('Custom JavaScript is not accepted in the playground MVP.', log);
+      }
+
+      const adapters = normalizeStringList(parsed.adapters, example.adapters);
+      const controllers = normalizeStringList(parsed.controllers, example.controllers);
+      const unknownAdapters = adapters.filter((adapter) => !example.adapters.includes(adapter));
+      const unknownControllers = controllers.filter((controller) => !example.controllers.includes(controller));
+
+      if (unknownAdapters.length > 0) {
+        return failValidation(`Adapter not in selected example metadata: ${unknownAdapters.join(', ')}.`, log);
+      }
+
+      if (unknownControllers.length > 0) {
+        return failValidation(`Controller not in selected example metadata: ${unknownControllers.join(', ')}.`, log);
+      }
+
+      renderExample(example, adapters, controllers);
+      setValidation('valid', `Config valid for ${example.title}. Known-example sandboxing is active.`);
+
+      if (log) {
+        appendEvent('playground:config-valid', `${example.title} validated with ${adapters.length} adapter(s).`);
+      }
+
+      return true;
+    }
+
+    select?.addEventListener('change', () => {
+      const example = exampleById.get(select.value) ?? defaultExample;
+
+      if (!textarea || !example) {
+        return;
+      }
+
+      textarea.value = formatConfig(example);
+      validateConfig();
+    });
+
+    textarea?.addEventListener('input', () => {
+      validateConfig({ log: false });
+    });
+
+    validateButton?.addEventListener('click', () => {
+      validateConfig();
+    });
+
+    resetButton?.addEventListener('click', () => {
+      const example = exampleById.get(select?.value) ?? defaultExample;
+
+      if (!textarea || !example) {
+        return;
+      }
+
+      textarea.value = formatConfig(example);
+      validateConfig({ log: false });
+      appendEvent('playground:config-reset', `${example.title} config reset to the catalog default.`);
+    });
+
+    validateConfig({ log: false });
+  </script>
+</BaseLayout>

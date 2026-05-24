@@ -1,0 +1,66 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Runtime State Panel
+ * Purpose: Render explicit runtime state plus registry visibility so live examples prove state and adapter ownership directly.
+ * Author: Stan Nesi
+ * Created: 2026-05-05
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+---
+
+<section class="site-card flex h-full flex-col gap-5 p-6">
+  <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+    <div>
+      <div class="site-kicker">Runtime state</div>
+      <h3 class="mt-4 text-2xl font-semibold tracking-[-0.04em]">Explicit state and registries</h3>
+    </div>
+    <p class="m-0 max-w-md text-sm leading-7 text-[var(--urk-muted)]">
+      The kernel snapshot stays visible while the surface is live, including the active phase,
+      current reason, and registered capabilities.
+    </p>
+  </div>
+
+  <div class="runtime-state-grid">
+    <article class="runtime-state-card">
+      <div class="runtime-state-card__label">Runtime ID</div>
+      <strong data-role="runtime-id">urk-www-minimal-runtime</strong>
+    </article>
+    <article class="runtime-state-card">
+      <div class="runtime-state-card__label">Reason</div>
+      <strong data-role="runtime-reason" aria-live="polite">kernel:init</strong>
+    </article>
+    <article class="runtime-state-card">
+      <div class="runtime-state-card__label">Updated</div>
+      <strong data-role="runtime-updated-at">--:--:--</strong>
+    </article>
+    <article class="runtime-state-card">
+      <div class="runtime-state-card__label">Total Events</div>
+      <strong data-role="runtime-total-events" aria-live="polite">0</strong>
+    </article>
+  </div>
+
+  <div class="grid gap-4 xl:grid-cols-3">
+    <article class="site-card site-card--muted p-4">
+      <div class="runtime-state-card__label">Adapters</div>
+      <ul class="runtime-entity-list" data-role="runtime-adapter-list">
+        <li class="runtime-entity-list__empty">Waiting for adapter registration.</li>
+      </ul>
+    </article>
+
+    <article class="site-card site-card--muted p-4">
+      <div class="runtime-state-card__label">Controllers</div>
+      <ul class="runtime-entity-list" data-role="runtime-controller-list">
+        <li class="runtime-entity-list__empty">Waiting for controller startup.</li>
+      </ul>
+    </article>
+
+    <article class="site-card site-card--muted p-4">
+      <div class="runtime-state-card__label">Services</div>
+      <ul class="runtime-entity-list" data-role="runtime-service-list">
+        <li class="runtime-entity-list__empty">Waiting for service visibility.</li>
+      </ul>
+    </article>
+  </div>
+</section>

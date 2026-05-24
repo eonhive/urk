@@ -1,0 +1,38 @@
+---
+title: Event routing demo
+description: Follow emitted runtime events through targeted and debug listeners in a live URK example.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Event Routing Demo Docs
+  Purpose: Document the live event routing demo.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-08
+  Notes: Vibe coded with Codex.
+*/}
+
+# Event routing demo
+
+Status: current.
+
+The [Event Routing example](/examples/event-routing/) shows events moving from controller emitters through targeted listeners, guarded debug listeners, and the visible runtime event log.
+
+## What it teaches
+
+- emit typed runtime events
+- listen to one event type
+- use guarded `onAny()` for debug visibility
+- keep the event log bounded and readable
+- avoid turning every interaction into an event
+
+## Boundary
+
+Runtime events should explain coordination and diagnostics. Direct local behavior should stay direct instead of being routed through events by default.
+
+## Related docs
+
+- [View runtime events](/docs/getting-started/view-runtime-events/)
+- [Event routing](/docs/concepts/event-routing/)
+- [Route events](/docs/guides/route-events/)

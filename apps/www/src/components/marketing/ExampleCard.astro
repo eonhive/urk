@@ -1,0 +1,44 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Example Card
+ * Purpose: Render a public example summary card for live and planned URK runtime proofs.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+import type { ExampleIndexEntry } from '@/data/examples';
+
+interface Props {
+  entry: ExampleIndexEntry;
+}
+
+const { entry } = Astro.props;
+const statusClass =
+  entry.status === 'Current'
+    ? 'site-status-badge--current'
+    : entry.status === 'Experimental'
+      ? 'site-status-badge--experimental'
+      : 'site-status-badge--planned';
+---
+
+<a
+  class="site-card flex h-full flex-col gap-4 p-6 no-underline transition-transform duration-150 hover:-translate-y-0.5"
+  href={entry.href}
+>
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <h3 class="font-[var(--urk-font-display)] text-2xl font-semibold tracking-[-0.04em]">{entry.title}</h3>
+    <span class={`site-status-badge ${statusClass}`}>{entry.status}</span>
+  </div>
+
+  <p class="font-[var(--urk-font-code)] text-sm text-[var(--urk-muted)]">{entry.difficulty}</p>
+  <p class="site-section-copy">{entry.purpose}</p>
+  <p class="site-section-copy text-sm">{entry.summary}</p>
+
+  <div class="mt-auto rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+    <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Boundary</div>
+    <p class="m-0 text-sm leading-7 text-[var(--urk-foreground)]">{entry.boundary}</p>
+  </div>
+</a>

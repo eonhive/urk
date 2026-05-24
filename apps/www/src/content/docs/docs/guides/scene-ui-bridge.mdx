@@ -1,0 +1,38 @@
+---
+title: Bridge scene and User Interface
+description: Coordinate scene-like browser surfaces and UI overlays without turning URK into a renderer.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Scene UI Bridge Guide
+  Purpose: Explain practical scene and User Interface coordination boundaries.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-08
+  Notes: Vibe coded with Codex.
+*/}
+
+# Bridge scene and User Interface
+
+Scene and User Interface (UI) coordination is a runtime problem when both surfaces need shared visibility.
+
+URK can coordinate that behavior through adapters, controllers, state, and events.
+
+## Pattern
+
+```text
+pointer adapter -> controller -> runtime state/event -> UI overlay
+```
+
+The scene renderer owns pixels. The UI owns presentation. URK coordinates runtime behavior between them.
+
+## Current status
+
+This guide describes the pattern used by the current [Scene/UI Bridge example](/examples/scene-ui-bridge/). The example is intentionally small and does not turn URK into a renderer.
+
+## Next
+
+- [Scene/User Interface bridge](/docs/concepts/scene-ui-bridge/)
+- [Pointer/input overlay](/docs/examples/pointer-input-overlay/)
+- [Scene/User Interface coordination](/docs/examples/scene-ui-coordination/)

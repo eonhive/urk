@@ -1,0 +1,38 @@
+---
+title: Use URK with React
+description: Explain the React integration boundary without treating it as the core architecture.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: React Later Guide
+  Purpose: Mark React wrapper guidance as integration-level and later-stage.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Use URK with React
+
+React integration is an integration layer, not the source of URK architecture.
+
+Use the standalone kernel model first. Then wrap mount and cleanup in React when a React app needs the runtime surface.
+
+```text
+React component -> host ref -> URK kernel -> adapters/controllers
+```
+
+## Current status
+
+`@urk/react-urk` is a publishable experimental wrapper package.
+
+Do not treat React as the primary runtime model. The wrapper consumes an existing kernel boundary.
+
+For package details, read [@urk/react-urk](/docs/reference/react-urk/).
+
+## Next
+
+- [Integration wrappers](/docs/concepts/integration-wrappers/)
+- [Use URK with Next.js](/docs/guides/next-later/)
+- [@urk/core reference](/docs/reference/core/)

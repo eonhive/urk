@@ -1,0 +1,102 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Theme Support Showcase
+ * Purpose: Show the dark-first and light-supported URK public theme system in a compact landing-page section.
+ * Author: Stan Nesi
+ * Created: 2026-05-03
+ * Updated: 2026-05-03
+ * Notes: Vibe coded with Codex.
+ */
+
+import StatusBadge from '@/components/visuals/StatusBadge.astro';
+---
+
+<section class="site-grid gap-6">
+  <div class="site-grid gap-3">
+    <span class="site-kicker">Theme support</span>
+    <h2 class="site-section-title">Dark-first, light-supported.</h2>
+    <p class="site-section-copy">
+      URK public pages support both dark and light themes, but the brand is dark-first. Dark
+      carries the runtime-native expression for code, examples, and system visuals. Light remains
+      first-class for reading, docs, and package reference.
+    </p>
+    <p class="site-section-copy">
+      Respect system theme on first visit, preserve explicit user choice, and keep contrast and
+      focus states strong in both modes.
+    </p>
+  </div>
+
+  <div class="grid gap-4 xl:grid-cols-2">
+    <article
+      class="rounded-[var(--urk-radius-lg)] border p-6 shadow-[var(--urk-shadow)]"
+      style="background:#090C14; border-color:rgba(86, 98, 121, 0.4); color:#E8ECF3;"
+    >
+      <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="font-[var(--urk-font-code)] text-xs uppercase tracking-[0.16em] text-[#96A0B4]">
+          Dark runtime surface
+        </div>
+        <StatusBadge label="Dark-first" tone="current" />
+      </div>
+
+      <div class="grid gap-4">
+        <div class="flex flex-wrap gap-2">
+          <span class="rounded-[0.7rem] border px-3 py-2 text-xs font-bold uppercase tracking-[0.12em]" style="border-color:rgba(86, 98, 121, 0.4); background:rgba(19, 26, 38, 0.92); color:#E8ECF3;">Runtime</span>
+          <span class="rounded-[0.7rem] border px-3 py-2 text-xs font-bold uppercase tracking-[0.12em]" style="border-color:rgba(86, 98, 121, 0.4); background:rgba(19, 26, 38, 0.92); color:#2FCB7A;">Current</span>
+          <span class="rounded-[0.7rem] border px-3 py-2 text-xs font-bold uppercase tracking-[0.12em]" style="border-color:rgba(86, 98, 121, 0.4); background:rgba(19, 26, 38, 0.92); color:#D9A441;">Adapter</span>
+        </div>
+
+        <div class="rounded-[1rem] border p-4" style="border-color:rgba(86, 98, 121, 0.4); background:rgba(15, 21, 32, 0.96);">
+          <div class="mb-2 font-[var(--urk-font-display)] text-2xl font-semibold tracking-[-0.04em]">
+            Runtime UI, without framework lock-in.
+          </div>
+          <p class="m-0 text-sm leading-7" style="color:#96A0B4;">
+            Dark mode is the default brand expression for runtime demos, logs, and code-heavy
+            browser surfaces.
+          </p>
+        </div>
+
+        <div class="rounded-[1rem] border p-4 font-[var(--urk-font-code)] text-sm leading-7" style="border-color:rgba(86, 98, 121, 0.4); background:#131A26; color:#E8ECF3;">
+          <div style="color:#7B61FF;">phase: ready</div>
+          <div style="color:#2FCB7A;">event: kernel.ready</div>
+          <div style="color:#96A0B4;">surface: browser-native</div>
+        </div>
+      </div>
+    </article>
+
+    <article
+      class="rounded-[var(--urk-radius-lg)] border p-6 shadow-[var(--urk-shadow)]"
+      style="background:#FCFAF5; border-color:rgba(126, 142, 164, 0.35); color:#161C28;"
+    >
+      <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="font-[var(--urk-font-code)] text-xs uppercase tracking-[0.16em] text-[#5E6A7C]">
+          Light docs surface
+        </div>
+        <StatusBadge label="Light-supported" tone="current" />
+      </div>
+
+      <div class="grid gap-4">
+        <div class="flex flex-wrap gap-2">
+          <span class="rounded-[0.7rem] border px-3 py-2 text-xs font-bold uppercase tracking-[0.12em]" style="border-color:rgba(126, 142, 164, 0.35); background:#FFFFFF; color:#161C28;">Docs</span>
+          <span class="rounded-[0.7rem] border px-3 py-2 text-xs font-bold uppercase tracking-[0.12em]" style="border-color:rgba(126, 142, 164, 0.35); background:#FFFFFF; color:#6C4DFF;">Reference</span>
+          <span class="rounded-[0.7rem] border px-3 py-2 text-xs font-bold uppercase tracking-[0.12em]" style="border-color:rgba(126, 142, 164, 0.35); background:#FFFFFF; color:#1F9A5F;">Readable</span>
+        </div>
+
+        <div class="rounded-[1rem] border p-4" style="border-color:rgba(126, 142, 164, 0.35); background:#FFFFFF;">
+          <div class="mb-2 font-[var(--urk-font-display)] text-2xl font-semibold tracking-[-0.04em]">
+            Data in. Experience out.
+          </div>
+          <p class="m-0 text-sm leading-7" style="color:#5E6A7C;">
+            Light mode stays available for long-form reading, package reference, and docs comfort.
+          </p>
+        </div>
+
+        <div class="rounded-[1rem] border p-4 font-[var(--urk-font-code)] text-sm leading-7" style="border-color:rgba(126, 142, 164, 0.35); background:#EFE8DC; color:#161C28;">
+          <div style="color:#6C4DFF;">route: /docs/getting-started</div>
+          <div style="color:#1F9A5F;">mode: light-supported</div>
+          <div style="color:#5E6A7C;">focus: contrast-first</div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

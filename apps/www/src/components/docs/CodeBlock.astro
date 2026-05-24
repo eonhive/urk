@@ -1,0 +1,70 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Code Block
+ * Purpose: Render short code and shell snippets in docs and marketing pages with consistent URK site styling.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+
+interface Props {
+  code: string;
+  language?: string;
+  title?: string;
+}
+
+const { code, language = 'text', title } = Astro.props;
+---
+
+<div class="site-code-block-shell" data-code-block>
+  <div class="site-code-block-header">
+    <span>{title ?? language}</span>
+    <button class="site-code-copy" type="button" data-code-copy aria-label="Copy code">
+      Copy
+    </button>
+  </div>
+  <pre class="site-code-block"><code data-language={language}>{code}</code></pre>
+</div>
+
+<script>
+  async function copyText(value: string): Promise<void> {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(value);
+      return;
+    }
+
+    throw new Error('Clipboard API is unavailable.');
+  }
+
+  const codeBlocks = document.querySelectorAll<HTMLElement>('[data-code-block]');
+
+  for (const block of codeBlocks) {
+    const button = block.querySelector<HTMLButtonElement>('[data-code-copy]');
+    const code = block.querySelector<HTMLElement>('code');
+
+    if (!button || !code || button.dataset.copyReady === 'true') {
+      continue;
+    }
+
+    button.dataset.copyReady = 'true';
+    button.addEventListener('click', async () => {
+      try {
+        await copyText(code.textContent ?? '');
+        button.textContent = 'Copied';
+        button.dataset.copied = 'true';
+        button.setAttribute('aria-label', 'Code copied');
+      } catch {
+        button.textContent = 'Copy failed';
+        button.setAttribute('aria-label', 'Copy failed');
+      }
+
+      window.setTimeout(() => {
+        button.textContent = 'Copy';
+        button.dataset.copied = 'false';
+        button.setAttribute('aria-label', 'Copy code');
+      }, 1500);
+    });
+  }
+</script>

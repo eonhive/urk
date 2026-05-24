@@ -1,0 +1,69 @@
+---
+title: Docs
+description: Public documentation for URK, the runtime kernel for interactive browser experiences.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Docs Index
+  Purpose: Introduce the public URK docs structure and keep the runtime boundary visible from the first docs page.
+  Author: Stan Nesi
+  Created: 2026-05-01
+  Updated: 2026-05-09
+  Notes: Vibe coded with Codex.
+*/}
+
+import CodeBlock from '@/components/docs/CodeBlock.astro';
+
+# URK Docs
+
+URK is the **runtime kernel for interactive browser experiences**.
+
+These docs focus on the parts URK actually owns:
+
+- lifecycle and bootstrap
+- runtime context
+- explicit runtime state
+- adapter registration and capability lookup
+- controller lifecycle and orchestration
+- event routing foundations
+- scene and User Interface bridge foundations
+
+The public brand system is published separately at [the URK brand board](/brand/). It exists to support the public website and documentation shell, not to redefine the kernel boundary.
+
+URK does **not** try to be:
+
+- a full application framework
+- a product shell
+- a mini game engine clone
+- just a React library
+- just a state manager
+- a no-code product
+- a backend platform
+
+## Start here
+
+- [What is URK?](/docs/introduction/what-is-urk/)
+- [Why URK?](/docs/introduction/why-urk/)
+- [Core mental model](/docs/introduction/core-mental-model/)
+- [Getting Started](/docs/getting-started/)
+- [Minimal standalone runtime](/docs/examples/minimal-standalone-runtime/)
+
+## Documentation map
+
+- Introduction explains what URK is and what it is not.
+- Getting Started walks through the first runtime surface.
+- Core Concepts explains the kernel, context, adapters, controllers, state, events, and wrappers.
+- Guides show how to build focused runtime pieces.
+- Examples separate current live runtime proofs from experimental or deferred directions.
+- Reference summarizes shipped package surfaces and current contract types.
+- Project keeps boundaries, architecture, decisions, deferred scope, contribution rules, and roadmap visible.
+
+## Core message
+
+> Runtime UI, without framework lock-in.
+
+<CodeBlock
+  title="Minimal direction"
+  language="ts"
+  code={`schema/data -> runtime kernel -> registry -> state/events -> browser UI`}/>

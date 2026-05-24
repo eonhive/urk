@@ -1,0 +1,53 @@
+---
+title: Event Routing
+description: Explain how events move through a URK runtime.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Event Routing Concept
+  Purpose: Explain URK event movement without encouraging event sprawl.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Event Routing
+
+Events make runtime behavior observable.
+
+The kernel, adapters, and controllers can emit events into the runtime event bus.
+
+```ts
+ctx.events.emit({
+  type: 'controller:ready',
+  source: 'example-controller',
+  payload: { phase: ctx.state.getSnapshot().phase },
+  timestamp: Date.now(),
+});
+```
+
+## Listen to events
+
+Use `on()` for one event type and `onAny()` for a debug log.
+
+```ts
+const offReady = ctx.events.on('controller:ready', (event) => {
+  console.log(event.payload);
+});
+
+const offLog = ctx.events.onAny((event) => {
+  console.log(event.type, event.source);
+});
+```
+
+## Boundary
+
+Do not use events for every local UI update. Use events when runtime behavior should be visible across the surface, examples, docs, or tooling.
+
+## Next
+
+- [View runtime events](/docs/getting-started/view-runtime-events/)
+- [Route events](/docs/guides/route-events/)
+- [Event types](/docs/reference/event-types/)

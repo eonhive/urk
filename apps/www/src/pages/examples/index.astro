@@ -1,0 +1,60 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Examples Index
+ * Purpose: Present public URK runtime examples while keeping the boundary explicit.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import ExampleCard from '@/components/marketing/ExampleCard.astro';
+import { liveExamples, nonCurrentExamples } from '@/data/examples';
+
+const hasNonCurrentExamples = nonCurrentExamples.length > 0;
+---
+
+<BaseLayout
+  title="Examples"
+  description="Public URK runtime examples that prove the kernel through live browser surfaces."
+>
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Examples</span>
+        <h1 class="site-section-title">Real runtime proofs, not static screenshots.</h1>
+        <p class="site-section-copy">
+          Each example is meant to prove one clear part of the runtime kernel. The examples stay
+          focused, browser-native, and explicit about lifecycle, adapters, controllers, and events.
+        </p>
+      </div>
+
+      <div class="site-grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {liveExamples.map((entry) => <ExampleCard entry={entry} />)}
+      </div>
+    </div>
+  </section>
+
+  {
+    hasNonCurrentExamples && (
+      <section class="site-section">
+        <div class="site-shell site-grid gap-6">
+          <div class="site-grid gap-3">
+            <span class="site-kicker">Future examples</span>
+            <h2 class="site-section-title">Expand carefully after the current proofs stay credible.</h2>
+            <p class="site-section-copy">
+              Additional examples stay deliberately narrow. They exist to prove runtime behavior,
+              not to turn URK into a catch-all demo app.
+            </p>
+          </div>
+
+          <div class="site-grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {nonCurrentExamples.map((entry) => <ExampleCard entry={entry} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>

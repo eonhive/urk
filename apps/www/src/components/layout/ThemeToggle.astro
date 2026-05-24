@@ -1,0 +1,22 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Theme Toggle
+ * Purpose: Provide an accessible dark and light theme toggle for the URK website shell.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+---
+
+<button class="site-button theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme" aria-pressed="false">
+  <span aria-hidden="true" data-role="theme-glyph">◑</span>
+  <span data-role="theme-label">Dark</span>
+</button>
+
+<script>
+  import { attachThemeToggles } from '@/lib/theme';
+
+  attachThemeToggles();
+</script>

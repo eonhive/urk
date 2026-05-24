@@ -1,0 +1,26 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Status Badge
+ * Purpose: Provide a small reusable status label for package, example, and experimental surface states.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+interface Props {
+  label: string;
+  tone?: 'current' | 'experimental' | 'planned';
+}
+
+const { label, tone = 'current' } = Astro.props;
+const toneClass =
+  tone === 'experimental'
+    ? 'site-status-badge--experimental'
+    : tone === 'planned'
+      ? 'site-status-badge--planned'
+      : 'site-status-badge--current';
+---
+
+<span class={`site-status-badge ${toneClass}`}>{label}</span>

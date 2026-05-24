@@ -1,0 +1,58 @@
+---
+title: Create your first runtime
+description: Boot the smallest useful URK kernel in the browser.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Create Your First Runtime
+  Purpose: Teach the smallest shipped kernel bootstrap path.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Create your first runtime
+
+Start with the kernel before adding adapters, controllers, or framework wrappers.
+
+```ts
+import { createKernel } from '@urk/core';
+
+const kernel = createKernel();
+
+await kernel.boot();
+```
+
+After boot, the kernel has a runtime context, a state snapshot, and an event bus.
+
+```ts
+const snapshot = kernel.getState();
+const events = kernel.getEventBus();
+
+events.onAny((event) => {
+  console.log(event.type, event.source);
+});
+```
+
+## What this proves
+
+- the kernel can be constructed
+- the boot lifecycle can run
+- runtime state is readable
+- runtime events are observable
+
+## Cleanup
+
+Shutdown should happen when the browser surface unmounts or the proof is reset.
+
+```ts
+await kernel.shutdown('surface:dispose');
+```
+
+## Next
+
+- [Register an adapter](/docs/getting-started/register-an-adapter/)
+- [Runtime kernel](/docs/concepts/runtime-kernel/)
+- [Runtime types](/docs/reference/runtime-types/)

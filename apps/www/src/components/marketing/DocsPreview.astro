@@ -1,0 +1,99 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Docs and Playground Preview
+ * Purpose: Preview the public docs, examples, playground direction, and live runtime proof surfaces from the landing page.
+ * Author: Stan Nesi
+ * Created: 2026-05-03
+ * Updated: 2026-05-03
+ * Notes: Vibe coded with Codex.
+ */
+
+import StatusBadge from '@/components/visuals/StatusBadge.astro';
+
+interface Props {
+  livePreviewHref: string;
+  livePreviewTitle: string;
+}
+
+const { livePreviewHref, livePreviewTitle } = Astro.props;
+
+type PreviewTile = {
+  title: string;
+  href: string;
+  body: string;
+  badge?: {
+    label: string;
+    tone: 'current' | 'experimental' | 'planned';
+  };
+};
+
+const previewTiles: PreviewTile[] = [
+  {
+    title: 'Docs overview',
+    href: '/docs',
+    body: 'Foundation, boundary, architecture, package guides, and runtime concept pages.',
+  },
+  {
+    title: 'Examples index',
+    href: '/examples',
+    body: 'Focused runtime proofs that each demonstrate one clear behavior path.',
+  },
+  {
+    title: 'Playground',
+    href: '/playground',
+    body: 'Experimental. A future workspace for editing schema, watching runtime logs, and previewing live output side by side.',
+    badge: { label: 'Experimental', tone: 'experimental' as const },
+  },
+  {
+    title: 'Runtime logs',
+    href: livePreviewHref,
+    body: 'Recent events, phase changes, and controller activity should stay visible instead of disappearing behind framework internals.',
+  },
+  {
+    title: 'Schema editor',
+    href: '/playground',
+    body: 'A planned surface for editing runtime descriptions without pretending the schema layer is final today.',
+    badge: { label: 'Planned', tone: 'planned' as const },
+  },
+  {
+    title: 'Live preview',
+    href: livePreviewHref,
+    body: `A compact live runtime proof is already available through ${livePreviewTitle}, not a fake product mock or screenshot.`,
+    badge: { label: 'Current', tone: 'current' as const },
+  },
+];
+---
+
+<section class="site-grid gap-6">
+  <div class="site-grid gap-3">
+    <span class="site-kicker">Docs and playground preview</span>
+    <h2 class="site-section-title">Content-first pages. Runtime-first proof surfaces.</h2>
+    <p class="site-section-copy">
+      The public site explains the kernel through static docs and live runtime surfaces. The
+      playground remains experimental until the kernel contracts harden further.
+    </p>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    {
+      previewTiles.map((tile) => (
+        <a
+          class="site-card site-card--muted flex min-h-[15rem] flex-col gap-4 p-5 no-underline transition-transform duration-150 hover:-translate-y-0.5"
+          href={tile.href}
+        >
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <h3 class="font-[var(--urk-font-display)] text-2xl font-semibold tracking-[-0.04em]">
+              {tile.title}
+            </h3>
+            {tile.badge && <StatusBadge label={tile.badge.label} tone={tile.badge.tone} />}
+          </div>
+          <p class="site-section-copy text-sm">{tile.body}</p>
+          <span class="mt-auto font-[var(--urk-font-code)] text-xs uppercase tracking-[0.16em] text-[var(--urk-muted)]">
+            Open surface
+          </span>
+        </a>
+      ))
+    }
+  </div>
+</section>

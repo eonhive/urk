@@ -1,0 +1,53 @@
+---
+title: Core mental model
+description: Explain the schema and data to runtime kernel to browser UI flow.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Core Mental Model
+  Purpose: Teach the core URK runtime flow before implementation details.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Core mental model
+
+URK moves browser runtime behavior through a small explicit pipeline.
+
+```text
+schema/data -> runtime kernel -> adapters/controllers -> state/events -> browser UI
+```
+
+## Plain version
+
+Data describes what should exist. The kernel starts the runtime. Adapters expose browser capabilities. Controllers coordinate behavior. Runtime state and events make the live surface inspectable.
+
+## Technical version
+
+The kernel creates a `RuntimeContext`. That context gives controllers access to the state store, adapter registry, controller registry, service registry, event bus, and frame scheduler.
+
+```ts
+const ctx = kernel.getContext();
+
+const snapshot = ctx.state.getSnapshot();
+const loading = ctx.adapters.require('loading');
+
+ctx.events.emit({
+  type: 'example:ready',
+  source: 'example-controller',
+  timestamp: Date.now(),
+});
+```
+
+## Boundary
+
+URK owns runtime coordination. It does not own the full application, public website, documentation shell, or product business policy.
+
+## Next
+
+- [Installation](/docs/getting-started/installation/)
+- [Runtime context](/docs/concepts/runtime-context/)
+- [Minimal standalone runtime](/docs/examples/minimal-standalone-runtime/)

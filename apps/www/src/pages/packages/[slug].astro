@@ -1,0 +1,240 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Package Detail Page
+ * Purpose: Render package-specific URK reference pages without overstating package maturity.
+ * Author: Stan Nesi
+ * Created: 2026-05-06
+ * Updated: 2026-05-06
+ * Notes: Vibe coded with Codex.
+ */
+
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import CodeBlock from '@/components/docs/CodeBlock.astro';
+import StatusBadge from '@/components/visuals/StatusBadge.astro';
+import { publicPackages, type PublicPackageEntry } from '@/data/packages';
+
+interface Props {
+  entry: PublicPackageEntry;
+}
+
+export function getStaticPaths() {
+  return publicPackages.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+
+<BaseLayout title={entry.name} description={entry.purpose}>
+  <section class="site-section">
+    <div class="site-shell site-grid gap-8">
+      <div class="site-grid gap-4">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="site-kicker">Package</span>
+          <StatusBadge label={entry.statusLabel} tone={entry.statusTone} />
+        </div>
+
+        <div class="site-grid gap-3">
+          <h1 class="site-section-title">{entry.name}</h1>
+          <p class="site-subheading">{entry.purpose}</p>
+          <p class="site-section-copy">{entry.detail}</p>
+        </div>
+      </div>
+
+      {
+        entry.warning && (
+          <section class="site-card border-[var(--urk-warning)]/40 p-5">
+            <div class="site-grid gap-2">
+              <div class="font-[var(--urk-font-code)] text-xs uppercase tracking-[0.16em] text-[var(--urk-warning)]">
+                Stability warning
+              </div>
+              <p class="m-0 text-sm leading-7 text-[var(--urk-foreground)]">{entry.warning}</p>
+            </div>
+          </section>
+        )
+      }
+
+      <div class="grid gap-4 md:grid-cols-3">
+        <article class="site-card p-5">
+          <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Stability</div>
+          <strong class="text-xl">{entry.statusLabel}</strong>
+          <p class="mt-3 text-sm leading-7 text-[var(--urk-muted)]">{entry.stabilityNote}</p>
+        </article>
+        <article class="site-card p-5">
+          <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Purpose</div>
+          <strong class="text-xl">{entry.name}</strong>
+          <p class="mt-3 text-sm leading-7 text-[var(--urk-muted)]">{entry.purpose}</p>
+        </article>
+        <article class="site-card p-5">
+          <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Boundary</div>
+          <strong class="text-xl">What this package owns</strong>
+          <p class="mt-3 text-sm leading-7 text-[var(--urk-muted)]">{entry.boundaryNote}</p>
+        </article>
+      </div>
+
+      <section class="grid gap-4 xl:grid-cols-2">
+        <article class="site-card p-6">
+          <div class="site-grid gap-4">
+            <div>
+              <span class="site-kicker">What belongs</span>
+              <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+                Responsibilities inside {entry.name}
+              </h2>
+            </div>
+            <div class="site-grid gap-3">
+              {
+                entry.whatBelongs.map((item) => (
+                  <div class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4 text-sm leading-7 text-[var(--urk-foreground)]">
+                    {item}
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="site-grid gap-4">
+            <div>
+              <span class="site-kicker">What does not belong</span>
+              <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+                Keep these concerns elsewhere
+              </h2>
+            </div>
+            <div class="site-grid gap-3">
+              {
+                entry.whatDoesNotBelong.map((item) => (
+                  <div class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4 text-sm leading-7 text-[var(--urk-foreground)]">
+                    {item}
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+        <article class="site-card p-6">
+          <div class="site-grid gap-4">
+            <div>
+              <span class="site-kicker">Install</span>
+              <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+                Install command
+              </h2>
+            </div>
+            <CodeBlock code={entry.install} language="bash" title="Install" />
+          </div>
+        </article>
+
+        <article class="site-card p-6">
+          <div class="site-grid gap-4">
+            <div>
+              <span class="site-kicker">Basic usage</span>
+              <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+                Start from a minimal surface
+              </h2>
+            </div>
+            <CodeBlock
+              code={entry.basicUsage.code}
+              language={entry.basicUsage.language}
+              title={entry.basicUsage.title}
+            />
+          </div>
+        </article>
+      </section>
+
+      <section class="site-card p-6">
+        <div class="site-grid gap-4">
+          <div>
+            <span class="site-kicker">API overview</span>
+            <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+              Package surface area
+            </h2>
+          </div>
+          <div class="site-grid gap-3">
+            {
+              entry.apiOverview.map((item) => (
+                <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+                  <div class="mb-2 font-[var(--urk-font-code)] text-sm text-[var(--urk-foreground-strong)]">
+                    {item.name}
+                  </div>
+                  <p class="m-0 text-sm leading-7 text-[var(--urk-muted)]">{item.description}</p>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="site-card p-6">
+        <div class="site-grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <div class="site-grid gap-4">
+            <div>
+              <span class="site-kicker">Related docs</span>
+              <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+                Read the kernel model in context
+              </h2>
+            </div>
+            <div class="site-grid gap-3">
+              {
+                entry.relatedDocs.map((doc) => (
+                  <a class="site-button site-button--secondary justify-start" href={doc.href}>
+                    {doc.title}
+                  </a>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="site-grid gap-4">
+            <div>
+              <span class="site-kicker">Related examples</span>
+              <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+                Proofs that reinforce this package
+              </h2>
+            </div>
+            <div class="site-grid gap-3">
+              {
+                entry.relatedExamples.map((example) =>
+                  example.href ? (
+                    <a class="site-card p-4 transition hover:-translate-y-0.5" href={example.href}>
+                      <div class="mb-2 flex flex-wrap items-center gap-2">
+                        <strong>{example.title}</strong>
+                        {example.statusLabel && (
+                          <span class="font-[var(--urk-font-code)] text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">
+                            {example.statusLabel}
+                          </span>
+                        )}
+                      </div>
+                      {example.detail && (
+                        <p class="m-0 text-sm leading-7 text-[var(--urk-muted)]">{example.detail}</p>
+                      )}
+                    </a>
+                  ) : (
+                    <div class="site-card p-4">
+                      <div class="mb-2 flex flex-wrap items-center gap-2">
+                        <strong>{example.title}</strong>
+                        {example.statusLabel && (
+                          <span class="font-[var(--urk-font-code)] text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">
+                            {example.statusLabel}
+                          </span>
+                        )}
+                      </div>
+                      {example.detail && (
+                        <p class="m-0 text-sm leading-7 text-[var(--urk-muted)]">{example.detail}</p>
+                      )}
+                    </div>
+                  ),
+                )
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>

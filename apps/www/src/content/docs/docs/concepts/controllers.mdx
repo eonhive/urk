@@ -1,0 +1,58 @@
+---
+title: Controller Lifecycle
+description: Explain controller lifecycle and orchestration inside URK.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Controllers Concept
+  Purpose: Explain controllers as orchestration units without implying URK owns app-specific business logic.
+  Author: Stan Nesi
+  Created: 2026-05-01
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+*/}
+
+import CodeBlock from '@/components/docs/CodeBlock.astro';
+
+# Controller Lifecycle
+
+Controllers orchestrate runtime behavior.
+
+They sit above adapters and runtime state. They react to events, drive loading transitions, coordinate browser surfaces, and keep feature flows understandable.
+
+## Lifecycle
+
+Controllers can participate in:
+
+- `init`
+- `start`
+- `update`
+- `onStateChange`
+- `dispose`
+
+<CodeBlock
+  title="Controller shape"
+  language="ts"
+  code={`{
+  id: 'example-controller',
+  start(ctx) {},
+  update(frame, ctx) {},
+  onStateChange(next, previous, ctx) {},
+}`}/>
+
+## What controllers should not become
+
+Controllers should not become:
+
+- unstructured service blobs
+- hidden product-business-logic containers
+- replacements for explicit runtime state
+
+They are orchestration units, not the entire application.
+
+## Next
+
+- [Create a controller](/docs/guides/create-controller/)
+- [Event routing](/docs/concepts/event-routing/)
+- [Controller contract types](/docs/reference/controller-contract-types/)

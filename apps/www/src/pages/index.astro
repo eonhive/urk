@@ -1,0 +1,310 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Landing Page
+ * Purpose: Present the public URK landing page with runtime-kernel messaging, public package truth, and live-surface previews.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-06
+ * Notes: Vibe coded with Codex.
+ */
+
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import DocsPreview from '@/components/marketing/DocsPreview.astro';
+import FeatureCard from '@/components/marketing/FeatureCard.astro';
+import HeroRuntimeDiagram from '@/components/marketing/HeroRuntimeDiagram.astro';
+import PackageCard from '@/components/marketing/PackageCard.astro';
+import RuntimePipeline from '@/components/marketing/RuntimePipeline.astro';
+import ThemeSupportShowcase from '@/components/marketing/ThemeSupportShowcase.astro';
+import UseCaseCard from '@/components/marketing/UseCaseCard.astro';
+import LiveURKExample from '@/components/urk-runtime/LiveURKExample.astro';
+import { liveExamples } from '@/data/examples';
+import { homepagePackages } from '@/data/packages';
+import { siteMetadata, supportingLines } from '@/data/site';
+
+const featuredExample =
+  liveExamples.find((entry) => entry.href === '/examples/minimal-runtime') ??
+  liveExamples[0] ?? {
+    title: 'Minimal Runtime',
+    href: '/examples/minimal-runtime',
+    summary: 'A small live runtime proof for lifecycle, explicit state, and event visibility.',
+    status: 'Current' as const,
+    boundary: 'Lifecycle, state, and event routing foundations.',
+  };
+
+const useCases = [
+  {
+    title: 'Interactive docs',
+    body: 'Mount stateful walkthroughs, runtime-aware documentation islands, and examples that prove behavior instead of describing it abstractly.',
+  },
+  {
+    title: 'App shells',
+    body: 'Coordinate loading, overlays, navigation-adjacent behavior, and runtime state without collapsing into a product shell.',
+  },
+  {
+    title: 'Builders',
+    body: 'Interpret schema-driven interfaces and runtime descriptors while keeping capability lookup and orchestration explicit.',
+  },
+  {
+    title: 'Sandboxes',
+    body: 'Spin up isolated runtime surfaces to test lifecycle, transitions, and capability registration.',
+  },
+  {
+    title: 'Internal tools',
+    body: 'Build browser-native tooling surfaces that need explicit runtime context and controlled capability access.',
+  },
+  {
+    title: 'Runtime demos',
+    body: 'Show architecture through live proofs instead of screenshots, static mockups, or vague diagrams.',
+  },
+  {
+    title: 'Scene / User Interface coordination',
+    body: 'Keep scene behavior and User Interface behavior inside one explicit runtime model without claiming engine scope.',
+  },
+  {
+    title: 'Browser-native experiments',
+    body: 'Try new interaction and runtime patterns in the browser without overbuilding into a framework or engine.',
+  },
+] as const;
+---
+
+<BaseLayout title={siteMetadata.title} description={siteMetadata.description}>
+  <section class="site-section site-section--tight">
+    <div class="site-shell grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+      <div class="site-grid gap-6">
+        <span class="site-kicker">Runtime-first UI infrastructure</span>
+
+        <div class="site-grid gap-5">
+          <h1 class="site-heading">{siteMetadata.tagline}</h1>
+          <p class="site-subheading">
+            URK helps developers mount schema-driven, adapter-based, controller-driven runtime
+            experiences into browser-native User Interfaces without locking the project into one
+            framework.
+          </p>
+          <p class="site-section-copy max-w-[60ch]">
+            Describe schema and runtime structure as data. Register capabilities. Coordinate
+            controllers, state, and events. Mount a live browser surface.
+          </p>
+        </div>
+
+        <div class="site-chip-row">
+          <span class="site-chip">Open-source</span>
+          <span class="site-chip">TypeScript-first</span>
+          <span class="site-chip">Browser-native</span>
+          <span class="site-chip">No framework lock-in</span>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <a class="site-button site-button--primary" href={siteMetadata.docsPath + '/getting-started'}>
+            Get started
+          </a>
+          <a class="site-button site-button--secondary" href={siteMetadata.examplesPath}>
+            View examples
+          </a>
+        </div>
+
+        <div class="site-grid gap-2">
+          {
+            supportingLines.map((line) => (
+              <div class="font-[var(--urk-font-code)] text-sm text-[var(--urk-muted)]">{line}</div>
+            ))
+          }
+        </div>
+      </div>
+
+      <HeroRuntimeDiagram />
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Runtime proof</span>
+        <h2 class="site-section-title">A real URK surface, mounted inside the public site.</h2>
+        <p class="site-section-copy">
+          This is not a screenshot. The public site mounts the current minimal runtime example
+          directly so lifecycle, state, registries, and emitted events stay visible.
+        </p>
+      </div>
+
+      <LiveURKExample example="minimal-runtime" />
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Why URK?</span>
+        <h2 class="site-section-title">A small runtime layer for live browser surfaces.</h2>
+        <p class="site-section-copy">
+          URK keeps runtime lifecycle, capability lookup, controllers, state, and event flow
+          explicit while the experience is live.
+        </p>
+      </div>
+
+      <div class="site-grid md:grid-cols-2 xl:grid-cols-4">
+        <FeatureCard
+          title="Runtime-first"
+          body="Behavior happens at runtime, not only at build time. Lifecycle, loading, transitions, and event flow stay visible while the surface is live."
+        />
+        <FeatureCard
+          title="Composable"
+          body="Start with a kernel, register a few capabilities, add controllers deliberately, and grow only the runtime pieces the experience needs."
+          accent="success"
+        />
+        <FeatureCard
+          title="Schema-driven"
+          body="Describe interface structure as data, then let the runtime coordinate how that data becomes a browser-native surface."
+        />
+        <FeatureCard
+          title="Browser-native"
+          body="Built for the web platform: DOM, browser input, storage, loading, scene bridges, and explicit runtime flow control."
+          accent="warning"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">How URK works</span>
+        <h2 class="site-section-title">Schema in. Runtime execution. Interactive UI out.</h2>
+        <p class="site-section-copy">
+          URK turns structured runtime input into live browser behavior through explicit state,
+          capability registries, controllers, and event routing.
+        </p>
+      </div>
+
+      <RuntimePipeline />
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <h2 class="site-section-title">What URK is</h2>
+        <p class="site-section-copy">
+          URK is intentionally narrow. That constraint is part of the product.
+        </p>
+      </div>
+
+      <div class="grid gap-6 xl:grid-cols-2">
+        <article class="site-card p-6 md:p-8">
+          <span class="site-kicker">URK is</span>
+          <ul class="mt-6 grid gap-3 pl-5 leading-8 text-[var(--urk-foreground)]">
+            <li>A runtime kernel for the browser.</li>
+            <li>Declarative and schema-driven.</li>
+            <li>Adapter-friendly.</li>
+            <li>Controller-driven.</li>
+            <li>Small and composable.</li>
+            <li>Useful for builders and platform teams.</li>
+          </ul>
+        </article>
+
+        <article class="site-card p-6 md:p-8">
+          <span class="site-kicker">URK is not</span>
+          <ul class="mt-6 grid gap-3 pl-5 leading-8 text-[var(--urk-muted)]">
+            <li>A full application framework.</li>
+            <li>A design system.</li>
+            <li>A backend.</li>
+            <li>A product shell.</li>
+            <li>A React-only library.</li>
+            <li>A no-code builder.</li>
+            <li>A replacement for app-specific business logic.</li>
+          </ul>
+        </article>
+      </div>
+
+      <article class="site-card site-card--muted p-6 md:p-8">
+        <div class="site-grid gap-3 lg:grid-cols-[0.72fr_1fr] lg:items-start">
+          <h3 class="font-[var(--urk-font-display)] text-3xl font-semibold tracking-[-0.05em]">
+            Not another framework.
+          </h3>
+          <p class="site-section-copy">
+            URK owns lifecycle, runtime context, adapters, controllers, explicit state, and event
+            routing. Product logic still belongs above the kernel.
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Built for how teams build</span>
+        <h2 class="site-section-title">Useful anywhere the browser surface behaves like a runtime.</h2>
+        <p class="site-section-copy">
+          URK fits teams that need explicit runtime behavior, inspectable coordination, and
+          browser-native execution without turning the whole stack into a framework bet.
+        </p>
+      </div>
+
+      <div class="site-grid md:grid-cols-2 xl:grid-cols-4">
+        {useCases.map((entry) => <UseCaseCard title={entry.title} body={entry.body} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">The URK ecosystem</span>
+        <h2 class="site-section-title">Start with the kernel. Add capabilities deliberately.</h2>
+        <p class="site-section-copy">
+          Public package surfaces stay honest about maturity. Current runtime pieces are marked
+          current. Future packages are clearly labeled planned or experimental.
+        </p>
+      </div>
+
+      <div class="site-grid md:grid-cols-2 xl:grid-cols-3">
+        {homepagePackages.map((entry) => <PackageCard entry={entry} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell">
+      <DocsPreview
+        livePreviewHref={featuredExample.href ?? '/examples/minimal-runtime'}
+        livePreviewTitle={featuredExample.title}
+      />
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell">
+      <ThemeSupportShowcase />
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-card p-6 md:p-8">
+      <div class="grid gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div class="site-grid gap-4">
+          <span class="site-kicker">Ready to build with URK?</span>
+          <h2 class="site-section-title">Ready to build with URK?</h2>
+          <p class="site-section-copy">
+            Start with the kernel, prove one runtime surface, then grow adapters, controllers, and
+            examples around it.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-3 lg:justify-end">
+          <a class="site-button site-button--primary" href={siteMetadata.docsPath + '/getting-started'}>
+            Get started
+          </a>
+          <a
+            class="site-button site-button--secondary"
+            href={siteMetadata.githubUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Star on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,150 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Packages Page
+ * Purpose: Summarize real URK package surfaces without inventing package pages for deferred ideas.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-06
+ * Notes: Vibe coded with Codex.
+ */
+
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import PackageCard from '@/components/marketing/PackageCard.astro';
+import StatusBadge from '@/components/visuals/StatusBadge.astro';
+import {
+  internalPackages,
+  runtimePackages,
+  toolingPackages,
+  wrapperPackages,
+} from '@/data/packages';
+---
+
+<BaseLayout title="Packages" description="Kernel-first package pages for real URK workspace packages.">
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Packages</span>
+        <h1 class="site-section-title">Real package surfaces, with the kernel at the center.</h1>
+        <p class="site-section-copy">
+          Start with the kernel and adapter layer. Tooling and wrappers are real publishable
+          packages, but they stay downstream from the runtime model. The website examples package
+          is private and internal. Deferred ideas such as schema and inspector packages do not get
+          package pages until they become real workspaces.
+        </p>
+      </div>
+
+      <section class="site-card p-6">
+        <div class="site-grid gap-4">
+          <div>
+            <span class="site-kicker">Status labels</span>
+            <h2 class="mt-4 font-[var(--urk-font-display)] text-3xl font-semibold">
+              Read the maturity label before you install
+            </h2>
+          </div>
+          <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+              <div class="mb-3"><StatusBadge label="Current" tone="current" /></div>
+              <p class="m-0 text-sm leading-7 text-[var(--urk-muted)]">
+                Usable now. Start here when you are learning or building the standalone kernel flow.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+              <div class="mb-3"><StatusBadge label="Experimental" tone="experimental" /></div>
+              <p class="m-0 text-sm leading-7 text-[var(--urk-muted)]">
+                Real and useful, but still intentionally unstable while the surrounding workflow settles.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+              <div class="mb-3"><StatusBadge label="Experimental wrapper" tone="experimental" /></div>
+              <p class="m-0 text-sm leading-7 text-[var(--urk-muted)]">
+                Publishable and real, but downstream from the standalone runtime model.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+              <div class="mb-3"><StatusBadge label="Private internal" tone="experimental" /></div>
+              <p class="m-0 text-sm leading-7 text-[var(--urk-muted)]">
+                Workspace-only infrastructure consumed by the website. Not a stable npm API.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="site-grid gap-4">
+        <div class="site-grid gap-3">
+          <span class="site-kicker">Runtime packages</span>
+          <h2 class="site-section-title">The current public runtime surface</h2>
+          <p class="site-section-copy">
+            These packages carry the standalone-first runtime story: bootstrap the kernel and
+            register browser capabilities without framework ownership.
+          </p>
+        </div>
+
+        <div class="site-grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {runtimePackages.map((entry) => <PackageCard entry={entry} />)}
+        </div>
+      </section>
+
+      <section class="site-grid gap-4">
+        <div class="site-grid gap-3">
+          <span class="site-kicker">Developer tooling</span>
+          <h2 class="site-section-title">Tooling that supports URK projects</h2>
+          <p class="site-section-copy">
+            Tooling can scaffold, inspect, and check projects, but it does not own runtime behavior
+            or browser execution.
+          </p>
+        </div>
+
+        <div class="site-grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {toolingPackages.map((entry) => <PackageCard entry={entry} />)}
+        </div>
+      </section>
+
+      <section class="site-grid gap-4">
+        <div class="site-grid gap-3">
+          <span class="site-kicker">Framework wrappers</span>
+          <h2 class="site-section-title">Publishable wrappers that stay downstream</h2>
+          <p class="site-section-copy">
+            React and Next integrations are real packages. They wrap the kernel instead of
+            redefining it, so they are useful after the standalone runtime model is clear.
+          </p>
+        </div>
+
+        <div class="site-grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {wrapperPackages.map((entry) => <PackageCard entry={entry} />)}
+        </div>
+      </section>
+
+      <section class="site-card p-6">
+        <div class="site-grid gap-3">
+          <span class="site-kicker">Private website internals</span>
+          <h2 class="font-[var(--urk-font-display)] text-3xl font-semibold">
+            Internal packages are labeled clearly
+          </h2>
+          <p class="site-section-copy">
+            `@urk/examples` is a real workspace, but it exists to power the public website examples.
+            It is private, unstable, and not a public consumer package.
+          </p>
+        </div>
+        <div class="mt-6 site-grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {internalPackages.map((entry) => <PackageCard entry={entry} />)}
+        </div>
+      </section>
+
+      <section class="site-card p-6">
+        <div class="site-grid gap-3">
+          <span class="site-kicker">Deferred package ideas</span>
+          <h2 class="font-[var(--urk-font-display)] text-3xl font-semibold">
+            No package pages for schema or inspector yet
+          </h2>
+          <p class="site-section-copy">
+            `@urk/schema` and `@urk/inspector` are deferred ideas, not current workspaces. Schema
+            and inspector language belongs in roadmap and deferred-feature docs until those packages
+            are intentionally created.
+          </p>
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>

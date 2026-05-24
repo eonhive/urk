@@ -1,0 +1,69 @@
+---
+title: Boundary
+description: State what URK owns and what stays outside the runtime kernel.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Project Boundary Docs
+  Purpose: Summarize the canonical URK boundary for public docs readers.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-15
+  Notes: Vibe coded with Codex.
+*/}
+
+# Boundary
+
+URK owns runtime coordination for interactive browser surfaces.
+
+The canonical source is `docs/BOUNDARY.md` in the repository. This page is a public onboarding summary.
+
+## URK owns
+
+- kernel bootstrap and startup/shutdown lifecycle
+- runtime context creation and dependency access
+- adapter registration and capability contracts
+- controller registration, lifecycle, and orchestration
+- explicit runtime state foundations
+- shared service lookup
+- event routing foundations
+- scene and User Interface bridge foundations
+- interactive runtime orchestration primitives
+- examples that prove the kernel works
+
+## URK does not own
+
+- product-specific business logic
+- Kivatar identity, Soul Seed logic, avatar packs, monetization, or dashboards
+- host/personal user policy systems
+- public website layout
+- content routing and docs rendering
+- backend services
+- no-code builder behavior
+- renderer or game engine internals
+
+## Boundary matrix
+
+| Concern | URK owns | Outside URK |
+| --- | --- | --- |
+| Runtime lifecycle | Kernel boot, pause, resume, shutdown, and teardown visibility. | Product launch flows and account state. |
+| Capabilities | Generic browser-facing adapter contracts and lookup. | Product-specific service integrations. |
+| Orchestration | Controllers that coordinate runtime behavior. | Business workflows, dashboards, and monetization policy. |
+| State | Runtime phases, snapshots, and transition reasons. | Product data models and identity state. |
+| UI coordination | Runtime-visible scene/User Interface bridge foundations. | Full renderer ownership or website layout ownership. |
+| Framework support | Thin wrappers around the standalone kernel. | Framework-first architecture that redefines the kernel. |
+
+## Red flags
+
+- product policy moving into `@urk/core`
+- avatar, identity, or dashboard behavior in runtime packages
+- wrappers redefining kernel architecture
+- no-code builder claims for the experimental playground
+- archived `docs/07_URK/` notes overriding current canonical docs
+
+## Next
+
+- [Architecture](/docs/project/architecture/)
+- [What URK is not](/docs/introduction/what-urk-is-not/)
+- [Decisions](/docs/project/decisions/)

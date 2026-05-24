@@ -1,0 +1,29 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Schema Panel
+ * Purpose: Render the declarative runtime input shown alongside the live example preview.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+interface Props {
+  schemaSource: string;
+}
+
+const { schemaSource } = Astro.props;
+---
+
+<section class="site-card flex h-full flex-col gap-4 p-6">
+  <div>
+    <div class="site-kicker">Schema</div>
+    <h3 class="mt-4 text-2xl font-semibold tracking-[-0.04em]">Declarative runtime input</h3>
+  </div>
+  <p class="site-section-copy text-sm">
+    This example keeps the surface small: one loading capability, one controller, and one preview
+    panel that exposes runtime state without pretending URK is the full app framework.
+  </p>
+  <pre class="site-code-block m-0 flex-1"><code>{schemaSource}</code></pre>
+</section>

@@ -1,0 +1,38 @@
+---
+title: Use URK with Next.js
+description: Explain the Next.js integration boundary without making Next.js the runtime source of truth.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Next Later Guide
+  Purpose: Mark Next.js wrapper guidance as integration-level and later-stage.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Use URK with Next.js
+
+Next.js integration must respect server and client boundaries.
+
+URK runtime execution belongs on the client because it coordinates browser capabilities.
+
+```text
+Next.js route -> client host component -> URK runtime surface
+```
+
+## Current status
+
+`@urk/next-urk` is a publishable experimental wrapper package, and `apps/next-proof` is the repo-only proof app.
+
+Do not present server rendering as runtime execution. Use the wrapper inside a client boundary.
+
+For package details, read [@urk/next-urk](/docs/reference/next-urk/).
+
+## Next
+
+- [Integration wrappers](/docs/concepts/integration-wrappers/)
+- [Use URK with React](/docs/guides/react-later/)
+- [Architecture](/docs/project/architecture/)

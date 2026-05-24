@@ -1,0 +1,62 @@
+---
+title: Adapter Contracts
+description: Explain URK adapters as capability contracts that bridge runtime logic to browser-native systems.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Adapters Concept
+  Purpose: Explain adapters and capability lookup without collapsing the concept into utilities or framework wrappers.
+  Author: Stan Nesi
+  Created: 2026-05-01
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+*/}
+
+import CodeBlock from '@/components/docs/CodeBlock.astro';
+
+# Adapter Contracts
+
+Adapters expose **capabilities**.
+
+An adapter is how URK bridges the runtime kernel to browser-native or environment-specific behavior such as loading, input, storage, audio, rendering, or UI widgets.
+
+## Why adapters exist
+
+Adapters keep two responsibilities separate:
+
+- the kernel owns lifecycle and orchestration
+- adapters own capability surfaces
+
+That separation prevents controller logic from collapsing into raw implementation detail.
+
+## Capability lookup
+
+Controllers resolve the capability they need through explicit runtime lookup.
+
+<CodeBlock
+  title="Capability lookup"
+  language="ts"
+  code={`const loading = ctx.adapters.require<LoadingAdapterApi>('loading');`}/>
+
+## Contract shape
+
+An adapter registration declares an `id`, a `capability`, setup logic, optional support checks, optional dependencies, and optional disposal logic.
+
+The contract comes from `@urk/core`; `@urk/adapters` re-exports the public adapter contract types for adapter authors.
+
+## What adapters are not
+
+Adapters are **not**:
+
+- a dumping ground for product logic
+- a random utilities collection
+- a framework-specific helper layer
+
+They should stay contract-first and explicit about what capability they provide.
+
+## Next
+
+- [Adapter capability lookup](/docs/concepts/adapter-capability-lookup/)
+- [Create an adapter](/docs/guides/create-adapter/)
+- [Adapter contract types](/docs/reference/adapter-contract-types/)

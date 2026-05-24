@@ -1,0 +1,41 @@
+---
+title: Minimal standalone runtime
+description: Document the first live URK runtime example on the public website.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Minimal Standalone Runtime Example Docs
+  Purpose: Explain the current live minimal runtime example and its learning goal.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Minimal standalone runtime
+
+Status: current.
+
+This is the first live public URK example. It demonstrates a small runtime surface with kernel lifecycle, loading adapter behavior, runtime state, and event visibility.
+
+Open the runnable example: [Minimal Runtime](/examples/minimal-runtime/).
+
+## What it teaches
+
+- boot a kernel
+- register a loading adapter
+- run a focused controller
+- render runtime state
+- render recent events
+- dispose the runtime surface cleanly
+
+## Boundary
+
+The example is consumed by the website from private `@urk/examples` internals. Treat the page behavior as a learning surface, not as a stable package contract.
+
+## Next
+
+- [Build a minimal runtime example](/docs/guides/minimal-runtime-example/)
+- [Adapter registration](/docs/examples/adapter-registration/)
+- [Runtime kernel](/docs/concepts/runtime-kernel/)

@@ -1,0 +1,42 @@
+---
+title: Playground starter
+description: Track the experimental playground direction without presenting it as a no-code builder.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Playground Starter Example Docs
+  Purpose: Mark playground behavior as experimental while keeping the URK boundary clear.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-14
+  Notes: Vibe coded with Codex.
+*/}
+
+# Playground starter
+
+Status: experimental.
+
+The playground is a runtime lab for exploring URK concepts. It is not a no-code builder and not a stable product API.
+
+Open the current shell: [Playground](/playground/). The shell validates known-example config, updates state/adapters/controllers/event panels locally, and links to real example routes for runtime execution.
+
+## Intended lesson
+
+- inspect known example runtime shape
+- connect example metadata to playground presentation
+- validate config before runtime execution
+- avoid hiding kernel behavior behind a product shell
+
+## Current path
+
+- [What URK is not](/docs/introduction/what-urk-is-not/)
+- [Deferred features](/docs/project/deferred-features/)
+- [@urk/examples reference](/docs/reference/examples/)
+
+## Current boundary
+
+- Config is limited to current public examples.
+- Adapter and controller names must match selected example metadata.
+- Custom JavaScript is rejected by design.
+- Runtime execution still happens on dedicated example routes until a stable playground mount contract exists.

@@ -1,0 +1,52 @@
+---
+title: Register a controller
+description: Add focused orchestration to a URK runtime.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Register A Controller
+  Purpose: Show how controller registration fits into the current runtime lifecycle.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Register a controller
+
+Controllers coordinate runtime behavior. They should not implement adapter internals or render the whole application.
+
+```ts
+import type { ControllerRegistration } from '@urk/core';
+
+const loadingController: ControllerRegistration = {
+  id: 'loading-flow',
+  start(ctx) {
+    const loading = ctx.adapters.require('loading');
+
+    loading.begin([
+      { id: 'boot', label: 'Boot runtime' },
+      { id: 'ready', label: 'Show surface' },
+    ]);
+
+    ctx.state.setPhase('ready', 'loading-flow:ready');
+    loading.complete('Runtime ready');
+  },
+};
+```
+
+Register the controller at kernel creation time.
+
+```ts
+const kernel = createKernel({
+  adapters: [createLoadingAdapter()],
+  controllers: [loadingController],
+});
+```
+
+## Next
+
+- [Mount a runtime surface](/docs/getting-started/mount-a-runtime-surface/)
+- [Controller lifecycle](/docs/concepts/controllers/)
+- [Create a controller](/docs/guides/create-controller/)

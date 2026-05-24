@@ -1,0 +1,69 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Live URK Example
+ * Purpose: Render the site-owned shell that mounts a real URK example while isolating failure from the rest of the page.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+
+import { getExampleMeta, type ExampleId } from '@urk/examples';
+import PreviewPanel from './PreviewPanel.astro';
+import RuntimeLogPanel from './RuntimeLogPanel.astro';
+import RuntimeStatePanel from './RuntimeStatePanel.astro';
+import SchemaPanel from './SchemaPanel.astro';
+
+interface Props {
+  exampleId?: ExampleId;
+  example?: ExampleId;
+  schemaSource?: string;
+}
+
+const { exampleId: explicitExampleId, example, schemaSource: explicitSchemaSource } = Astro.props;
+const resolvedExampleId = explicitExampleId ?? example;
+
+if (!resolvedExampleId) {
+  throw new Error('LiveURKExample requires an exampleId or example prop.');
+}
+
+const exampleMeta = getExampleMeta(resolvedExampleId);
+const schemaSource = explicitSchemaSource ?? exampleMeta.schemaSource;
+---
+
+<section class="site-grid gap-6" data-urk-example-root data-example-id={resolvedExampleId}>
+  <div class="site-card flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
+    <div>
+      <div class="font-[var(--urk-font-code)] text-xs uppercase tracking-[0.16em] text-[var(--urk-muted)]">
+        Runtime controls
+      </div>
+      <p class="m-0 mt-2 text-sm leading-7 text-[var(--urk-muted)]">
+        Restart tears down the mounted example and boots a fresh runtime surface.
+      </p>
+    </div>
+    <button
+      class="site-button site-button--secondary"
+      type="button"
+      data-role="restart-example"
+      aria-label={`Reset and restart ${exampleMeta.title}`}
+    >
+      Reset / restart
+    </button>
+  </div>
+
+  <div class="site-grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
+    <div class="site-grid gap-6">
+      <SchemaPanel schemaSource={schemaSource} />
+      <RuntimeStatePanel />
+    </div>
+    <PreviewPanel />
+  </div>
+  <RuntimeLogPanel />
+</section>
+
+<script>
+  import { mountExampleIslands } from '@/lib/runtime-islands/example-client';
+
+  mountExampleIslands();
+</script>

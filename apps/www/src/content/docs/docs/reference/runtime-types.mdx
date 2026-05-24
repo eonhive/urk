@@ -1,0 +1,50 @@
+---
+title: Runtime types
+description: Reference current runtime object and lifecycle type vocabulary.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Runtime Types Reference
+  Purpose: Summarize the current public runtime types from @urk/core.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Runtime types
+
+Runtime types live in `@urk/core`.
+
+Key public types include `RuntimePhase`, `RuntimeSnapshot`, `RuntimeContext`, `KernelConfig`, `FrameInfo`, and `FrameScheduler`.
+
+## Runtime snapshot
+
+```ts
+export interface RuntimeSnapshot {
+  phase: RuntimePhase;
+  reason?: string;
+  updatedAt: number;
+}
+```
+
+## Runtime context
+
+```ts
+export interface RuntimeContext {
+  id: string;
+  state: RuntimeStore;
+  adapters: AdapterRegistry;
+  controllers: ControllerRegistry;
+  services: ServiceRegistry;
+  events: EventBus<KernelEvent>;
+  scheduler: FrameScheduler;
+}
+```
+
+## Next
+
+- [Runtime context](/docs/concepts/runtime-context/)
+- [Explicit runtime state](/docs/concepts/explicit-runtime-state/)
+- [@urk/core](/docs/reference/core/)

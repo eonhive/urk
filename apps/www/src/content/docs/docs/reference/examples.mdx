@@ -1,0 +1,65 @@
+---
+title: "@urk/examples"
+description: Document the private website-consumed example package without making it a public API.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Examples Package Reference
+  Purpose: Explain the internal @urk/examples workspace contract and instability warning.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-09
+  Notes: Vibe coded with Codex.
+*/}
+
+# @urk/examples
+
+`@urk/examples` is private, internal, unstable, and consumed by `apps/www`.
+
+It is not a public npm API.
+
+Status: private internal workspace.
+
+Package page: [@urk/examples](/packages/examples/)
+
+## Install
+
+Do not install this package from consumer projects.
+
+Inside the URK repository, build it as a private workspace package:
+
+```bash
+corepack yarn workspace @urk/examples build
+```
+
+## Current role
+
+The package provides example metadata and a website mount contract for runtime islands.
+
+The current live catalog includes the public runtime examples under `/examples/`, including `minimal-runtime`, `adapter-registration`, `controller-orchestration`, `runtime-state`, `event-routing`, `scene-ui-bridge`, `pointer-input-overlay`, and `embedded-docs-demo`.
+
+## Internal mount shape
+
+The current internal shape is:
+
+```ts
+mount(host: HTMLElement, options?: ExampleMountOptions): ExampleMountResult
+```
+
+Do not build external packages against this contract yet.
+
+## Current exports
+
+- `exampleCatalog`
+- `getExampleMeta(id)`
+- `loadExampleModule(id)`
+- internal example metadata and mount types
+- current runtime mounts for website routes
+
+## Next
+
+- [Minimal standalone runtime](/docs/examples/minimal-standalone-runtime/)
+- [Use URK inside Astro docs](/docs/guides/astro-docs-embed/)
+- [Embedded Docs Demo](/examples/embedded-docs-demo/)
+- [Boundary](/docs/project/boundary/)

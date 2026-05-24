@@ -1,0 +1,47 @@
+---
+title: Use runtime state safely
+description: Keep URK runtime state visible, bounded, and separate from product data.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Use Runtime State Safely Guide
+  Purpose: Explain safe use of the current runtime state store.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Use runtime state safely
+
+URK state describes the runtime, not the product.
+
+Use it for lifecycle phase and operational visibility.
+
+```ts
+ctx.state.setPhase('loading', 'assets:begin');
+ctx.state.setPhase('ready', 'assets:complete');
+```
+
+## Safe practices
+
+- use specific reasons
+- subscribe only when the surface needs updates
+- unsubscribe during teardown
+- keep product records outside the runtime store
+- do not encode every UI control value into runtime phase
+
+## Subscribe to state
+
+```ts
+const unsubscribe = ctx.state.subscribe((next, previous) => {
+  console.log(previous.phase, '->', next.phase);
+});
+```
+
+## Next
+
+- [Explicit runtime state](/docs/concepts/explicit-runtime-state/)
+- [Runtime state panel](/docs/examples/runtime-state-panel/)
+- [Runtime types](/docs/reference/runtime-types/)

@@ -1,0 +1,48 @@
+---
+title: Mount a runtime surface
+description: Connect a URK runtime to a browser host element and dispose cleanly.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Mount A Runtime Surface
+  Purpose: Explain the browser mount boundary without turning URK into the page framework.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Mount a runtime surface
+
+A runtime surface starts with a browser host element.
+
+The page shell can be static HTML, Astro, React, Next.js, or another framework. URK should only own the live runtime surface inside the host.
+
+```ts
+export async function mountRuntime(host: HTMLElement) {
+  const kernel = createKernel({
+    adapters: [createLoadingAdapter()],
+  });
+
+  host.textContent = 'Booting URK runtime';
+  await kernel.boot();
+
+  return {
+    async teardown() {
+      await kernel.shutdown('surface:teardown');
+      host.textContent = '';
+    },
+  };
+}
+```
+
+## Boundary
+
+The shell owns layout, navigation, Search Engine Optimization (SEO), and static content. URK owns the live runtime behavior inside the mounted surface.
+
+## Next
+
+- [View runtime events](/docs/getting-started/view-runtime-events/)
+- [Embed URK in a static website](/docs/guides/static-website-embed/)
+- [Use URK inside Astro docs](/docs/guides/astro-docs-embed/)

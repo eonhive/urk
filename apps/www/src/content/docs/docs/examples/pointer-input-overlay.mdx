@@ -1,0 +1,37 @@
+---
+title: Pointer/input overlay
+description: Use pointer and keyboard input adapters to drive visible overlay feedback in a live URK example.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Pointer Input Overlay Example Docs
+  Purpose: Document the live pointer and input overlay example.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-09
+  Notes: Vibe coded with Codex.
+*/}
+
+# Pointer/input overlay
+
+Status: current.
+
+The [Pointer Input Overlay example](/examples/pointer-input-overlay/) connects browser pointer and keyboard input capabilities to visible overlay feedback.
+
+## What it teaches
+
+- bind pointer targets or pointer surfaces
+- handle keyboard input
+- emit interaction events
+- update a visible overlay without coupling to one renderer
+
+## Boundary
+
+The adapters expose browser interaction. The controller coordinates feedback. The overlay stays an example surface, not a renderer-specific input framework.
+
+## Related docs
+
+- [Adapter contracts](/docs/concepts/adapters/)
+- [Scene/User Interface bridge](/docs/concepts/scene-ui-bridge/)
+- [Bridge scene and User Interface](/docs/guides/scene-ui-bridge/)

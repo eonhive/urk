@@ -1,0 +1,51 @@
+---
+title: Explicit Runtime State
+description: Explain URK runtime phases, snapshots, and state boundaries.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Explicit Runtime State Concept
+  Purpose: Explain how URK keeps runtime phase visible and bounded.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Explicit Runtime State
+
+URK runtime state is intentionally small.
+
+It records the runtime phase, an optional reason, and the update time.
+
+```ts
+const snapshot = kernel.getState();
+
+console.log(snapshot.phase, snapshot.reason);
+```
+
+## Current phases
+
+- `boot`
+- `loading`
+- `ready`
+- `transition`
+- `paused`
+- `error`
+
+## Runtime state is not product state
+
+Runtime state should explain the live runtime surface. It should not become the product database or the application business state store.
+
+Use it to keep lifecycle and operational transitions visible.
+
+```ts
+ctx.state.setPhase('ready', 'loading-flow:complete');
+```
+
+## Next
+
+- [Event routing](/docs/concepts/event-routing/)
+- [Use runtime state safely](/docs/guides/runtime-state-safely/)
+- [Runtime types](/docs/reference/runtime-types/)

@@ -1,0 +1,58 @@
+---
+title: What is URK?
+description: Define URK as a runtime kernel for browser-native interactive experiences.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: What Is URK
+  Purpose: Define the public URK product boundary for new developers.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# What is URK?
+
+URK - Universal Runtime Kernel is a public open-source runtime kernel for browser-native interactive experiences.
+
+It gives a browser surface a small, explicit runtime center:
+
+- a kernel lifecycle
+- a runtime context
+- adapter registration
+- controller orchestration
+- visible runtime state
+- event routing
+
+URK is useful when a page needs more than static content but should not become locked to one application framework.
+
+## Runtime kernel
+
+A runtime kernel is the part that owns live runtime coordination. It does not own the whole product shell.
+
+URK starts a kernel, creates a context, registers capabilities, starts controllers, tracks runtime phase, and emits events.
+
+```ts
+import { createKernel } from '@urk/core';
+
+const kernel = createKernel({
+  adapters: [],
+  controllers: [],
+});
+
+await kernel.boot();
+```
+
+## Browser-native focus
+
+URK is designed for browser User Interface (UI) surfaces. The kernel can run inside a plain page, a static website island, or a framework wrapper.
+
+The standalone runtime stays the source of truth. Framework integrations should stay thin.
+
+## Next
+
+- [Why URK?](/docs/introduction/why-urk/)
+- [Core mental model](/docs/introduction/core-mental-model/)
+- [Create your first runtime](/docs/getting-started/create-your-first-runtime/)

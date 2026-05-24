@@ -1,0 +1,73 @@
+---
+title: "@urk/core"
+description: Reference the current public core package responsibilities and exports.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Core Package Reference
+  Purpose: Summarize the current shipped @urk/core public surface.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# @urk/core
+
+`@urk/core` is the runtime kernel package.
+
+It exports the kernel lifecycle, runtime context types, explicit runtime state, registries, event bus, scheduler, inspector types, and public contract types.
+
+Status: current, publishable, 0.x.
+
+Package page: [@urk/core](/packages/core/)
+
+## Install
+
+```bash
+pnpm add @urk/core
+```
+
+## Primary entry
+
+```ts
+import { createKernel } from '@urk/core';
+
+const kernel = createKernel();
+await kernel.boot();
+```
+
+## Current areas
+
+- kernel creation and lifecycle
+- runtime context
+- runtime state store
+- adapter registry
+- controller registry
+- service registry
+- event bus
+- frame scheduler
+- runtime inspector types
+
+## Public export
+
+```ts
+export * from './events.js';
+export * from './kernel.js';
+export * from './registry.js';
+export * from './runtime.js';
+export * from './runtime-store.js';
+export * from './scheduler.js';
+export * from './types.js';
+```
+
+## Boundary
+
+This package should not import website code, examples, app shell code, or framework wrappers.
+
+## Next
+
+- [Runtime kernel](/docs/concepts/runtime-kernel/)
+- [Runtime types](/docs/reference/runtime-types/)
+- [Architecture](/docs/project/architecture/)

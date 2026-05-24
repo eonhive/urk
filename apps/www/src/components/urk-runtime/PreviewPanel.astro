@@ -1,0 +1,101 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Preview Panel
+ * Purpose: Provide the live browser surface and runtime telemetry shell for the minimal URK example page.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+---
+
+<section class="site-card flex h-full flex-col gap-5 p-6">
+  <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+    <div>
+      <div class="site-kicker">Live preview</div>
+      <h3 class="mt-4 text-2xl font-semibold tracking-[-0.04em]">Browser-native runtime surface</h3>
+    </div>
+    <div class="site-status-badge site-status-badge--current">Live runtime</div>
+  </div>
+
+  <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+      <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Phase</div>
+      <strong class="text-lg" data-role="runtime-phase" aria-live="polite">boot</strong>
+    </article>
+    <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+      <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Stage</div>
+      <strong class="text-lg" data-role="runtime-stage" aria-live="polite">Waiting</strong>
+    </article>
+    <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+      <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Frame</div>
+      <strong class="text-lg" data-role="runtime-frame">0</strong>
+    </article>
+    <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+      <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Latest Event</div>
+      <strong class="text-lg" data-role="runtime-latest-event">kernel:init</strong>
+    </article>
+  </div>
+
+  <div class="rounded-[1.35rem] border border-[var(--urk-border)] bg-black/12 p-5">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <div class="mb-1 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Mounted surface</div>
+        <strong class="text-xl" data-role="preview-phase">boot</strong>
+      </div>
+      <div class="text-right">
+        <div class="mb-1 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Reason</div>
+        <span data-role="preview-reason">kernel:init</span>
+      </div>
+    </div>
+
+    <div class="mb-3 flex items-center justify-between gap-3 font-[var(--urk-font-code)] text-sm">
+      <span>Progress</span>
+      <span data-role="preview-progress-label">0%</span>
+    </div>
+    <div class="runtime-preview-track">
+      <div
+        class="runtime-preview-track__fill"
+        data-role="preview-progress-fill"
+        role="progressbar"
+        aria-label="Runtime loading progress"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+      ></div>
+    </div>
+    <p class="mt-4 text-sm leading-7 text-[var(--urk-muted)]" data-role="preview-message" aria-live="polite">
+      Waiting to start the kernel.
+    </p>
+  </div>
+
+  <div class="grid gap-3 md:grid-cols-4">
+    <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+      <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Progress</div>
+      <strong data-role="runtime-progress">0%</strong>
+    </article>
+    <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+      <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Scheduler</div>
+      <strong data-role="runtime-scheduler">Stopped</strong>
+    </article>
+    <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+      <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Booted</div>
+      <strong data-role="runtime-booted">No</strong>
+    </article>
+    <article class="rounded-2xl border border-[var(--urk-border)] bg-white/3 p-4">
+      <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Registries</div>
+      <strong>
+        <span data-role="runtime-adapters">0</span>/<span data-role="runtime-controllers">0</span>/<span data-role="runtime-services">0</span>
+      </strong>
+    </article>
+  </div>
+
+  <div class="flex flex-wrap gap-3" role="group" aria-label="Runtime controls">
+    <button class="site-button site-button--secondary" type="button" data-role="pause-button">Pause</button>
+    <button class="site-button site-button--secondary" type="button" data-role="resume-button">Resume</button>
+    <button class="site-button site-button--ghost" type="button" data-role="shutdown-button">Shutdown</button>
+  </div>
+
+  <p class="hidden rounded-2xl border border-[color:var(--urk-error)] bg-[color-mix(in_srgb,var(--urk-error)_10%,transparent)] px-4 py-3 text-sm text-[var(--urk-foreground)]" data-role="example-error" role="alert"></p>
+</section>

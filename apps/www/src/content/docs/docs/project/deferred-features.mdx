@@ -1,0 +1,48 @@
+---
+title: Deferred features
+description: Mark intentionally deferred URK scope so public docs do not overpromise.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Project Deferred Features Docs
+  Purpose: Summarize deferred URK scope for public docs readers.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-15
+  Notes: Vibe coded with Codex.
+*/}
+
+# Deferred features
+
+The canonical source is `docs/DEFERRED.md` in the repository.
+
+Deferred means not promised as shipped public behavior.
+
+## Deferred scope
+
+| Deferred idea | Current rule |
+| --- | --- |
+| Full plugin marketplace | Do not build until the kernel and adapter contracts are credible. |
+| No-code runtime builder | The playground remains an experimental known-example config shell, not a product builder. |
+| Advanced devtools suite | Keep visibility surfaces small and local before building a large tool suite. |
+| Giant framework integration matrix | Keep React and Next wrappers thin and downstream; do not multiply wrappers speculatively. |
+| Many adapters without proof | Add adapters when examples or real hosts prove the need. |
+| Engine-like simulation features | URK coordinates browser runtime surfaces; it is not a game engine clone. |
+| Product-shell behavior | Auth, dashboards, monetization, and product policy stay outside URK. |
+| Separate `@urk/schema` package | Deferred until there is a real workspace and stable contract. |
+| Separate `@urk/inspector` package | Deferred until inspector behavior is stable beyond `kernel.getInspector()`. |
+
+## Why this matters
+
+The kernel must stay readable before URK expands outward. Planned ideas should not make current docs harder to trust.
+
+Schema and inspector ideas should stay in roadmap or deferred-feature docs until they become real workspaces. The current inspector data source is `kernel.getInspector()` from `@urk/core`.
+
+The next real win is contract-first implementation plus credible examples, not ecosystem sprawl.
+
+## Next
+
+- [Roadmap](/docs/project/roadmap/)
+- [What URK is not](/docs/introduction/what-urk-is-not/)
+- [Playground starter](/docs/examples/playground-starter/)

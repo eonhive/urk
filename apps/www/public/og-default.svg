@@ -1,0 +1,46 @@
+<!--
+  Company: EonHive Inc.
+  Title: URK Default Open Graph Image
+  Purpose: Provide the canonical social preview graphic for the URK public site.
+  Author: Stan Nesi
+  Created: 2026-05-01
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#090C14"/>
+  <g opacity=".18">
+    <path d="M0 90H1200M0 210H1200M0 330H1200M0 450H1200M0 570H1200" stroke="#566279"/>
+    <path d="M120 0V630M240 0V630M360 0V630M480 0V630M600 0V630M720 0V630M840 0V630M960 0V630M1080 0V630" stroke="#566279"/>
+  </g>
+  <circle cx="164" cy="150" r="140" fill="#7B61FF" fill-opacity=".08"/>
+  <circle cx="1020" cy="120" r="120" fill="#2FCB7A" fill-opacity=".05"/>
+  <g transform="translate(112 138)">
+    <g stroke="#96A0B4" stroke-opacity=".72" stroke-width="9">
+      <path d="M48 48H144M48 96H144M48 144H144M48 48V144M96 48V144M144 48V144"/>
+    </g>
+    <g stroke="#E8ECF3" stroke-width="7">
+      <circle cx="48" cy="48" r="10.5"/>
+      <circle cx="96" cy="48" r="10.5"/>
+      <circle cx="144" cy="48" r="10.5"/>
+      <circle cx="48" cy="96" r="10.5"/>
+      <circle cx="144" cy="96" r="10.5"/>
+      <circle cx="48" cy="144" r="10.5"/>
+      <circle cx="96" cy="144" r="10.5"/>
+      <circle cx="144" cy="144" r="10.5"/>
+    </g>
+    <circle cx="96" cy="96" r="15" fill="#7B61FF" stroke="#E8ECF3" stroke-width="7"/>
+  </g>
+  <g transform="translate(360 150) scale(1.8)">
+    <g stroke="#E8ECF3" stroke-width="8.5" stroke-linecap="square" stroke-linejoin="miter">
+      <path d="M20 16v22c0 8 6 14 14 14h6c8 0 14-6 14-14V16"/>
+      <path d="M92 52V12h18c12 0 20 7 20 18s-8 18-20 18H92"/>
+      <path d="M110 34l22 18"/>
+      <path d="M164 12v40"/>
+      <path d="M194 12l-30 20 30 20"/>
+    </g>
+  </g>
+  <text x="360" y="330" fill="#96A0B4" font-family="Geist, Inter, Arial, sans-serif" font-size="28" font-weight="600" letter-spacing="4">UNIVERSAL RUNTIME KERNEL</text>
+  <text x="112" y="434" fill="#E8ECF3" font-family="Space Grotesk, Arial, sans-serif" font-size="64" font-weight="600" letter-spacing="-2">The runtime kernel for interactive browser experiences.</text>
+  <text x="112" y="502" fill="#96A0B4" font-family="Geist, Inter, Arial, sans-serif" font-size="28">Runtime UI, without framework lock-in. Data in. Experience out.</text>
+</svg>

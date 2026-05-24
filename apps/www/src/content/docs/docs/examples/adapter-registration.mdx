@@ -1,0 +1,40 @@
+---
+title: Adapter registration
+description: Explain the live example for capability registration and lookup.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Adapter Registration Example Docs
+  Purpose: Explain the current adapter registration example and its capability lookup behavior.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-07
+  Notes: Vibe coded with Codex.
+*/}
+
+# Adapter registration
+
+Status: current.
+
+This example shows how a runtime registers loading and storage capabilities, then resolves them through the adapter registry from one focused controller.
+
+Open the runnable example: [Adapter Registration](/examples/adapter-registration/).
+
+## What it teaches
+
+- register loading and storage adapters
+- resolve required capabilities with `ctx.adapters.require()`
+- check an optional missing capability with `ctx.adapters.get()`
+- emit visible events for lookup success, optional miss, and storage write/read
+- keep adapter implementation separate from controller orchestration
+
+## Boundary
+
+The example is consumed by the website from private `@urk/examples` internals. It demonstrates current runtime behavior, but the website example package is still private and unstable.
+
+## Next
+
+- [Register an adapter](/docs/getting-started/register-an-adapter/)
+- [Adapter contracts](/docs/concepts/adapters/)
+- [Adapter capability lookup](/docs/concepts/adapter-capability-lookup/)

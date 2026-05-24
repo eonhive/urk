@@ -1,0 +1,45 @@
+---
+title: Route events
+description: Use URK events for visible runtime coordination without event sprawl.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Route Events Guide
+  Purpose: Teach practical event routing patterns for URK runtimes.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Route events
+
+Events should make runtime behavior visible.
+
+Use them for lifecycle transitions, adapter capability changes, controller milestones, and debug panels.
+
+```ts
+const unsubscribe = ctx.events.on('loading:changed', (event) => {
+  console.log(event.payload);
+});
+```
+
+## Naming
+
+Use names that state the source and action:
+
+- `loading:changed`
+- `input:key-down`
+- `pointer:select`
+- `runtime:phase-changed`
+
+## Avoid event sprawl
+
+Do not route simple local changes through global events. Direct calls are clearer when behavior stays inside one small unit.
+
+## Next
+
+- [Event routing](/docs/concepts/event-routing/)
+- [Event routing demo](/docs/examples/event-routing-demo/)
+- [Event types](/docs/reference/event-types/)

@@ -1,0 +1,53 @@
+---
+title: Create a controller
+description: Build a focused orchestration unit for a URK runtime.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Create Controller Guide
+  Purpose: Teach controller authoring without turning controllers into product shells.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Create a controller
+
+A controller coordinates runtime behavior.
+
+It can read context, use adapter capabilities, update runtime state, emit events, and clean itself up.
+
+```ts
+import type { ControllerRegistration } from '@urk/core';
+
+export const exampleController: ControllerRegistration = {
+  id: 'example-controller',
+  start(ctx) {
+    ctx.state.setPhase('ready', 'example-controller:start');
+    ctx.events.emit({
+      type: 'example:started',
+      source: 'example-controller',
+      timestamp: Date.now(),
+    });
+  },
+  dispose(ctx) {
+    ctx.events.emit({
+      type: 'example:disposed',
+      source: 'example-controller',
+      timestamp: Date.now(),
+    });
+  },
+};
+```
+
+## Keep controllers focused
+
+Controllers should orchestrate. They should not contain adapter implementation details, renderer internals, or the entire application business layer.
+
+## Next
+
+- [Controller lifecycle](/docs/concepts/controllers/)
+- [Controller contract types](/docs/reference/controller-contract-types/)
+- [Route events](/docs/guides/route-events/)

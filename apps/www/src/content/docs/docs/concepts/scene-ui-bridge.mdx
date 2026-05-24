@@ -1,0 +1,46 @@
+---
+title: Scene/User Interface Bridge
+description: Explain how URK can coordinate scene-like surfaces and browser UI without becoming a renderer.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Scene UI Bridge Concept
+  Purpose: Explain scene and User Interface coordination while keeping URK out of renderer scope.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-08
+  Notes: Vibe coded with Codex.
+*/}
+
+# Scene/User Interface Bridge
+
+URK can coordinate scene-like surfaces and browser User Interface (UI) overlays.
+
+The kernel should not become the renderer or a game engine. It should coordinate runtime state, adapter capabilities, and events between surfaces.
+
+## Bridge pattern
+
+```text
+scene surface -> adapter events -> controller -> runtime state -> UI overlay
+```
+
+This keeps renderer-specific code inside adapters or surface code, while controller logic owns orchestration.
+
+## Useful cases
+
+- pointer overlays
+- scene selection state
+- loading progress panels
+- runtime debug panels
+- input feedback
+
+## Current status
+
+The concept is part of the architecture. The public website now includes the current [Scene/UI Bridge example](/examples/scene-ui-bridge/) as a focused proof of scene-like state and UI overlay coordination.
+
+## Next
+
+- [Bridge scene and User Interface](/docs/guides/scene-ui-bridge/)
+- [Pointer/input overlay](/docs/examples/pointer-input-overlay/)
+- [Scene/User Interface coordination](/docs/examples/scene-ui-coordination/)

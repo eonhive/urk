@@ -1,0 +1,10 @@
+<!-- Company: EonHive Inc. | Title: Runtime Kernel Icon | Purpose: Icon asset for the URK runtime kernel concept. | Author: Stan Nesi | Created: 2026-05-01 | Updated: 2026-05-01 | Notes: Vibe coded with Codex. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <g stroke="#E8ECF3" stroke-width="1.75" stroke-linecap="square">
+    <path d="M4 6h16M4 12h16M4 18h16M6 4v16M12 4v16M18 4v16" opacity=".72"/>
+    <circle cx="6" cy="6" r="1.35"/><circle cx="12" cy="6" r="1.35"/><circle cx="18" cy="6" r="1.35"/>
+    <circle cx="6" cy="12" r="1.35"/><circle cx="18" cy="12" r="1.35"/>
+    <circle cx="6" cy="18" r="1.35"/><circle cx="12" cy="18" r="1.35"/><circle cx="18" cy="18" r="1.35"/>
+  </g>
+  <circle cx="12" cy="12" r="2.2" fill="#7B61FF" stroke="#E8ECF3" stroke-width="1.75"/>
+</svg>

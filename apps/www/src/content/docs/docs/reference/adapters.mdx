@@ -1,0 +1,64 @@
+---
+title: "@urk/adapters"
+description: Reference the current adapter package and DOM adapter subpath.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Adapters Package Reference
+  Purpose: Summarize the current shipped @urk/adapters public surface.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# @urk/adapters
+
+`@urk/adapters` provides contract-first runtime capabilities.
+
+The package currently exports loading, audio, input, pointer, storage, three, UI widgets, and adapter contract helpers.
+
+Status: current, publishable, 0.x.
+
+Package page: [@urk/adapters](/packages/adapters/)
+
+## Install
+
+```bash
+pnpm add @urk/core @urk/adapters
+```
+
+## DOM subpath
+
+Use `@urk/adapters/dom` when you only need DOM-facing adapters.
+
+```ts
+import { createLoadingAdapter } from '@urk/adapters/dom';
+```
+
+## Root import
+
+```ts
+import { createLoadingAdapter, createPointerAdapter } from '@urk/adapters';
+```
+
+## Current adapters
+
+- `createLoadingAdapter()`
+- `createInputAdapter()`
+- `createPointerAdapter()`
+- `createStorageAdapter()`
+- `createUiWidgetsAdapter()`
+- `createAudioAdapter()`
+- `createThreeAdapter()`
+
+## Boundary
+
+Adapters expose capabilities. They should not own product orchestration or app-specific policy.
+
+## Next
+
+- [Adapter contracts](/docs/concepts/adapters/)
+- [Create an adapter](/docs/guides/create-adapter/)
+- [Adapter contract types](/docs/reference/adapter-contract-types/)

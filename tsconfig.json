@@ -22,6 +22,8 @@
       "@urk/core/*": ["packages/core/src/*"],
       "@urk/adapters": ["packages/adapters/src"],
       "@urk/adapters/*": ["packages/adapters/src/*"],
+      "@urk/examples": ["packages/examples/src"],
+      "@urk/examples/*": ["packages/examples/src/*"],
       "@urk/react-urk": ["packages/react-urk/src"],
       "@urk/react-urk/*": ["packages/react-urk/src/*"],
       "@urk/next-urk": ["packages/next-urk/src"],

@@ -1,0 +1,57 @@
+---
+title: Create an adapter
+description: Build a focused browser capability for a URK runtime.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Create Adapter Guide
+  Purpose: Teach adapter authoring against the current public contract.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Create an adapter
+
+An adapter exposes one runtime capability.
+
+Keep the adapter focused. It should know how to set up, expose, and dispose a capability. It should not own product orchestration.
+
+```ts
+import type { AdapterRegistration } from '@urk/core';
+
+export function createExampleAdapter(): AdapterRegistration<ExampleApi> {
+  return {
+    id: 'example-adapter',
+    capability: 'example',
+    setup(ctx) {
+      return {
+        publish(message: string) {
+          ctx.events.emit({
+            type: 'example:message',
+            source: 'example-adapter',
+            payload: { message },
+            timestamp: Date.now(),
+          });
+        },
+      };
+    },
+  };
+}
+```
+
+## Adapter checklist
+
+- use a clear capability name
+- expose a small typed API
+- use `isSupported` when the browser capability is optional
+- clean up listeners in `dispose`
+- emit events when runtime-visible behavior changes
+
+## Next
+
+- [Adapter contracts](/docs/concepts/adapters/)
+- [Adapter contract types](/docs/reference/adapter-contract-types/)
+- [Register an adapter](/docs/getting-started/register-an-adapter/)

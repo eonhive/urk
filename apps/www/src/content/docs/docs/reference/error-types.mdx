@@ -1,0 +1,40 @@
+---
+title: Error types
+description: Explain current runtime failure behavior and missing-capability errors.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Error Types Reference
+  Purpose: Document current runtime error behavior without inventing a larger error taxonomy.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Error types
+
+URK currently uses standard JavaScript `Error` objects for runtime failures.
+
+There is not yet a stable custom error taxonomy.
+
+## Current failure paths
+
+- registering a duplicate adapter id
+- registering a duplicate adapter capability
+- missing an adapter dependency
+- using `require()` for a missing adapter
+- using a disposed kernel
+- pausing or resuming before boot
+- adapter or controller disposal failure
+
+## Runtime error phase
+
+When update or state-change handling fails, the kernel stops the scheduler, emits `runtime:error`, and moves state to `error`.
+
+## Next
+
+- [Adapter capability lookup](/docs/concepts/adapter-capability-lookup/)
+- [Event types](/docs/reference/event-types/)
+- [Deferred features](/docs/project/deferred-features/)

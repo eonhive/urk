@@ -1,0 +1,151 @@
+/*
+ * Company: EonHive Inc.
+ * Title: Public Site Tokens
+ * Purpose: Define the canonical URK public-site fonts, semantic colors, spacing, and motif variables.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/brand/fonts/space-grotesk-latin-variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("/brand/fonts/geist-latin-variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/brand/fonts/ibm-plex-mono-latin-400.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/brand/fonts/ibm-plex-mono-latin-500.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+:root {
+  --urk-font-display: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  --urk-font-body: "Geist", "Inter", "Avenir Next", "Segoe UI", sans-serif;
+  --urk-font-code: "IBM Plex Mono", "JetBrains Mono", "SFMono-Regular", monospace;
+
+  --urk-background: #090c14;
+  --urk-background-elevated: #0f1520;
+  --urk-surface: #131a26;
+  --urk-surface-strong: #1a2332;
+  --urk-surface-soft: rgba(255, 255, 255, 0.03);
+  --urk-card: rgba(19, 26, 38, 0.94);
+  --urk-card-muted: rgba(15, 21, 32, 0.88);
+  --urk-card-hover: rgba(26, 35, 50, 0.98);
+  --urk-foreground: #e8ecf3;
+  --urk-foreground-strong: #f7f9ff;
+  --urk-muted: #96a0b4;
+  --urk-border: rgba(86, 98, 121, 0.55);
+  --urk-border-strong: rgba(122, 136, 164, 0.74);
+  --urk-primary: #7b61ff;
+  --urk-primary-hover: #8c76ff;
+  --urk-primary-soft: rgba(123, 97, 255, 0.18);
+  --urk-success: #2fcb7a;
+  --urk-warning: #d9a441;
+  --urk-error: #e05666;
+  --urk-info: #48b7ff;
+  --urk-code-background: #0e131d;
+  --urk-code-border: rgba(86, 98, 121, 0.58);
+  --urk-code-text: #d7def0;
+  --urk-focus-ring: rgba(123, 97, 255, 0.42);
+  --urk-grid-dot: rgba(150, 160, 180, 0.18);
+  --urk-flow-line: rgba(123, 97, 255, 0.35);
+  --urk-success-soft: rgba(47, 203, 122, 0.16);
+  --urk-warning-soft: rgba(217, 164, 65, 0.16);
+  --urk-error-soft: rgba(224, 86, 102, 0.12);
+  --urk-shadow: 0 28px 56px rgba(3, 8, 18, 0.28);
+  --urk-shadow-card: var(--urk-shadow);
+  --urk-shadow-glow: 0 0 42px rgba(123, 97, 255, 0.2);
+  --urk-radius-xl: 1.5rem;
+  --urk-radius-lg: 1.25rem;
+  --urk-radius-md: 0.95rem;
+  --urk-radius-sm: 0.7rem;
+
+  --urk-color-background: var(--urk-background);
+  --urk-color-foreground: var(--urk-foreground);
+  --urk-color-muted: var(--urk-muted);
+  --urk-color-border: var(--urk-border);
+  --urk-color-card: var(--urk-card);
+  --urk-color-card-hover: var(--urk-card-hover);
+  --urk-color-primary: var(--urk-primary);
+  --urk-color-primary-hover: var(--urk-primary-hover);
+  --urk-color-success: var(--urk-success);
+  --urk-color-warning: var(--urk-warning);
+  --urk-color-error: var(--urk-error);
+  --urk-color-info: var(--urk-info);
+  --urk-color-code-background: var(--urk-code-background);
+  --urk-color-code-border: var(--urk-code-border);
+  --urk-color-code-text: var(--urk-code-text);
+  --urk-color-focus-ring: var(--urk-focus-ring);
+
+  --urk-radius-small: var(--urk-radius-sm);
+  --urk-radius-medium: var(--urk-radius-md);
+  --urk-radius-large: var(--urk-radius-lg);
+
+  --urk-space-1: 0.25rem;
+  --urk-space-2: 0.5rem;
+  --urk-space-3: 0.75rem;
+  --urk-space-4: 1rem;
+  --urk-space-5: 1.25rem;
+  --urk-space-6: 1.5rem;
+  --urk-space-8: 2rem;
+  --urk-space-10: 2.5rem;
+  --urk-space-12: 3rem;
+  --urk-space-16: 4rem;
+  --urk-space-20: 5rem;
+}
+
+html[data-theme="light"] {
+  --urk-background: #f6f1e8;
+  --urk-background-elevated: #fcfaf5;
+  --urk-surface: #ffffff;
+  --urk-surface-strong: #efe8dc;
+  --urk-surface-soft: rgba(22, 28, 40, 0.03);
+  --urk-card: rgba(255, 255, 255, 0.96);
+  --urk-card-muted: rgba(252, 250, 245, 0.94);
+  --urk-card-hover: #ffffff;
+  --urk-foreground: #161c28;
+  --urk-foreground-strong: #0c1119;
+  --urk-muted: #5e6a7c;
+  --urk-border: rgba(126, 142, 164, 0.32);
+  --urk-border-strong: rgba(88, 101, 120, 0.45);
+  --urk-primary: #6c4dff;
+  --urk-primary-hover: #5637ee;
+  --urk-primary-soft: rgba(108, 77, 255, 0.1);
+  --urk-success: #1f9a5f;
+  --urk-warning: #b7791f;
+  --urk-error: #c6404c;
+  --urk-info: #1268a8;
+  --urk-code-background: #121821;
+  --urk-code-border: rgba(88, 101, 120, 0.44);
+  --urk-code-text: #edf2ff;
+  --urk-focus-ring: rgba(108, 77, 255, 0.28);
+  --urk-grid-dot: rgba(94, 106, 124, 0.16);
+  --urk-flow-line: rgba(108, 77, 255, 0.24);
+  --urk-success-soft: rgba(31, 154, 95, 0.12);
+  --urk-warning-soft: rgba(183, 121, 31, 0.12);
+  --urk-error-soft: rgba(198, 64, 76, 0.1);
+  --urk-shadow: 0 20px 42px rgba(15, 23, 42, 0.1);
+  --urk-shadow-glow: 0 0 34px rgba(108, 77, 255, 0.13);
+}

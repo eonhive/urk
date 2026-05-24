@@ -1,0 +1,44 @@
+---
+title: Installation
+description: Install the current URK runtime packages needed for the first browser surface.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Installation
+  Purpose: Show the current package install path without documenting planned packages as stable.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Installation
+
+Install the runtime pieces you need first.
+
+```bash
+pnpm add @urk/core @urk/adapters
+```
+
+Use the package manager your project already uses. The repository itself uses Yarn with Node 22, but consumers do not need the repository workspace setup to use the published packages.
+
+## Current packages
+
+- `@urk/core` provides the kernel, runtime context, state store, registries, event bus, scheduler, and public contract types.
+- `@urk/adapters` provides current adapter implementations and adapter contract re-exports.
+- `@urk/adapters/dom` provides the DOM-only adapter subpath.
+
+## Integration packages
+
+`@urk/react-urk` and `@urk/next-urk` are integration packages. Treat them as wrappers around the standalone runtime model, not as the source of truth.
+
+## Internal package
+
+`@urk/examples` is private, internal, unstable, and consumed by the public website. Do not use it as a stable npm API.
+
+## Next
+
+- [Create your first runtime](/docs/getting-started/create-your-first-runtime/)
+- [@urk/core reference](/docs/reference/core/)
+- [@urk/adapters reference](/docs/reference/adapters/)

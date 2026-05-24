@@ -1,0 +1,47 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Package Card
+ * Purpose: Render a public package summary with status and install guidance on the URK website.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-06
+ * Notes: Vibe coded with Codex.
+ */
+
+import StatusBadge from '@/components/visuals/StatusBadge.astro';
+import type { PublicPackageEntry } from '@/data/packages';
+
+interface Props {
+  entry: PublicPackageEntry;
+}
+
+const { entry } = Astro.props;
+---
+
+<article class="site-card flex h-full flex-col gap-4 p-6">
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <h3 class="font-[var(--urk-font-code)] text-lg font-semibold">
+      <a class="hover:text-[var(--urk-primary)]" href={`/packages/${entry.slug}`}>
+        {entry.name}
+      </a>
+    </h3>
+    <StatusBadge label={entry.statusLabel} tone={entry.statusTone} />
+  </div>
+
+  <p class="site-section-copy">{entry.purpose}</p>
+
+  <div class="rounded-2xl border border-[var(--urk-border)] bg-black/10 p-4">
+    <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Install</div>
+    <code class="font-[var(--urk-font-code)] text-sm text-[var(--urk-code-text)]">
+      {entry.cardInstall ?? entry.install}
+    </code>
+  </div>
+
+  <p class="text-sm leading-7 text-[var(--urk-muted)]">{entry.detail}</p>
+  <p class="text-sm leading-7 text-[var(--urk-muted)]">{entry.boundaryNote}</p>
+
+  <a class="site-button site-button--secondary mt-auto justify-start" href={`/packages/${entry.slug}`}>
+    Read package page
+  </a>
+</article>

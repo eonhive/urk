@@ -1,0 +1,66 @@
+---
+title: CLI commands
+description: Reference the current URK command-line tooling surface.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: CLI Commands Reference
+  Purpose: Document shipped @urk/cli commands without inventing future tooling behavior.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# CLI commands
+
+`@urk/cli` is publishable developer tooling with the `urk` binary.
+
+Status: experimental, publishable, tooling-only.
+
+Package page: [@urk/cli](/packages/cli/)
+
+## Install
+
+```bash
+pnpm add -D @urk/cli
+```
+
+## Current commands
+
+- `urk create`
+- `urk create-proof`
+- `urk add`
+- `urk check`
+- `urk inspect`
+
+```bash
+urk create my-runtime
+urk add adapter pointer
+urk inspect
+```
+
+`urk inspect` is a static project summary. It is not a live browser devtools inspector.
+
+## Binary
+
+The package exposes:
+
+```json
+{
+  "bin": {
+    "urk": "./dist/index.js"
+  }
+}
+```
+
+## Boundary
+
+The Command-Line Interface (CLI) should help scaffold, inspect, and check URK projects. It should not redefine the runtime architecture.
+
+## Next
+
+- [Contributing](/docs/project/contributing/)
+- [Roadmap](/docs/project/roadmap/)
+- [@urk/core](/docs/reference/core/)

@@ -1,0 +1,39 @@
+---
+title: Controller contract types
+description: Reference the current controller registration contract.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Controller Contract Types Reference
+  Purpose: Summarize the current controller lifecycle contract for controller authors.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Controller contract types
+
+Controllers are registered through `ControllerRegistration` from `@urk/core`.
+
+```ts
+export interface ControllerRegistration {
+  id: string;
+  init?(ctx: RuntimeContext): Promise<void> | void;
+  start?(ctx: RuntimeContext): Promise<void> | void;
+  update?(frame: FrameInfo, ctx: RuntimeContext): void;
+  onStateChange?(next: RuntimeSnapshot, previous: RuntimeSnapshot, ctx: RuntimeContext): Promise<void> | void;
+  dispose?(ctx: RuntimeContext): Promise<void> | void;
+}
+```
+
+## Boundary
+
+Controllers own orchestration. They should not own adapter internals or full application rendering.
+
+## Next
+
+- [Controller lifecycle](/docs/concepts/controllers/)
+- [Create a controller](/docs/guides/create-controller/)
+- [Runtime types](/docs/reference/runtime-types/)

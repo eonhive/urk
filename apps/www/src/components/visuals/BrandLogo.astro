@@ -1,0 +1,65 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Brand Logo
+ * Purpose: Render theme-aware URK logo assets in the public site shell and brand board.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-01
+ * Notes: Vibe coded with Codex.
+ */
+
+interface Props {
+  variant?: 'wordmark' | 'horizontal' | 'stacked' | 'monogram' | 'app-icon';
+  theme?: 'auto' | 'dark' | 'light';
+  className?: string;
+  label?: string;
+}
+
+const {
+  variant = 'wordmark',
+  theme = 'auto',
+  className = '',
+  label,
+} = Astro.props;
+
+const assetMap = {
+  wordmark: {
+    onDark: '/brand/logos/urk-wordmark-on-dark.svg',
+    onLight: '/brand/logos/urk-wordmark-on-light.svg',
+    label: 'uRK wordmark',
+  },
+  horizontal: {
+    onDark: '/brand/logos/urk-lockup-horizontal-on-dark.svg',
+    onLight: '/brand/logos/urk-lockup-horizontal-on-light.svg',
+    label: 'uRK horizontal lockup',
+  },
+  stacked: {
+    onDark: '/brand/logos/urk-lockup-stacked-on-dark.svg',
+    onLight: '/brand/logos/urk-lockup-stacked-on-light.svg',
+    label: 'uRK stacked lockup',
+  },
+  monogram: {
+    onDark: '/brand/logos/urk-monogram-on-dark.svg',
+    onLight: '/brand/logos/urk-monogram-on-light.svg',
+    label: 'uRK monogram',
+  },
+  'app-icon': {
+    onDark: '/brand/logos/urk-app-icon.svg',
+    onLight: '/brand/logos/urk-app-icon.svg',
+    label: 'uRK app icon',
+  },
+} as const;
+
+const asset = assetMap[variant];
+const ariaLabel = label ?? asset.label;
+---
+
+<span
+  class:list={['brand-logo', `brand-logo--${variant}`, `brand-logo--theme-${theme}`, className]}
+  role="img"
+  aria-label={ariaLabel}
+>
+  <img class="brand-logo__img brand-logo__img--on-dark" src={asset.onDark} alt="" aria-hidden="true" loading="lazy" />
+  <img class="brand-logo__img brand-logo__img--on-light" src={asset.onLight} alt="" aria-hidden="true" loading="lazy" />
+</span>

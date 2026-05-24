@@ -1,0 +1,25 @@
+<!--
+  Company: EonHive Inc.
+  Title: URK Monogram On Dark
+  Purpose: Compact kernel monogram for dark public-site surfaces.
+  Author: Stan Nesi
+  Created: 2026-05-01
+  Updated: 2026-05-01
+  Notes: Vibe coded with Codex.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <g stroke="#96A0B4" stroke-opacity=".72" stroke-width="3">
+    <path d="M16 16H48M16 32H48M16 48H48M16 16V48M32 16V48M48 16V48"/>
+  </g>
+  <g stroke="#E8ECF3" stroke-width="2.5">
+    <circle cx="16" cy="16" r="3.75"/>
+    <circle cx="32" cy="16" r="3.75"/>
+    <circle cx="48" cy="16" r="3.75"/>
+    <circle cx="16" cy="32" r="3.75"/>
+    <circle cx="48" cy="32" r="3.75"/>
+    <circle cx="16" cy="48" r="3.75"/>
+    <circle cx="32" cy="48" r="3.75"/>
+    <circle cx="48" cy="48" r="3.75"/>
+  </g>
+  <circle cx="32" cy="32" r="5.5" fill="#7B61FF" stroke="#E8ECF3" stroke-width="2.5"/>
+</svg>

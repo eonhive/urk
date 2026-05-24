@@ -1,0 +1,35 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Runtime Log Panel
+ * Purpose: Render a bounded event log shell for the live URK example page.
+ * Author: Stan Nesi
+ * Created: 2026-05-01
+ * Updated: 2026-05-14
+ * Notes: Vibe coded with Codex.
+ */
+---
+
+<section class="site-card flex flex-col gap-4 p-6">
+  <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+    <div>
+      <div class="site-kicker">Runtime log</div>
+      <h3 class="mt-4 text-2xl font-semibold tracking-[-0.04em]">Recent emitted events</h3>
+    </div>
+    <p class="m-0 max-w-xl text-sm leading-7 text-[var(--urk-muted)]">
+      The panel shows recent kernel, loading, and controller events so the example proves URK’s
+      runtime visibility instead of hiding behavior behind static marketing copy.
+    </p>
+  </div>
+
+  <ol class="site-grid m-0 list-none p-0" data-role="runtime-event-list" aria-label="Recent runtime events">
+    <li class="runtime-log-item">
+      <div class="runtime-log-item__meta">
+        <span>--:--:--</span>
+        <span>kernel</span>
+      </div>
+      <strong>kernel:init</strong>
+      <span>Waiting for runtime activity.</span>
+    </li>
+  </ol>
+</section>

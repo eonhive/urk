@@ -1,0 +1,77 @@
+---
+title: "@urk/react-urk"
+description: Reference the publishable React wrapper package and its downstream boundary.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: React URK Package Reference
+  Purpose: Document the current @urk/react-urk wrapper package without making React the runtime source of truth.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# @urk/react-urk
+
+`@urk/react-urk` is a thin React wrapper around an existing URK kernel.
+
+Status: experimental, publishable, downstream wrapper.
+
+Package page: [@urk/react-urk](/packages/react-urk/)
+
+## Install
+
+```bash
+pnpm add @urk/core @urk/react-urk react react-dom
+```
+
+## Public API
+
+- `UrkProvider`
+- `useKernel()`
+- `useRuntimeSnapshot()`
+- `useRuntimePhase()`
+- `useRuntimeInspector()`
+- `useRuntimeInspectorSnapshot()`
+- `useEventBus()`
+- `useKernelEvent()`
+- `KernelEventListener`
+
+## Minimal usage
+
+```tsx
+import { createKernel } from '@urk/core';
+import { createLoadingAdapter } from '@urk/adapters/dom';
+import { UrkProvider, useRuntimePhase } from '@urk/react-urk';
+
+const kernel = createKernel({
+  adapters: [createLoadingAdapter()],
+});
+
+function PhaseView() {
+  const phase = useRuntimePhase();
+  return <div>{phase}</div>;
+}
+
+export function App() {
+  return (
+    <UrkProvider kernel={kernel}>
+      <PhaseView />
+    </UrkProvider>
+  );
+}
+```
+
+## Boundary
+
+React consumes the kernel. It does not define the kernel architecture, adapter model, controller lifecycle, runtime state, or event bus.
+
+Start with `@urk/core` and `@urk/adapters`. Add this wrapper only when a React host needs it.
+
+## Next
+
+- [Integration wrappers](/docs/concepts/integration-wrappers/)
+- [Use URK with React](/docs/guides/react-later/)
+- [@urk/core](/docs/reference/core/)

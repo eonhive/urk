@@ -1,0 +1,37 @@
+---
+title: Scene/User Interface coordination
+description: Coordinate a scene-like browser surface with User Interface overlays in a live URK example.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Scene UI Coordination Example Docs
+  Purpose: Document the live scene and User Interface coordination example.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-08
+  Notes: Vibe coded with Codex.
+*/}
+
+# Scene/User Interface coordination
+
+Status: current.
+
+The [Scene/UI Bridge example](/examples/scene-ui-bridge/) shows a scene-like browser surface coordinated with a normal User Interface (UI) overlay through runtime services, adapters, controllers, and events.
+
+## What it teaches
+
+- keep renderer-specific logic out of the kernel
+- use adapters for browser capabilities
+- use controllers for coordination
+- keep overlays synchronized through explicit runtime state and events
+
+## Boundary
+
+URK coordinates runtime behavior between surfaces. It does not own the renderer, scene graph, animation engine, or product UI framework.
+
+## Related docs
+
+- [Scene/User Interface bridge](/docs/concepts/scene-ui-bridge/)
+- [Bridge scene and User Interface](/docs/guides/scene-ui-bridge/)
+- [Pointer/input overlay](/docs/examples/pointer-input-overlay/)

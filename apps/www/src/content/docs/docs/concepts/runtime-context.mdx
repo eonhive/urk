@@ -1,0 +1,51 @@
+---
+title: Runtime Context
+description: Explain the shared URK runtime context used by adapters, controllers, and services.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Runtime Context Concept
+  Purpose: Explain the shared context object that connects URK runtime parts.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# Runtime Context
+
+The runtime context is the shared object created by the kernel.
+
+It is how runtime parts communicate without relying on ambient globals.
+
+## What it contains
+
+The current `RuntimeContext` contains:
+
+- `id`
+- `state`
+- `adapters`
+- `controllers`
+- `services`
+- `events`
+- `scheduler`
+
+```ts
+const ctx = kernel.getContext();
+
+const phase = ctx.state.getSnapshot().phase;
+const loading = ctx.adapters.get('loading');
+```
+
+## Lifetime
+
+The context belongs to one kernel instance. It should not be treated as a process-wide singleton.
+
+Adapters and controllers receive the same context during setup, lifecycle hooks, event handling, and disposal.
+
+## Next
+
+- [Adapter capability lookup](/docs/concepts/adapter-capability-lookup/)
+- [Controller lifecycle](/docs/concepts/controllers/)
+- [Runtime types](/docs/reference/runtime-types/)

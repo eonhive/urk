@@ -1,0 +1,77 @@
+---
+title: "@urk/next-urk"
+description: Reference the publishable Next.js wrapper package and its client-boundary role.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Next URK Package Reference
+  Purpose: Document the current @urk/next-urk wrapper package without making Next.js the runtime source of truth.
+  Author: Stan Nesi
+  Created: 2026-05-06
+  Updated: 2026-05-06
+  Notes: Vibe coded with Codex.
+*/}
+
+# @urk/next-urk
+
+`@urk/next-urk` is a thin Next App Router client-boundary wrapper built on top of `@urk/react-urk`.
+
+Status: experimental, publishable, downstream wrapper.
+
+Package page: [@urk/next-urk](/packages/next-urk/)
+
+## Install
+
+```bash
+pnpm add @urk/core @urk/react-urk @urk/next-urk next react react-dom
+```
+
+## Public API
+
+- `KernelFactory`
+- `useClientKernel()`
+- `UrkNextProvider`
+- `UrkNextProviderProps`
+- all current `@urk/react-urk` exports re-exported unchanged
+
+## Minimal usage
+
+```tsx
+'use client';
+
+import { createKernel } from '@urk/core';
+import { createLoadingAdapter } from '@urk/adapters/dom';
+import { UrkNextProvider, useRuntimePhase } from '@urk/next-urk';
+
+function createAppKernel() {
+  return createKernel({
+    adapters: [createLoadingAdapter()],
+  });
+}
+
+function PhaseView() {
+  const phase = useRuntimePhase();
+  return <div>{phase}</div>;
+}
+
+export function App() {
+  return (
+    <UrkNextProvider createKernel={createAppKernel}>
+      <PhaseView />
+    </UrkNextProvider>
+  );
+}
+```
+
+## Boundary
+
+Runtime execution belongs in a client boundary. Next.js does not replace the standalone kernel model and should not own server-side runtime execution.
+
+Use `apps/next-proof` as the repo-only proof that this wrapper works in a real App Router app.
+
+## Next
+
+- [Integration wrappers](/docs/concepts/integration-wrappers/)
+- [Use URK with Next.js](/docs/guides/next-later/)
+- [@urk/react-urk](/docs/reference/react-urk/)
