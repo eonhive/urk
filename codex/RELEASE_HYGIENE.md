@@ -2,11 +2,11 @@
 
 ## Status
 
-Last reviewed: 2026-05-23.
+Last reviewed: 2026-05-27.
 
 This file records the dirty-worktree release inventory. It does not approve a publish or deployment by itself.
 
-The final staged review found no blockers. The selected release action is commit-only: create a local release-candidate commit, keep package versions unchanged, and do not tag, push, publish, or deploy in this step.
+The release candidate was committed locally as `29ceb89 chore: prepare URK public release candidate`. The release-prep metadata commit gate is limited to the root changelog, public scoped-package publish metadata for the three unpublished packages, and codex release docs. It does not tag, push, publish, or deploy.
 
 ## Release-intended source changes
 
@@ -51,10 +51,17 @@ The final staged review found no blockers. The selected release action is commit
 - Staged hygiene checks after cleanup passed: `.yarn/install-state.gz` was not staged, generated/local-only paths were not staged, no staged package export map contains `"default"`, and `git diff --cached --check` exited cleanly.
 - Final staged release-candidate review passed on 2026-05-23. No blockers were found; the only noted risk is the large intentional staged diff from public-site work and tracked zero-install cache archives.
 - Commit-only decision: preserve current package versions (`@urk/core` `0.1.1`, `@urk/adapters` `0.1.3`, `@urk/react-urk` `0.1.0`, `@urk/next-urk` `0.1.0`, and `@urk/cli` `0.1.0`) and commit with `chore: prepare URK public release candidate`.
+- Npm registry status checked on 2026-05-25: `@urk/core` is published at `0.1.1`, `@urk/adapters` is published at `0.1.3`, and `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` returned `E404` because they are not published yet.
+- Release prep added root `CHANGELOG.md` and `publishConfig.access: "public"` to `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` only. Package versions remain unchanged.
+- Release-prep validation on 2026-05-25 passed: `git diff --check`, targeted builds for `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`, and `npm pack --dry-run --json --workspace` for those three packages.
+- Release-prep pack results: React and Next wrapper tarballs contain README, package metadata, and built `dist/**` only; CLI tarball contains README, package metadata, built `dist/**`, and intentional `src/templates/**` scaffold assets.
+- `.yarn/install-state.gz` remains modified but unstaged; the staged install-state check printed no paths during release-prep validation.
+- Release-prep commit gate on 2026-05-27 stages only `CHANGELOG.md`, `packages/react-urk/package.json`, `packages/next-urk/package.json`, `packages/cli/package.json`, `codex/RELEASE_HYGIENE.md`, `codex/PLANS.md`, and `codex/SESSION_HANDOFF.md`, then commits with `chore: prepare URK public package release metadata`.
 
 ## Remaining release blockers
 
-- Decide versioning, changelog, npm publish, and site deploy steps after the local release-candidate commit.
+- Publish `@urk/react-urk@0.1.0`, `@urk/next-urk@0.1.0`, and `@urk/cli@0.1.0` only after an explicit npm publish decision.
+- Decide public site deploy target and environment before deploying `apps/www`.
 - Do not publish private `@urk/examples`.
 
 ## Do not redo
@@ -65,3 +72,4 @@ The final staged review found no blockers. The selected release action is commit
 - Do not document `@urk/examples` as a stable public npm API.
 - Do not re-add `"default"` export conditions without a separate package-export decision.
 - Do not stage `.yarn/install-state.gz` without a separate release-policy decision.
+- Do not republish `@urk/core@0.1.1` or `@urk/adapters@0.1.3` in the unpublished-package release step.
