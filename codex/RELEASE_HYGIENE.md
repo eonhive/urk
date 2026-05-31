@@ -2,11 +2,15 @@
 
 ## Status
 
-Last reviewed: 2026-05-27.
+Last reviewed: 2026-05-28.
 
 This file records the dirty-worktree release inventory. It does not approve a publish or deployment by itself.
 
 The release candidate was committed locally as `29ceb89 chore: prepare URK public release candidate`. The release-prep metadata commit gate is limited to the root changelog, public scoped-package publish metadata for the three unpublished packages, and codex release docs. It does not tag, push, publish, or deploy.
+
+Npm publish execution was attempted on 2026-05-28 but blocked before publish because `npm whoami` returned `E401 Unauthorized` for `https://registry.npmjs.org/`. No package was published in that attempt.
+
+Npm publish execution resumed on 2026-05-29 after auth succeeded as `stannesi`, but `npm publish --workspace @urk/react-urk --access public` was rejected with `E403` because npm requires two-factor authentication or a granular access token with 2FA bypass enabled. No package was published in that attempt.
 
 ## Release-intended source changes
 
@@ -57,9 +61,15 @@ The release candidate was committed locally as `29ceb89 chore: prepare URK publi
 - Release-prep pack results: React and Next wrapper tarballs contain README, package metadata, and built `dist/**` only; CLI tarball contains README, package metadata, built `dist/**`, and intentional `src/templates/**` scaffold assets.
 - `.yarn/install-state.gz` remains modified but unstaged; the staged install-state check printed no paths during release-prep validation.
 - Release-prep commit gate on 2026-05-27 stages only `CHANGELOG.md`, `packages/react-urk/package.json`, `packages/next-urk/package.json`, `packages/cli/package.json`, `codex/RELEASE_HYGIENE.md`, `codex/PLANS.md`, and `codex/SESSION_HANDOFF.md`, then commits with `chore: prepare URK public package release metadata`.
+- Npm publish preflight on 2026-05-28 confirmed registry `https://registry.npmjs.org/`, `@urk/core@0.1.1` and `@urk/adapters@0.1.3` already published, and `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` still returning `E404`.
+- Publish-target validation on 2026-05-28 passed again for `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`: targeted builds passed and `npm pack --dry-run --json --workspace` passed for all three.
+- Npm publish preflight on 2026-05-29 confirmed auth as `stannesi`, registry `https://registry.npmjs.org/`, and `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` still returning `E404`.
+- Publish-target validation on 2026-05-29 passed again for `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`: targeted builds passed and `npm pack --dry-run --json --workspace` passed for all three.
+- Publish attempt on 2026-05-29 was blocked at `@urk/react-urk` with npm `E403` requiring two-factor authentication. No package upload completed.
 
 ## Remaining release blockers
 
+- Provide a current npm one-time password or use a granular publish token with 2FA bypass enabled before publish execution.
 - Publish `@urk/react-urk@0.1.0`, `@urk/next-urk@0.1.0`, and `@urk/cli@0.1.0` only after an explicit npm publish decision.
 - Decide public site deploy target and environment before deploying `apps/www`.
 - Do not publish private `@urk/examples`.

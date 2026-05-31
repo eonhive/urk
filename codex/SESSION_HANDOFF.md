@@ -26,7 +26,11 @@ The release candidate was committed locally as `29ceb89 chore: prepare URK publi
 
 The release-prep metadata commit gate is complete. The only intended commit contents are `CHANGELOG.md`, the three first-publish package manifests, and codex release docs. The commit message is `chore: prepare URK public package release metadata`.
 
-After this commit, `.yarn/install-state.gz` remains intentionally unstaged. Do not assume unrelated modified or untracked files are safe to revert.
+Npm publish execution was attempted on 2026-05-28 but blocked before package upload because `npm whoami` returned `E401 Unauthorized` for the public npm registry.
+
+Npm publish execution resumed on 2026-05-29 after auth succeeded as `stannesi`, but npm rejected the first package publish with `E403` because two-factor authentication or a granular access token with 2FA bypass is required. The three publish targets are still publish-ready after fresh builds and pack dry-runs; no package was published.
+
+`.yarn/install-state.gz` remains intentionally unstaged. Do not assume unrelated modified or untracked files are safe to revert.
 
 ## Completed work
 
@@ -86,11 +90,16 @@ After this commit, `.yarn/install-state.gz` remains intentionally unstaged. Do n
 - Added `publishConfig.access: "public"` to `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` only.
 - Completed release-prep validation for the first unpublished-package publish set without tagging, pushing, publishing, or deploying.
 - Completed the release-prep metadata commit gate without changing package versions, publishing npm packages, deploying the site, tagging, or pushing.
+- Attempted npm publish execution for the first unpublished-package set, but stopped before publish because npm authentication is missing.
+- Reran publish-target builds and pack dry-runs for `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`; all passed.
+- Resumed npm publish execution after auth succeeded as `stannesi`, but npm required 2FA for the first publish attempt.
+- Reran publish-target builds and pack dry-runs for `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` on 2026-05-29; all passed.
 
 ## In-progress work
 
 - The initial planned public example catalog is fully promoted; next work should not assume another planned example exists.
-- Production readiness verification, final-release hygiene inventory, intentional staging, staged diff review, release-candidate cleanup, final staged release-candidate review, local release-candidate commit, post-commit release prep, and release-prep metadata commit gate are complete; next work should be npm publish planning/execution or site deploy planning.
+- Production readiness verification, final-release hygiene inventory, intentional staging, staged diff review, release-candidate cleanup, final staged release-candidate review, local release-candidate commit, post-commit release prep, and release-prep metadata commit gate are complete.
+- Npm publish execution is blocked on npm publish 2FA. Next work should rerun the publish commands with a fresh npm OTP or a granular publish token with 2FA bypass, then publish `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` only.
 
 ## Changed files
 
@@ -204,6 +213,7 @@ There are many unrelated pre-existing modified/untracked files from earlier work
 - `npm pack --dry-run --json --workspace @urk/react-urk`
 - `npm pack --dry-run --json --workspace @urk/next-urk`
 - `npm pack --dry-run --json --workspace @urk/cli`
+- `npm publish --workspace @urk/react-urk --access public`
 - `git diff --check`
 - `git status --short`
 - `git diff --cached --name-only -- .yarn/install-state.gz`
@@ -214,6 +224,19 @@ There are many unrelated pre-existing modified/untracked files from earlier work
 - `git diff --cached --name-only | rg '(^|/)(dist|\.astro|\.next|node_modules)(/|$)|(^|/)\.DS_Store$|^\.codex/|\.tsbuildinfo$'`
 - `rg -n '"version": "0.1.0"|"version": "0.1.1"|"version": "0.1.3"|publishConfig' packages/react-urk/package.json packages/next-urk/package.json packages/cli/package.json packages/core/package.json packages/adapters/package.json`
 - `git commit -m "chore: prepare URK public package release metadata"`
+- `npm whoami`
+- `npm config get registry`
+- `npm view @urk/core version --json`
+- `npm view @urk/adapters version --json`
+- `npm view @urk/react-urk version --json || true`
+- `npm view @urk/next-urk version --json || true`
+- `npm view @urk/cli version --json || true`
+- `corepack yarn workspace @urk/react-urk build`
+- `corepack yarn workspace @urk/next-urk build`
+- `corepack yarn workspace @urk/cli build`
+- `npm pack --dry-run --json --workspace @urk/react-urk`
+- `npm pack --dry-run --json --workspace @urk/next-urk`
+- `npm pack --dry-run --json --workspace @urk/cli`
 - Static untracked-generated-output check with `git ls-files -o --exclude-standard`
 - `corepack yarn workspace @urk/www dev --host 127.0.0.1 --port 4327`
 - `corepack yarn workspace @urk/www dev --host 127.0.0.1 --port 4328`
@@ -300,12 +323,19 @@ Node used for validation: `/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin`.
 - Release-prep pack check confirmed `@urk/cli` tarball contains README, package metadata, built `dist/**`, and intentional `src/templates/**` scaffold assets.
 - `.yarn/install-state.gz` remains modified but unstaged; the staged install-state check printed no paths.
 - Release-prep metadata commit-gate checks passed: staged files were limited to intended release-prep files, staged whitespace check passed, generated/local artifact staged check printed no paths, and package version/publishConfig scan confirmed unchanged versions plus publishConfig only on the three first-publish packages.
+- Npm publish preflight on 2026-05-28 failed auth: `npm whoami` returned `E401 Unauthorized`.
+- Registry checks on 2026-05-28 confirmed `@urk/core@0.1.1` and `@urk/adapters@0.1.3` are already published, while `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` still return `E404`.
+- Targeted publish-readiness validation on 2026-05-28 passed: `corepack yarn workspace @urk/react-urk build`, `corepack yarn workspace @urk/next-urk build`, `corepack yarn workspace @urk/cli build`, and `npm pack --dry-run --json --workspace` for all three publish targets.
+- Npm publish preflight on 2026-05-29 passed auth as `stannesi`; registry checks confirmed all three publish targets still return `E404`.
+- Targeted publish-readiness validation on 2026-05-29 passed: `corepack yarn workspace @urk/react-urk build`, `corepack yarn workspace @urk/next-urk build`, `corepack yarn workspace @urk/cli build`, and `npm pack --dry-run --json --workspace` for all three publish targets.
+- Publish attempt for `@urk/react-urk@0.1.0` was rejected by npm with `E403` requiring two-factor authentication; no package publish completed.
 
 ## Known issues
 
 - Production readiness verification is complete, but this is not a deployment or npm publish claim.
 - The release candidate has not been tagged, pushed, published, or deployed.
 - The release-prep metadata commit has not been tagged, pushed, published, or deployed.
+- Npm authentication now succeeds as `stannesi`, but package upload is blocked by npm publish 2FA; provide a current npm OTP or configure a granular publish token with 2FA bypass.
 - `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` still require explicit npm publish execution; release prep only made them publish-ready.
 - `.yarn/install-state.gz` remains intentionally unstaged; include it only if a later release-policy decision accepts Yarn install-state churn.
 - Running `corepack yarn workspace @urk/www build` before `@urk/examples` artifacts exist can fail package entry resolution. Run `corepack yarn workspace @urk/examples build` first or use `corepack yarn build` for dependency-safe order.
@@ -320,7 +350,7 @@ Node used for validation: `/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin`.
 
 Recommended next scope is publish/deploy decision-making:
 
-- Decide npm publish execution for `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`.
+- Publish with npm 2FA: `@urk/react-urk@0.1.0`, `@urk/next-urk@0.1.0`, and `@urk/cli@0.1.0` in that order.
 - Decide public site deploy target and environment for `apps/www`.
 - Keep the next task narrow and update `codex/SESSION_HANDOFF.md` before stopping.
 - Do not add new runtime APIs, package exports, or new example scope without a new roadmap decision.
@@ -351,6 +381,7 @@ Recommended next scope is publish/deploy decision-making:
 - First unpublished-package publish target is `@urk/react-urk@0.1.0`, `@urk/next-urk@0.1.0`, and `@urk/cli@0.1.0`.
 - `@urk/core@0.1.1` and `@urk/adapters@0.1.3` already exist on npm and should not be republished in the unpublished-package release step.
 - `publishConfig.access: "public"` belongs only on the unpublished publishable scoped packages for this release prep: `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`.
+- Publish order should be `@urk/react-urk`, then `@urk/next-urk`, then `@urk/cli`.
 
 ## Do not redo
 
@@ -378,5 +409,6 @@ Recommended next scope is publish/deploy decision-making:
 - Do not publish or deploy as part of release-prep validation.
 - Do not bump package versions in this release-prep step.
 - Do not re-add release-prep metadata to `@urk/core` or `@urk/adapters`; those package versions are already published and unchanged.
+- Do not attempt to publish private `@urk/examples` or `@urk/www`.
 - Do not remove the private Three.js proof or hide its imports to solve bundle noise; the current fix is scoped vendor chunking.
 - Do not revert unrelated dirty workspace changes.
