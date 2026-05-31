@@ -1,6 +1,6 @@
 {
   "name": "@urk/react-urk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "URK React wrapper - thin provider and hooks around an existing kernel",
   "type": "module",
   "main": "./dist/index.js",

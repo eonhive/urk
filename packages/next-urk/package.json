@@ -1,6 +1,6 @@
 {
   "name": "@urk/next-urk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "URK Next wrapper - thin client-boundary helpers around the React wrapper",
   "type": "module",
   "main": "./dist/index.js",

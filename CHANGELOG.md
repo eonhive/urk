@@ -1,5 +1,15 @@
 # Changelog
 
+## Published npm packages - 2026-05-31
+
+URK package publication is now reconciled with npm latest.
+
+- Published `@urk/core@0.1.2` as the current kernel package.
+- Published `@urk/adapters@0.1.4` as the current adapter package.
+- Published `@urk/react-urk@0.1.1`, `@urk/next-urk@0.1.1`, and `@urk/cli@0.1.1`.
+- Kept `@urk/examples` and `@urk/www` private and unpublished.
+- Public website deployment remains a separate follow-up gate.
+
 ## Public release candidate - 2026-05-25
 
 This release candidate prepares URK for public-facing package and site release review. It does not publish npm packages or deploy the public website by itself.

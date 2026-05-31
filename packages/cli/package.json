@@ -1,6 +1,6 @@
 {
   "name": "@urk/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "URK CLI - lightweight developer tooling for scaffolding and inspecting URK projects",
   "type": "module",
   "main": "./dist/index.js",

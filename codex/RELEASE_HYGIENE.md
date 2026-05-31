@@ -2,7 +2,7 @@
 
 ## Status
 
-Last reviewed: 2026-05-28.
+Last reviewed: 2026-05-31.
 
 This file records the dirty-worktree release inventory. It does not approve a publish or deployment by itself.
 
@@ -10,7 +10,9 @@ The release candidate was committed locally as `29ceb89 chore: prepare URK publi
 
 Npm publish execution was attempted on 2026-05-28 but blocked before publish because `npm whoami` returned `E401 Unauthorized` for `https://registry.npmjs.org/`. No package was published in that attempt.
 
-Npm publish execution resumed on 2026-05-29 after auth succeeded as `stannesi`, but `npm publish --workspace @urk/react-urk --access public` was rejected with `E403` because npm requires two-factor authentication or a granular access token with 2FA bypass enabled. No package was published in that attempt.
+Npm publish execution resumed on 2026-05-29 after auth succeeded as `stannesi`, but `npm publish --workspace @urk/react-urk --access public` was rejected with `E403` because npm required two-factor authentication or a granular access token with 2FA bypass enabled. No package was published in that attempt.
+
+Npm registry state was verified on 2026-05-31. The current published latest versions match the local manifests: `@urk/core@0.1.2`, `@urk/adapters@0.1.4`, `@urk/react-urk@0.1.1`, `@urk/next-urk@0.1.1`, and `@urk/cli@0.1.1`.
 
 ## Release-intended source changes
 
@@ -66,11 +68,12 @@ Npm publish execution resumed on 2026-05-29 after auth succeeded as `stannesi`, 
 - Npm publish preflight on 2026-05-29 confirmed auth as `stannesi`, registry `https://registry.npmjs.org/`, and `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` still returning `E404`.
 - Publish-target validation on 2026-05-29 passed again for `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`: targeted builds passed and `npm pack --dry-run --json --workspace` passed for all three.
 - Publish attempt on 2026-05-29 was blocked at `@urk/react-urk` with npm `E403` requiring two-factor authentication. No package upload completed.
+- Published-package reconciliation on 2026-05-31 verified npm latest versions match local manifests: `@urk/core@0.1.2`, `@urk/adapters@0.1.4`, `@urk/react-urk@0.1.1`, `@urk/next-urk@0.1.1`, and `@urk/cli@0.1.1`.
+- `corepack yarn build` passed under Node 22 on 2026-05-31 during published-package reconciliation.
+- Release reconciliation commit gate on 2026-05-31 stages only the five public package manifests, `CHANGELOG.md`, `codex/RELEASE_HYGIENE.md`, `codex/PLANS.md`, and `codex/SESSION_HANDOFF.md`, then commits with `chore: reconcile published URK npm releases`.
 
 ## Remaining release blockers
 
-- Provide a current npm one-time password or use a granular publish token with 2FA bypass enabled before publish execution.
-- Publish `@urk/react-urk@0.1.0`, `@urk/next-urk@0.1.0`, and `@urk/cli@0.1.0` only after an explicit npm publish decision.
 - Decide public site deploy target and environment before deploying `apps/www`.
 - Do not publish private `@urk/examples`.
 
@@ -82,4 +85,4 @@ Npm publish execution resumed on 2026-05-29 after auth succeeded as `stannesi`, 
 - Do not document `@urk/examples` as a stable public npm API.
 - Do not re-add `"default"` export conditions without a separate package-export decision.
 - Do not stage `.yarn/install-state.gz` without a separate release-policy decision.
-- Do not republish `@urk/core@0.1.1` or `@urk/adapters@0.1.3` in the unpublished-package release step.
+- Do not republish current npm latest package versions without a new version bump.

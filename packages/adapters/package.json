@@ -1,6 +1,6 @@
 {
   "name": "@urk/adapters",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "URK adapters - reference three, pointer, input, loading, storage, and overlay capability adapters",
   "type": "module",
   "main": "./dist/index.js",
