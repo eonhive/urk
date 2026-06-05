@@ -13,6 +13,7 @@ corepack yarn install
 
 ```bash
 corepack yarn build
+corepack yarn build:www
 corepack yarn dev
 corepack yarn dev:examples
 corepack yarn dev:next-proof
@@ -20,6 +21,8 @@ corepack yarn workspace @urk/www check
 ```
 
 `corepack yarn dev` starts the public website under `apps/www`. `corepack yarn dev:examples` starts the private proof workspace under `examples/`. `corepack yarn dev:next-proof` starts the standalone Next proof under `apps/next-proof`.
+
+`corepack yarn build:www` is the deployment-safe public website build. It builds `@urk/core`, `@urk/adapters`, private `@urk/examples`, and then `@urk/www` in dependency order. Use this for Cloudflare Pages, Netlify, Vercel, and local deploy-build checks.
 
 ## Project structure
 
@@ -41,6 +44,7 @@ See:
 - [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
 - [docs/DECISIONS.md](./docs/DECISIONS.md)
 - [docs/EXAMPLES.md](./docs/EXAMPLES.md)
+- [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)
 
 ## Validation
 

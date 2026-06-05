@@ -32,6 +32,12 @@ Npm publish execution resumed on 2026-05-29 after auth succeeded as `stannesi`, 
 
 Published-package reconciliation is complete on 2026-05-31. Npm latest matches local package manifests: `@urk/core@0.1.2`, `@urk/adapters@0.1.4`, `@urk/react-urk@0.1.1`, `@urk/next-urk@0.1.1`, and `@urk/cli@0.1.1`; full workspace build passed under Node 22; and the reconciliation commit message is `chore: reconcile published URK npm releases`.
 
+Public-site deployment prep was corrected on 2026-06-04 after a provider build tried to compile private `@urk/examples` before `@urk/core` and `@urk/adapters` declaration artifacts existed. Root `corepack yarn build:www` now builds the public website in dependency order, and `docs/DEPLOYMENT.md` records Cloudflare Pages and fallback provider settings.
+
+Cloudflare Workers Static Assets deployment prep was corrected on 2026-06-05 after confirming the Worker dashboard has no output-directory text field. Root `wrangler.jsonc` now supplies `assets.directory: "./apps/www/dist"` for the Worker named `urk-site`, and the documented deploy/version commands preserve dashboard variables with `--keep-vars`.
+
+The Cloudflare Workers Static Assets deployment configuration is being committed and pushed to `main` so Cloudflare can build from Git. The next gate is deployed-route smoke testing after Cloudflare finishes the build.
+
 `.yarn/install-state.gz` remains intentionally unstaged. Do not assume unrelated modified or untracked files are safe to revert.
 
 ## Completed work
@@ -98,12 +104,20 @@ Published-package reconciliation is complete on 2026-05-31. Npm latest matches l
 - Reran publish-target builds and pack dry-runs for `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli` on 2026-05-29; all passed.
 - Verified on 2026-05-31 that npm latest matches the local package manifests for all five public packages.
 - Completed published-package reconciliation and kept the version bumps that match npm latest.
+- Added root `corepack yarn build:www` for dependency-safe public website deploy builds.
+- Added `docs/DEPLOYMENT.md` with Cloudflare Pages, Netlify, Vercel, GitHub Pages, and Wrangler direct-upload guidance.
+- Updated README, development, build-status, release-hygiene, and plan docs with the deployment-safe command and the Cloudflare Pages next gate.
+- Verified that `corepack yarn build:www` succeeds from a clean generated-output state after removing `packages/core/dist`, `packages/adapters/dist`, `packages/examples/dist`, and `apps/www/dist`.
+- Added root `wrangler.jsonc` for Cloudflare Workers Static Assets so the missing output-directory dashboard field is represented as `assets.directory`.
+- Updated deployment docs for the Worker dashboard fields: build command, deploy command, version command, root directory, and environment variables.
+- Validated Wrangler deploy and version upload dry-runs against the assets-only Worker config.
+- Prepared the Cloudflare Workers Static Assets deployment changes for commit and push to `main`.
 
 ## In-progress work
 
 - The initial planned public example catalog is fully promoted; next work should not assume another planned example exists.
 - Production readiness verification, final-release hygiene inventory, intentional staging, staged diff review, release-candidate cleanup, final staged release-candidate review, local release-candidate commit, post-commit release prep, and release-prep metadata commit gate are complete.
-- Published-package reconciliation is complete. Next work should deploy the public website, with Cloudflare Pages as the default recommendation for `apps/www`.
+- Published-package reconciliation is complete. Public-site deploy build prep is complete and being pushed to `main`. Next work should wait for the Cloudflare build, then smoke-test the deployed routes.
 
 ## Changed files
 
@@ -169,6 +183,11 @@ Published-package reconciliation is complete on 2026-05-31. Npm latest matches l
 - `packages/next-urk/package.json`
 - `packages/cli/package.json`
 - `CHANGELOG.md`
+- `package.json`
+- `README.md`
+- `DEVELOPMENT.md`
+- `wrangler.jsonc`
+- `docs/DEPLOYMENT.md`
 - `packages/examples/package.json`
 - `codex/RELEASE_HYGIENE.md`
 - `codex/SESSION_HANDOFF.md`
@@ -224,6 +243,20 @@ There are many unrelated pre-existing modified/untracked files from earlier work
 - `/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin/npm view @urk/next-urk version dist-tags --json`
 - `/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin/npm view @urk/cli version dist-tags --json`
 - `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH corepack yarn build`
+- `rm -rf packages/core/dist packages/adapters/dist packages/examples/dist apps/www/dist`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH SITE_URL=https://urk-www.pages.dev corepack yarn build:www`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH corepack yarn workspace @urk/www check`
+- `test -f apps/www/dist/index.html && test -f apps/www/dist/docs/index.html && test -f apps/www/dist/examples/minimal-runtime/index.html && test -f apps/www/dist/packages/index.html && test -f apps/www/dist/playground/index.html`
+- `git diff --check`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH SITE_URL=https://urk.eonhive.com corepack yarn build:www`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH npx wrangler deploy --dry-run`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH npx wrangler versions upload --help`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH npx wrangler versions upload --dry-run`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH npx wrangler deploy --keep-vars --dry-run`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH npx wrangler versions upload --keep-vars --dry-run`
+- `git status --short --branch`
+- `git diff --name-status`
+- `git log -3 --oneline --decorate`
 - `git diff --check`
 - `git status --short`
 - `git diff --cached --name-only -- .yarn/install-state.gz`
@@ -341,6 +374,12 @@ Node used for validation: `/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin`.
 - Publish attempt for `@urk/react-urk@0.1.0` was rejected by npm with `E403` requiring two-factor authentication; no package publish completed.
 - Registry checks on 2026-05-31 confirmed npm latest matches local manifests: `@urk/core@0.1.2`, `@urk/adapters@0.1.4`, `@urk/react-urk@0.1.1`, `@urk/next-urk@0.1.1`, and `@urk/cli@0.1.1`.
 - Full workspace build passed under Node 22 on 2026-05-31.
+- Deployment-safe website build check passed under Node 22 on 2026-06-04: generated `dist` folders were removed, then `SITE_URL=https://urk-www.pages.dev corepack yarn build:www` rebuilt `@urk/core`, `@urk/adapters`, private `@urk/examples`, and `@urk/www` successfully.
+- `corepack yarn workspace @urk/www check` passed under Node 22 on 2026-06-04 with 0 errors, 0 warnings, and 0 hints.
+- Static deploy route-file check passed for `/`, `/docs/`, `/examples/minimal-runtime/`, `/packages/`, and `/playground/`.
+- Deployment-safe website build check passed under Node 22 on 2026-06-05 with `SITE_URL=https://urk.eonhive.com corepack yarn build:www`.
+- `npx wrangler deploy --keep-vars --dry-run` passed on 2026-06-05; Wrangler read 288 files from `apps/www/dist` and found no bindings, which matches the assets-only Worker config.
+- `npx wrangler versions upload --keep-vars --dry-run` passed on 2026-06-05.
 
 ## Known issues
 
@@ -348,7 +387,8 @@ Node used for validation: `/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin`.
 - The release candidate and release-prep metadata commits have not been tagged or pushed in this thread.
 - Published package versions are live on npm and reconciled locally; public website deployment is still pending.
 - `.yarn/install-state.gz` remains intentionally unstaged; include it only if a later release-policy decision accepts Yarn install-state churn.
-- Running `corepack yarn workspace @urk/www build` before `@urk/examples` artifacts exist can fail package entry resolution. Run `corepack yarn workspace @urk/examples build` first or use `corepack yarn build` for dependency-safe order.
+- Running `corepack yarn workspace @urk/examples build` before `@urk/core` and `@urk/adapters` artifacts exist can fail package entry resolution. Use `corepack yarn build:www` for public-site deployment.
+- The Cloudflare Worker dashboard does not provide a build-output-directory text field. `wrangler.jsonc` owns this through `assets.directory`.
 - Running `corepack yarn workspace @urk/www check` without first selecting Node 22 fails because the default shell Node is `v18.17.1`; use `nvm use 22` first.
 - `corepack yarn install --immutable` exits successfully but currently reports a peer warning: `@astrojs/language-server` does not provide `typescript` to `@volar/kit`.
 - During dev-server smoke tests, rebuilding packages while Astro watches `dist/` can briefly produce Vite reload errors for missing transient files. The server recovers after the package build finishes.
@@ -360,7 +400,9 @@ Node used for validation: `/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin`.
 
 Recommended next scope is public website deployment:
 
-- Decide public site deploy target and environment for `apps/www`; default recommendation is Cloudflare Pages.
+- Wait for Cloudflare to build the pushed `main` branch.
+- Smoke-test `https://urk.eonhive.com/`, `/docs/`, `/examples/minimal-runtime/`, `/packages/`, and `/playground/`.
+- If Cloudflare still fails, inspect the build logs before changing repo code.
 - Keep the next task narrow and update `codex/SESSION_HANDOFF.md` before stopping.
 - Do not add new runtime APIs, package exports, or new example scope without a new roadmap decision.
 
@@ -385,6 +427,8 @@ Recommended next scope is public website deployment:
 - Staged package export maps should not include `"default"` conditions for this release.
 - `.yarn/install-state.gz` should remain unstaged for this release unless a later explicit policy decision changes that.
 - Current published npm latest versions are `@urk/core@0.1.2`, `@urk/adapters@0.1.4`, `@urk/react-urk@0.1.1`, `@urk/next-urk@0.1.1`, and `@urk/cli@0.1.1`.
+- Public-site deployment builds must use `corepack yarn build:www` or an equivalent dependency-safe order: `@urk/core`, `@urk/adapters`, private `@urk/examples`, then `@urk/www`.
+- Cloudflare Workers Static Assets is now the active dashboard path. `wrangler.jsonc` replaces the old Pages output-directory field with `assets.directory`.
 - The release-candidate commit message is `chore: prepare URK public release candidate`.
 - The release-prep metadata commit message is `chore: prepare URK public package release metadata`.
 - The published-package reconciliation commit message is `chore: reconcile published URK npm releases`.
@@ -418,4 +462,6 @@ Recommended next scope is public website deployment:
 - Do not re-add release-prep metadata to `@urk/core` or `@urk/adapters`; those package versions are already published and unchanged.
 - Do not attempt to publish private `@urk/examples` or `@urk/www`.
 - Do not remove the private Three.js proof or hide its imports to solve bundle noise; the current fix is scoped vendor chunking.
+- Do not retry the broken deploy command that builds `@urk/examples` before `@urk/core` and `@urk/adapters`.
+- Do not add `main` or `assets.binding` to `wrangler.jsonc` unless URK intentionally adds Worker script logic.
 - Do not revert unrelated dirty workspace changes.

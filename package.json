@@ -18,6 +18,7 @@
   ],
   "scripts": {
     "build": "corepack yarn workspace @urk/core build && corepack yarn workspace @urk/adapters build && corepack yarn workspace @urk/examples build && corepack yarn workspace @urk/react-urk build && corepack yarn workspace @urk/next-urk build && corepack yarn workspace @urk/cli build && corepack yarn workspace urk-examples build && corepack yarn workspace @urk/www build && corepack yarn workspace @urk/next-proof build",
+    "build:www": "corepack yarn workspace @urk/core build && corepack yarn workspace @urk/adapters build && corepack yarn workspace @urk/examples build && corepack yarn workspace @urk/www build",
     "dev": "corepack yarn workspace @urk/www dev",
     "dev:examples": "corepack yarn workspace urk-examples dev",
     "dev:next-proof": "corepack yarn workspace @urk/next-proof dev",

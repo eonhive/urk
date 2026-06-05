@@ -2,7 +2,7 @@
 
 ## Status
 
-Last reviewed: 2026-05-31.
+Last reviewed: 2026-06-05.
 
 This file records the dirty-worktree release inventory. It does not approve a publish or deployment by itself.
 
@@ -14,14 +14,19 @@ Npm publish execution resumed on 2026-05-29 after auth succeeded as `stannesi`, 
 
 Npm registry state was verified on 2026-05-31. The current published latest versions match the local manifests: `@urk/core@0.1.2`, `@urk/adapters@0.1.4`, `@urk/react-urk@0.1.1`, `@urk/next-urk@0.1.1`, and `@urk/cli@0.1.1`.
 
+Public-site deployment prep was updated on 2026-06-04 after a provider build tried to compile `@urk/examples` before `@urk/core` and `@urk/adapters` artifacts existed. Use `corepack yarn build:www` for deploy builds so package artifacts are created in dependency order.
+
+Cloudflare Workers Static Assets deployment prep was updated on 2026-06-05. Root `wrangler.jsonc` now sets `assets.directory` to `./apps/www/dist`, which replaces the missing dashboard output-directory field in the Workers build flow. The documented Worker commands use `--keep-vars` to avoid replacing dashboard-managed variables during deploy/version upload.
+
 ## Release-intended source changes
 
 - Root package/workspace policy: `package.json`, `tsconfig.json`, `.gitignore`, `.nvmrc`, `.yarnrc.yml`, and `yarn.lock`.
+- Cloudflare deployment config: `wrangler.jsonc`.
 - Public website workspace: `apps/www/package.json`, `apps/www/astro.config.mjs`, `apps/www/tsconfig.json`, `apps/www/public/**`, and `apps/www/src/**`.
 - Private website example package: `packages/examples/package.json`, `packages/examples/tsconfig.json`, and `packages/examples/src/**`.
 - Publishable CLI workspace: `packages/cli/package.json`, `packages/cli/README.md`, `packages/cli/tsconfig.json`, and `packages/cli/src/**`.
 - Publish hygiene metadata: `packages/core/package.json`, `packages/adapters/package.json`, `packages/react-urk/package.json`, and `packages/next-urk/package.json`.
-- Canonical docs and readiness docs: `README.md`, `DEVELOPMENT.md`, `BUILD_STATUS.md`, `docs/EXAMPLES.md`, `docs/IMPLEMENTATION_PLAN.md`, `docs/DOCUMENTATION_IA.md`, `docs/PUBLIC_SITE_PLAN.md`, `docs/UI_UX_SYSTEM.md`, `codex/PLANS.md`, `codex/SESSION_HANDOFF.md`, and this file.
+- Canonical docs and readiness docs: `README.md`, `DEVELOPMENT.md`, `BUILD_STATUS.md`, `docs/EXAMPLES.md`, `docs/IMPLEMENTATION_PLAN.md`, `docs/DOCUMENTATION_IA.md`, `docs/PUBLIC_SITE_PLAN.md`, `docs/UI_UX_SYSTEM.md`, `docs/DEPLOYMENT.md`, `codex/PLANS.md`, `codex/SESSION_HANDOFF.md`, and this file.
 - Private proof workspace updates: `examples/index.html`, `examples/main.ts`, `examples/styles.css`, and `examples/vite.config.ts`.
 
 ## Explicit staging decisions
@@ -71,10 +76,13 @@ Npm registry state was verified on 2026-05-31. The current published latest vers
 - Published-package reconciliation on 2026-05-31 verified npm latest versions match local manifests: `@urk/core@0.1.2`, `@urk/adapters@0.1.4`, `@urk/react-urk@0.1.1`, `@urk/next-urk@0.1.1`, and `@urk/cli@0.1.1`.
 - `corepack yarn build` passed under Node 22 on 2026-05-31 during published-package reconciliation.
 - Release reconciliation commit gate on 2026-05-31 stages only the five public package manifests, `CHANGELOG.md`, `codex/RELEASE_HYGIENE.md`, `codex/PLANS.md`, and `codex/SESSION_HANDOFF.md`, then commits with `chore: reconcile published URK npm releases`.
+- `corepack yarn build:www` was added on 2026-06-04 as the deployment-safe public-site build. It builds `@urk/core`, `@urk/adapters`, private `@urk/examples`, and `@urk/www` in order.
+- `wrangler.jsonc` was added on 2026-06-05 for Cloudflare Workers Static Assets with `assets.directory` set to `./apps/www/dist`.
+- Wrangler dry-runs passed on 2026-06-05 with `npx wrangler deploy --keep-vars --dry-run` and `npx wrangler versions upload --keep-vars --dry-run`.
 
 ## Remaining release blockers
 
-- Decide public site deploy target and environment before deploying `apps/www`.
+- Configure Cloudflare Workers Build settings with the documented non-empty build, deploy, and version commands, then smoke-test the deployed routes.
 - Do not publish private `@urk/examples`.
 
 ## Do not redo

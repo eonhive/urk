@@ -17,6 +17,7 @@ URK currently ships:
 
 - `corepack yarn install --immutable`
 - `corepack yarn build`
+- `corepack yarn build:www`
 - `corepack yarn workspace @urk/www check`
 - `npm pack --dry-run --json` for publishable packages: `@urk/core`, `@urk/adapters`, `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`
 - generated-site internal link audit over `apps/www/dist`
@@ -40,6 +41,7 @@ Install immutability last checked: 2026-05-22 under Node `/Users/nappy.cat/.nvm/
 - `corepack yarn workspace urk-examples build` passes without a Vite chunk-size warning. The private proof workspace now splits intentional vendor code into `vendor-three`, `vendor-react`, and `vendor-urk`, with `vendor-three` at about `501.52 kB` under the proof-workspace warning limit of `650 kB`.
 - `corepack yarn workspace @urk/www check` passes with `0 errors`, `0 warnings`, and `0 hints`.
 - `corepack yarn workspace @urk/www build` passes after `@urk/examples` artifacts are present.
+- `corepack yarn build:www` is the deployment-safe public website build because it creates `@urk/core`, `@urk/adapters`, and `@urk/examples` artifacts before building `@urk/www`.
 - `corepack yarn build` passes and does not emit the previous proof-workspace chunk-size warning.
 - Generated-site internal link audit over `apps/www/dist` passed with `htmlFiles: 77` and `missing: []`.
 - Publish dry-runs passed for `@urk/core`, `@urk/adapters`, `@urk/react-urk`, `@urk/next-urk`, and `@urk/cli`.

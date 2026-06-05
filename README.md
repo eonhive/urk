@@ -25,6 +25,7 @@ Use Node 22. The repo uses Yarn workspaces with `nodeLinker: node-modules`; Yarn
 corepack enable
 corepack yarn install
 corepack yarn build
+corepack yarn build:www
 corepack yarn dev
 ```
 
@@ -151,5 +152,6 @@ See [packages/cli/README.md](./packages/cli/README.md) for the full command refe
 - `docs/PUBLIC_SITE_PLAN.md`
 - `docs/DOCUMENTATION_IA.md`
 - `docs/UI_UX_SYSTEM.md`
+- `docs/DEPLOYMENT.md`
 
 `docs/07_URK/` remains draft and reference material. The top-level docs above are the canonical entry points.
