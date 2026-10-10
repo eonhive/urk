@@ -637,3 +637,11 @@ Final local results on Node **22.22.2**, Yarn **3.8.7**, with `CI=true`:
 - `git diff --check` passed. Logs: `/tmp/urk-v02-release-checks.log` and `/tmp/urk-v02-release-browser.log`.
 
 Existing Astro language-server peer, website large-chunk, and docs-404 build warnings remain non-blocking. Chromium/macOS is the local browser evidence; hosted CI, broader performance workloads, and the supported toolchain matrix are not established by this run. No package publication or website deployment was performed.
+
+## Lifecycle review correction — 2026-10-10
+
+Review reproduced an operational-state bug: an application write to the legacy `paused` phase made `kernel.pause()` leave frames running; an application phase change while paused made `resume()` leave the kernel stopped. `Kernel.ts` now uses lifecycle state for both guards and preserves the last non-paused application phase. No public signature or lifecycle policy changes.
+
+Added two focused regressions in `lifecycle-observation.test.mjs`, covering continuous and auto frame modes, duplicate calls, phase restoration, and actual update delivery. On Node 22.22.2 / Yarn 3.8.7, **122 core tests and declaration checks passed**, then **all 32 Chromium integration checks passed**. The integration command rebuilt affected runtime dependencies; full production builds are delegated to the PR gate. Logs: `/tmp/urk-v02-pause-{review,browser}.log`. `git diff --check` passed.
+
+The preceding candidate `e7ec4dc` passed its first [GitHub-hosted Ubuntu CI run](https://github.com/eonhive/urk/actions/runs/38025788225), including browser checks and artifact upload. Current-head hosted results are tracked on [PR #1](https://github.com/eonhive/urk/pull/1). No external review comments were present at this review. The documented Cloudflare production branch is `main`; merging therefore needs to account for automatic deployment as well as source integration.

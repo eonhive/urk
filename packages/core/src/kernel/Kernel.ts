@@ -246,13 +246,15 @@ export class Kernel {
   pause(reason = 'kernel:pause'): void {
     this.assertBooted();
 
-    const snapshot = this.ctx.state.getSnapshot();
-
-    if (snapshot.phase === 'paused') {
+    if (this.lifecycle.getSnapshot().state === 'paused') {
       return;
     }
 
-    this.resumePhase = snapshot.phase === 'boot' ? 'ready' : snapshot.phase;
+    const snapshot = this.ctx.state.getSnapshot();
+    // Application phases can change independently of operational pause/resume.
+    if (snapshot.phase !== 'paused') {
+      this.resumePhase = snapshot.phase === 'boot' ? 'ready' : snapshot.phase;
+    }
     this.lifecycle.commit('paused', reason);
     try {
       this.ctx.scheduler.stop();
@@ -266,7 +268,7 @@ export class Kernel {
   resume(reason = 'kernel:resume'): void {
     this.assertBooted();
 
-    if (this.ctx.state.getSnapshot().phase !== 'paused') {
+    if (this.lifecycle.getSnapshot().state !== 'paused') {
       return;
     }
 

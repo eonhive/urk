@@ -112,6 +112,54 @@ test('direct legacy phase writes do not acquire operational scheduler side effec
   await kernel.shutdown();
 });
 
+for (const frameMode of ['continuous', 'auto']) {
+  test(`${frameMode}: pause and resume follow lifecycle after application phase changes`, async () => {
+    const scheduler = new ManualFrameScheduler();
+    let frames = 0;
+    const kernel = createKernel({ scheduler, frameMode, controllers: [{
+      id: 'updates', update() { frames++; },
+    }] });
+    try {
+      await kernel.boot();
+      const state = kernel.getContext().state;
+      state.setPhase('transition', 'application:scene');
+      state.setPhase('paused', 'application:menu');
+      const running = kernel.getLifecycleSnapshot();
+      kernel.resume('ignored while running');
+      assert.equal(kernel.getLifecycleSnapshot(), running);
+      assert.equal(kernel.getState().phase, 'paused');
+
+      kernel.pause();
+      assert.equal(kernel.getLifecycleSnapshot().state, 'paused');
+      assert.equal(scheduler.isRunning(), false);
+      scheduler.step(10);
+      assert.equal(frames, 0);
+      kernel.resume();
+      assert.equal(kernel.getState().phase, 'transition');
+      assert.equal(scheduler.isRunning(), true);
+      scheduler.step(20);
+      assert.equal(frames, 1);
+
+      kernel.pause();
+      const paused = kernel.getLifecycleSnapshot();
+      state.setPhase('ready', 'application:loaded');
+      kernel.pause('ignored while paused');
+      assert.equal(kernel.getLifecycleSnapshot(), paused);
+      assert.equal(kernel.getState().phase, 'ready');
+      assert.equal(scheduler.isRunning(), false);
+      kernel.resume();
+      assert.equal(kernel.getLifecycleSnapshot().state, 'running');
+      assert.equal(kernel.getState().phase, 'ready');
+      assert.equal(scheduler.isRunning(), true);
+      scheduler.step(30);
+      assert.equal(frames, 2);
+    } finally {
+      await kernel.shutdown();
+    }
+    assert.equal(scheduler.isRunning(), false);
+  });
+}
+
 test('shutdown commits disposal intent before abort and waits for pending startup', async () => {
   const entered = deferred();
   const release = deferred();
