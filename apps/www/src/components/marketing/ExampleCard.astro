@@ -5,7 +5,7 @@
  * Purpose: Render a public example summary card for live and planned URK runtime proofs.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-05-01
+ * Updated: 2026-06-06
  * Notes: Vibe coded with Codex.
  */
 
@@ -25,9 +25,18 @@ const statusClass =
 ---
 
 <a
-  class="site-card flex h-full flex-col gap-4 p-6 no-underline transition-transform duration-150 hover:-translate-y-0.5"
+  class={`example-card example-card--${entry.visualTone} site-card flex h-full flex-col gap-5 p-5 no-underline transition-transform duration-150 hover:-translate-y-1`}
   href={entry.href}
 >
+  <div class="example-card__visual" aria-hidden="true">
+    <div class="example-card__orb example-card__orb--one"></div>
+    <div class="example-card__orb example-card__orb--two"></div>
+    <div class="example-card__rail">
+      {entry.visualNodes.map((node) => <span>{node}</span>)}
+    </div>
+    <div class="example-card__label">{entry.visualLabel}</div>
+  </div>
+
   <div class="flex flex-wrap items-start justify-between gap-3">
     <h3 class="font-[var(--urk-font-display)] text-2xl font-semibold tracking-[-0.04em]">{entry.title}</h3>
     <span class={`site-status-badge ${statusClass}`}>{entry.status}</span>
@@ -41,4 +50,6 @@ const statusClass =
     <div class="mb-2 text-xs uppercase tracking-[0.14em] text-[var(--urk-muted)]">Boundary</div>
     <p class="m-0 text-sm leading-7 text-[var(--urk-foreground)]">{entry.boundary}</p>
   </div>
+
+  <span class="example-card__cta">Open live example</span>
 </a>

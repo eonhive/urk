@@ -1,0 +1,74 @@
+{
+  "measuredAt": "2026-10-07T22:03:36.823Z",
+  "node": "v22.22.2",
+  "os": "darwin 24.6.0",
+  "cpu": "Apple M1",
+  "head": "94b654c107ff6fbe2e554fc81c093d4372cdb001",
+  "workingChanges": true,
+  "protocol": {
+    "steps": 5000,
+    "measuredRuns": 7,
+    "warmupRuns": 2,
+    "diagnostics": "off",
+    "scheduler": "manual"
+  },
+  "comparison": "frame modes within the v0.2 working tree; no historical v0.1 baseline or GPU/rendering measurement",
+  "cases": [
+    {
+      "controllers": 0,
+      "frameMode": "continuous",
+      "dispatchedFrames": 5000,
+      "medianMs": 0.1,
+      "maxMs": 0.628
+    },
+    {
+      "controllers": 0,
+      "frameMode": "auto",
+      "dispatchedFrames": 0,
+      "medianMs": 0.07,
+      "maxMs": 0.07
+    },
+    {
+      "controllers": 10,
+      "frameMode": "continuous",
+      "dispatchedFrames": 5000,
+      "medianMs": 0.218,
+      "maxMs": 0.653
+    },
+    {
+      "controllers": 10,
+      "frameMode": "auto",
+      "dispatchedFrames": 5000,
+      "medianMs": 0.225,
+      "maxMs": 0.284
+    },
+    {
+      "controllers": 100,
+      "frameMode": "continuous",
+      "dispatchedFrames": 5000,
+      "medianMs": 4.924,
+      "maxMs": 5.606
+    },
+    {
+      "controllers": 100,
+      "frameMode": "auto",
+      "dispatchedFrames": 5000,
+      "medianMs": 5.074,
+      "maxMs": 5.642
+    },
+    {
+      "controllers": 1000,
+      "frameMode": "continuous",
+      "dispatchedFrames": 5000,
+      "medianMs": 49.241,
+      "maxMs": 53.36
+    },
+    {
+      "controllers": 1000,
+      "frameMode": "auto",
+      "dispatchedFrames": 5000,
+      "medianMs": 53.127,
+      "maxMs": 58.446
+    }
+  ]
+}

@@ -18,15 +18,6 @@ import { error, info, success } from '../utils/logger.js';
 import { validateProjectName } from '../utils/names.js';
 import { detectUrkPackages, readNearestPackageJson } from '../utils/project.js';
 
-type RootPackageJson = {
-  packageManager?: string;
-  devDependencies?: Record<string, string>;
-};
-
-type LibraryPackageJson = {
-  version?: string;
-};
-
 type DependencyVersions = {
   core: string;
   adapters: string;
@@ -35,43 +26,20 @@ type DependencyVersions = {
   packageManager?: string;
 };
 
-function toCaretVersion(version: string | undefined, packageName: string): string {
-  if (!version) {
-    throw new Error(`Could not resolve the current ${packageName} version.`);
-  }
-
-  return version.startsWith('^') ? version : `^${version}`;
-}
-
 async function isDirectoryEmpty(path: string): Promise<boolean> {
   const entries = await readdir(path);
   return entries.length === 0;
 }
 
 async function resolveDependencyVersions(): Promise<DependencyVersions> {
-  const rootManifestPath = fileURLToPath(new URL('../../../../package.json', import.meta.url));
-  const coreManifestPath = fileURLToPath(new URL('../../../core/package.json', import.meta.url));
-  const adaptersManifestPath = fileURLToPath(
-    new URL('../../../adapters/package.json', import.meta.url),
-  );
-
-  const rootManifest = await readJsonFile<RootPackageJson>(rootManifestPath);
-  const coreManifest = await readJsonFile<LibraryPackageJson>(coreManifestPath);
-  const adaptersManifest = await readJsonFile<LibraryPackageJson>(adaptersManifestPath);
-  const typescriptVersion = rootManifest.devDependencies?.typescript;
-  const viteVersion = rootManifest.devDependencies?.vite;
-
-  if (!typescriptVersion || !viteVersion) {
-    throw new Error('Could not resolve TypeScript or Vite versions from the repo root package.json.');
+  // This path works in both the source tree and an installed CLI package.
+  const manifestPath = fileURLToPath(new URL('../../package.json', import.meta.url));
+  const manifest = await readJsonFile<{ urkTemplateVersions?: DependencyVersions }>(manifestPath);
+  const versions = manifest.urkTemplateVersions;
+  if (!versions?.core || !versions.adapters || !versions.typescript || !versions.vite) {
+    throw new Error('The CLI package is missing its scaffold dependency versions.');
   }
-
-  return {
-    core: toCaretVersion(coreManifest.version, '@urk/core'),
-    adapters: toCaretVersion(adaptersManifest.version, '@urk/adapters'),
-    typescript: typescriptVersion,
-    vite: viteVersion,
-    packageManager: rootManifest.packageManager,
-  };
+  return versions;
 }
 
 async function runCreateControllerCommand(args: string[]): Promise<number> {

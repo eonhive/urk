@@ -9,6 +9,7 @@
  */
 
 import { minimalRuntimeMeta } from './minimal-runtime/meta.js';
+import { audioProofMeta } from './audio-proof/meta.js';
 import { adapterRegistrationMeta } from './adapter-registration/meta.js';
 import { controllerOrchestrationMeta } from './controller-orchestration/meta.js';
 import { runtimeStateMeta } from './runtime-state/meta.js';
@@ -20,6 +21,7 @@ import { plannedExampleMetas } from './planned.js';
 import type { ExampleId, ExampleMeta, ExampleModule } from './types.js';
 
 export const exampleCatalog: ExampleMeta[] = [
+  audioProofMeta,
   minimalRuntimeMeta,
   adapterRegistrationMeta,
   controllerOrchestrationMeta,
@@ -43,6 +45,10 @@ export function getExampleMeta(id: ExampleId): ExampleMeta {
 
 export async function loadExampleModule(id: ExampleId): Promise<ExampleModule> {
   switch (id) {
+    case 'audio-proof': {
+      const module = await import('./audio-proof/mount.js');
+      return { meta: audioProofMeta, mount: module.mountAudioProofExample };
+    }
     case 'minimal-runtime': {
       const module = await import('./minimal-runtime/mount.js');
 

@@ -1,0 +1,53 @@
+---
+title: URK v0.2
+description: Use typed dependencies, automatic idle scheduling, explicit ownership, and the shared experience.
+---
+
+{/* Company: EonHive Inc. | Title: URK v0.2 Guide | Purpose: Explain the implemented runtime and runnable experience.
+Author: Stan Nesi | Created: 2026-10-07 | Updated: 2026-10-08 | Notes: Vibe coded with Codex. */}
+
+# URK v0.2
+
+The v0.2 implementation is available in this checkout. Package manifests are `0.2.0`; publication is a separate step. Existing kernel methods, package names, adapter strings, legacy phases, and thin React/Next wrappers remain supported.
+
+[Open the playground](/playground/). Pick the Explore, Create, or Connect object, or use the matching buttons. With the playground focused, keys **1–3** select and **arrow keys** rotate the selected object. The Three.js scene redraws only on interaction, resize, or resume; it has no continuous update loop. Loading reports actual initialization without an artificial delay.
+
+**Enable sound** opts into the confirmation sound. Adjust **Volume** to save its level alongside your selection in browser storage under `urk:v02:preferences`. Invalid preferences are ignored. If storage is blocked, **Session only** indicates borrowed memory storage for the current page. Fresh kernels restore preferences but start silent. Pause disables interaction and stops pending drawing and playback; resume redraws without starting sound.
+
+The host controls demonstrate pause/resume, optional diagnostics, unmount, deliberate setup failure, and fresh-kernel recovery. A WebGL startup failure rolls back the owned surface; use **Start fresh** after restoring support. An unavailable sound file only affects the sound controls.
+
+## Simpler dependency access
+
+```ts
+import { createKernel, token } from '@urk/core';
+import { createLoadingAdapter, LoadingCapability } from '@urk/adapters/loading';
+
+const Preferences = token<{ volume: number }>('preferences');
+const kernel = createKernel({
+  frameMode: 'auto',
+  serviceBindings: [{ token: Preferences, value: { volume: 0.5 } }],
+  adapters: [createLoadingAdapter()],
+});
+
+await kernel.boot();
+const ctx = kernel.getContext();
+ctx.require(LoadingCapability).begin([{ id: 'content', label: 'Content' }]);
+ctx.require(Preferences).volume = 0.8;
+await kernel.shutdown();
+```
+
+Tokens infer the API type and identify one provider per kernel across adapters and borrowed services. Import the canonical token rather than recreating it by label. Services remain borrowed; cleanup drops references without destroying supplied values. Explicit string registry calls continue to work.
+
+## Scheduling and startup
+
+`frameMode: 'auto'` requests controller frames only after an update controller starts. An event-driven kernel can be running and idle. The default `continuous` mode preserves legacy behavior. Pause stops the kernel loop; external systems retain their own ownership.
+
+Configured dependencies are checked before setup, including missing providers, collisions, and cycles. Forward references initialize before consumers. Setup is sequential by default; `adapterStartup: 'parallel'` starts independent dependency batches together. The playground declares its view dependencies before using this option. Dynamic registration needs already-published providers.
+
+## Framework hosts and cleanup
+
+React adds `useLifecycleSnapshot()` for operational state. Use provider ownership for a kernel the provider owns, and external ownership for shared host-owned kernels. Next defaults to provider ownership. Factories are inert; browser acquisition belongs in lifecycle hooks.
+
+Built-in adapters register cleanup during acquisition so partial setup also releases owned resources. Shutdown signals cancellation immediately and waits for tracked work. A disposed kernel is terminal; create a new one to restart. Hooks must cooperate with cancellation.
+
+Run `corepack yarn dev:v02` for standalone `/v02/` and React `/v02/react.html`, or use `/v02` in the Next proof. All hosts use the same private shared experience implementation.

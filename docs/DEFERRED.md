@@ -1,14 +1,13 @@
-# URK Deferred
+# Deferred after URK v0.2
 
-These are intentionally deferred until the kernel and proof example are stable:
+The working v0.2 implementation includes lifecycle/ownership, typed adapter and borrowed-service lookup, dependency planning, auto frame scheduling, diagnostics, framework hosts, and the shared experience. The following need independent evidence or contracts:
 
-- full plugin marketplace
-- no-code runtime builder
-- giant framework integration matrix
-- advanced devtools suite before kernel stability
-- many adapters without real usage proof
-- engine-like simulation features
-- product-shell behavior
-- monetization/admin surfaces
+- Per-dependency immediate startup beyond the implemented parallel batches: measure real application startup before adding a more complex scheduler.
+- Forced cancellation or shutdown timeouts: arbitrary hooks remain cooperative. Unresolved owned work must not be reported as completed cleanup.
+- Automatic controller hot swapping: membership grows after successful startup; disposal remains terminal. Removal/replacement needs its own concurrency and frame-boundary contract.
+- Compiler, bundler, or package-manager migration: retain Node 22, Yarn, and the existing tools until comparable cold/warm measurements justify a change.
+- Historical performance comparisons and broad allocation/heap/GPU budgets: the current measurement compares frame modes within v0.2, not an old release. Browser resource checks are not a complete profiler report.
+- Diagnostics packaging split: observation is lazy, but its compatible facade remains part of core.
+- New rendering engines, ECS, physics, marketplaces, product identity, monetization, editors, workers, or a wider framework matrix: outside this runtime release.
 
-Reason: the next real win is contract-first implementation plus one credible example, not ecosystem sprawl. fileciteturn30file16
+Package publication, deployment, and creating a release tag are external release actions; changing local manifests does not perform them.

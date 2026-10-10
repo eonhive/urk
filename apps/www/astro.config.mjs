@@ -88,6 +88,7 @@ export default defineConfig({
         {
           label: 'Examples',
           items: [
+            { label: 'Audio Lab', link: '/docs/examples/audio-proof/' },
             { label: 'Minimal standalone runtime', link: '/docs/examples/minimal-standalone-runtime/' },
             { label: 'Adapter registration', link: '/docs/examples/adapter-registration/' },
             { label: 'Controller orchestration', link: '/docs/examples/controller-orchestration/' },

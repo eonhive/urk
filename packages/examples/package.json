@@ -1,6 +1,6 @@
 {
   "name": "@urk/examples",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "URK examples - internal unstable runtime proofs consumed by the public website",
   "type": "module",
@@ -11,6 +11,10 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./v02": {
+      "types": "./dist/v02/runtime.d.ts",
+      "import": "./dist/v02/runtime.js"
     }
   },
   "files": [
@@ -19,14 +23,16 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "dev": "tsc --watch",
-    "test": "echo 'manual browser acceptance only for this milestone'",
-    "lint": "echo 'no lint yet'"
+    "lint": "yarn typecheck",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@urk/adapters": "workspace:*",
-    "@urk/core": "workspace:*"
+    "@urk/core": "workspace:*",
+    "three": "^0.184.0"
   },
   "devDependencies": {
+    "@types/three": "^0.184.0",
     "typescript": "^5.3.0"
   }
 }

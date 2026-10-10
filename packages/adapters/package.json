@@ -1,6 +1,6 @@
 {
   "name": "@urk/adapters",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "URK adapters - reference three, pointer, input, loading, storage, and overlay capability adapters",
   "type": "module",
   "main": "./dist/index.js",
@@ -14,6 +14,34 @@
     "./dom": {
       "import": "./dist/dom.js",
       "types": "./dist/dom.d.ts"
+    },
+    "./audio": {
+      "types": "./dist/audio/index.d.ts",
+      "import": "./dist/audio/index.js"
+    },
+    "./input": {
+      "types": "./dist/input/index.d.ts",
+      "import": "./dist/input/index.js"
+    },
+    "./loading": {
+      "types": "./dist/loading/index.d.ts",
+      "import": "./dist/loading/index.js"
+    },
+    "./pointer": {
+      "types": "./dist/pointer/index.d.ts",
+      "import": "./dist/pointer/index.js"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "import": "./dist/storage/index.js"
+    },
+    "./three": {
+      "types": "./dist/three/index.d.ts",
+      "import": "./dist/three/index.js"
+    },
+    "./ui-widgets": {
+      "types": "./dist/ui-widgets/index.d.ts",
+      "import": "./dist/ui-widgets/index.js"
     }
   },
   "files": [
@@ -22,11 +50,13 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "dev": "tsc --watch",
-    "test": "echo 'manual validation only for this milestone'",
-    "lint": "echo 'no lint yet'"
+    "test": "yarn build && yarn test:types && node --test tests/*.test.mjs",
+    "lint": "yarn typecheck",
+    "test:types": "tsc --project tests/types/tsconfig.json",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@urk/core": "^0.1.1",
+    "@urk/core": "^0.2.0",
     "three": "^0.184.0"
   },
   "peerDependenciesMeta": {
@@ -36,7 +66,7 @@
   },
   "devDependencies": {
     "@types/three": "^0.184.0",
-    "@urk/core": "^0.1.1",
+    "@urk/core": "^0.2.0",
     "three": "^0.184.0",
     "typescript": "^5.3.0"
   }

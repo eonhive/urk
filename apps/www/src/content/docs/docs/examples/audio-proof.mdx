@@ -1,0 +1,42 @@
+---
+title: Audio Lab
+description: Play real audio and explore how URK coordinates browser media and runtime lifecycle.
+---
+
+{/*
+  Company: EonHive Inc.
+  Title: Public Audio Lab Guide
+  Purpose: Explain the audio proof migration, controls, and lifecycle boundaries.
+  Author: Stan Nesi
+  Created: 2026-09-21
+  Updated: 2026-09-21
+  Notes: Vibe coded with Codex.
+*/}
+
+Status: current.
+
+[Open Audio Lab](/examples/audio-proof/). This is the public adaptation of the original `examples/audio-proof/` integration proof.
+
+## Try it
+
+1. Choose Ambient bed, Pulse cue, or Confirmation to play a real WAV track. Sound never starts automatically.
+2. Adjust Volume or Mute. Pause track holds its position; Stop rewinds it.
+3. Pause the runtime using the controls below the deck. Audio pauses too. Resume the runtime, then press Play to continue listening.
+4. Shutdown releases the audio adapter. Reset / restart creates a fresh kernel and deck state.
+5. Inspect the runtime panels below for `audio:changed` and `audio-demo:*` events.
+
+All controls are native buttons or a labeled slider and support keyboard interaction. The record animation indicates playback state; it is not a waveform or spectrum analyzer. Reduced-motion preferences disable the rotation.
+
+## How URK is used
+
+`packages/examples/src/audio-proof/mount.ts` creates a kernel with `createAudioAdapter()` from `@urk/adapters` and `createLoadingAdapter()` from `@urk/adapters/dom`. The controller registers three tracks, resolves the audio capability, and coordinates media state with runtime pause and disposal. Tracks load on demand when played; loading status and playback errors appear on the deck.
+
+The Astro component owns the static HTML, styling, and track asset URLs. `view.ts` updates those elements from adapter snapshots. The existing runtime panel helper handles diagnostics and reset/teardown wiring.
+
+## Source and scope
+
+- [Public runtime source](https://github.com/eonhive/urk/tree/main/packages/examples/src/audio-proof)
+- [Original local proof](https://github.com/eonhive/urk/tree/main/examples/audio-proof)
+- [Adapter reference](/docs/reference/adapters/)
+
+The original proof still runs with `corepack yarn dev:examples` at `/audio-proof/`; it covers the broader pointer/input/widget integration. The website adaptation reuses its three WAV assets, served locally from `/audio/`, and focuses on audio transport and lifecycle. It adds no mixer or Web Audio analysis API. Private `@urk/examples` remains an internal website workspace.

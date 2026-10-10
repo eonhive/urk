@@ -5,34 +5,128 @@
  * Purpose: Present public URK runtime examples while keeping the boundary explicit.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-05-14
+ * Updated: 2026-06-06
  * Notes: Vibe coded with Codex.
  */
 
 import BaseLayout from '@/components/layout/BaseLayout.astro';
 import ExampleCard from '@/components/marketing/ExampleCard.astro';
-import { liveExamples, nonCurrentExamples } from '@/data/examples';
+import { liveExamples, nonCurrentExamples, repoProofExamples } from '@/data/examples';
 
 const hasNonCurrentExamples = nonCurrentExamples.length > 0;
+const featuredExamples = liveExamples.slice(0, 3);
 ---
 
 <BaseLayout
   title="Examples"
   description="Public URK runtime examples that prove the kernel through live browser surfaces."
 >
-  <section class="site-section">
+  <section class="site-section examples-hero-section">
+    <div class="site-shell examples-hero">
+      <div class="site-grid gap-5">
+        <span class="site-kicker">Examples</span>
+        <h1 class="site-heading">Runtime proofs should feel alive.</h1>
+        <p class="site-subheading">
+          The website examples are the public, docs-friendly URK runtime islands. The older root
+          `examples/` workspace is a separate proof lab with more visual experiments that still run
+          locally while the public surfaces stay stable.
+        </p>
+        <div class="site-chip-row">
+          <span class="site-chip">{liveExamples.length} live website examples</span>
+          <span class="site-chip">{repoProofExamples.length} repo proof lab routes</span>
+        </div>
+      </div>
+
+      <aside class="examples-hero__visual site-card" aria-label="URK example system map">
+        <div class="examples-hero__glow"></div>
+        <div class="examples-hero__kicker">Website runtime island</div>
+        <div class="examples-hero__stage">
+          {featuredExamples.map((entry, index) => (
+            <a class={`examples-hero__node examples-hero__node--${index + 1}`} href={entry.href}>
+              <span>{entry.visualLabel}</span>
+              <strong>{entry.title}</strong>
+            </a>
+          ))}
+        </div>
+        <div class="examples-hero__caption">
+          <span>kernel</span>
+          <span>adapters</span>
+          <span>controllers</span>
+          <span>events</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="site-section site-section--tight">
     <div class="site-shell site-grid gap-6">
       <div class="site-grid gap-3">
-        <span class="site-kicker">Examples</span>
-        <h1 class="site-section-title">Real runtime proofs, not static screenshots.</h1>
+        <span class="site-kicker">Public examples</span>
+        <h2 class="site-section-title">Live website surfaces with clearer visual identity.</h2>
         <p class="site-section-copy">
-          Each example is meant to prove one clear part of the runtime kernel. The examples stay
-          focused, browser-native, and explicit about lifecycle, adapters, controllers, and events.
+          These routes are deployed on the public site. They prioritize readable runtime behavior:
+          what boots, what capability is registered, what controller owns behavior, and what events
+          prove the interaction.
         </p>
       </div>
 
-      <div class="site-grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div class="site-grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {liveExamples.map((entry) => <ExampleCard entry={entry} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="site-shell site-grid gap-6">
+      <div class="site-grid gap-3">
+        <span class="site-kicker">Repo proof lab</span>
+        <h2 class="site-section-title">The older `examples/` proofs are local lab surfaces.</h2>
+        <p class="site-section-copy">
+          These original routes run in the local Vite workspace. They are visual, exploratory
+          proofs used to validate bigger integration ideas like Three picking, audio transport,
+          scrollytelling, and app shells before promoting anything into `packages/examples`.
+          The audio proof now also has a <a href="/examples/audio-proof/">playable public Audio Lab</a>.
+        </p>
+      </div>
+
+      <div class="repo-proof-callout site-card p-6">
+        <div class="site-grid gap-3">
+          <h3 class="font-[var(--urk-font-display)] text-3xl font-semibold tracking-[-0.05em]">
+            Run the proof lab locally
+          </h3>
+          <p class="site-section-copy">
+            `corepack yarn dev:examples` starts the Vite proof workspace. Then open routes like
+            `/picking/`, `/audio-proof/`, or `/scrollytelling/` on the local proof server.
+          </p>
+        </div>
+        <code class="repo-proof-callout__command">corepack yarn dev:examples</code>
+      </div>
+
+      <div class="site-grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {
+          repoProofExamples.map((proof) => (
+            <a class={`repo-proof-card repo-proof-card--${proof.visualTone} site-card p-5 no-underline`} href={proof.sourceHref}>
+              <div class="repo-proof-card__visual" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="site-grid gap-3">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <h3 class="font-[var(--urk-font-display)] text-2xl font-semibold tracking-[-0.04em]">
+                    {proof.title}
+                  </h3>
+                  <code class="font-[var(--urk-font-code)] text-xs text-[var(--urk-muted)]">{proof.route}</code>
+                </div>
+                <p class="site-section-copy text-sm">{proof.summary}</p>
+                <div class="site-chip-row">
+                  {proof.stack.map((item) => <span class="site-chip">{item}</span>)}
+                </div>
+                <span class="example-card__cta">View source folder</span>
+              </div>
+            </a>
+          ))
+        }
       </div>
     </div>
   </section>

@@ -112,3 +112,7 @@ Treat these as boundary violations unless documented otherwise:
 - dashboard/admin behavior in kernel packages
 - wrappers redefining kernel architecture
 - framework-first implementation that undermines standalone-first
+
+## Operational state and experience flow
+
+v0.2 operational lifecycle describes whether a kernel can work or has completed cleanup. Experience phases describe loading, readiness, and interaction. A running event-driven experience may have no frame loop in auto mode. Typed lookup and scopes simplify orchestration; they do not move product state or framework ownership into core.

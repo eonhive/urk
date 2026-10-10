@@ -21,6 +21,8 @@ export default defineConfig({
       input: [
         resolve(__dirname, 'index.html'),
         resolve(__dirname, 'audio-proof/index.html'),
+        resolve(__dirname, 'v02/index.html'),
+        resolve(__dirname, 'v02/react.html'),
         resolve(__dirname, 'app-shell/index.html'),
         resolve(__dirname, 'loading-transition/index.html'),
         resolve(__dirname, 'picking/index.html'),

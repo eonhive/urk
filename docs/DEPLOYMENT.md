@@ -96,3 +96,13 @@ SITE_URL=https://example.com corepack yarn build:www
 ```
 
 The command should rebuild package artifacts in dependency order and produce `apps/www/dist`.
+
+## Post-deploy smoke check
+
+Run this after Cloudflare deploys `main`:
+
+```bash
+SITE_URL=https://urk.eonhive.com corepack yarn smoke:www
+```
+
+The command checks the live home, docs, minimal runtime example, packages, playground, sitemap, robots, 404 handling, and critical assets. `SITE_URL` is optional and defaults to `https://urk.eonhive.com`.

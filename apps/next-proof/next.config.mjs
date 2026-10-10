@@ -15,6 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const nextConfig = {
+  distDir: process.env.URK_INTEGRATION_TEST === '1' ? '.next-integration' : '.next',
   webpack(config) {
     config.resolve.alias = {
       ...config.resolve.alias,

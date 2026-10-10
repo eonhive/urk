@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .next/
+.next-integration/
 .astro/
 *.tsbuildinfo
 .DS_Store

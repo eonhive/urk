@@ -6,6 +6,8 @@ The handoff update must record current status, completed work, in-progress work,
 
 ## Task log
 
+- 2026-09-21: Audio proof promotion plan: add a private audio runtime module and catalog entry, a site-owned visual deck, local WAV assets, a public guide, and gallery links. Accept only after website build/check, playback/lifecycle/browser validation, and generated-link checks. Keep the original integration proof intact. Implementation is in progress; verification results will be recorded in the handoff.
+
 - 2026-05-08: Promoted `runtime-state` from planned metadata to the fourth current public runtime example. Next incomplete example catalog item: `event-routing`.
 - 2026-05-08: Promoted `event-routing` from planned metadata to the fifth current public runtime example. Next incomplete example catalog item: `scene-ui-bridge`.
 - 2026-05-08: Promoted `scene-ui-bridge` from planned metadata to the sixth current public runtime example. Next incomplete example catalog item: `pointer-input-overlay`.
@@ -27,3 +29,7 @@ The handoff update must record current status, completed work, in-progress work,
 - 2026-06-04: Fixed the public-site deploy-build command after Cloudflare failed by building `@urk/examples` before `@urk/core` and `@urk/adapters` artifacts existed. Added root `corepack yarn build:www` for dependency-safe website deployment and documented Cloudflare Pages, Netlify, Vercel, and GitHub Pages settings in `docs/DEPLOYMENT.md`. Next work should configure Cloudflare Pages with the documented non-empty build command and `apps/www/dist` output directory, then smoke-test the deployed routes.
 - 2026-06-05: Reconciled deployment docs with the Cloudflare Workers Static Assets dashboard flow. Added root `wrangler.jsonc` so `assets.directory` replaces the missing output-directory text field and points to `./apps/www/dist`; deploy settings now use `npx wrangler deploy --keep-vars` and `npx wrangler versions upload --keep-vars`.
 - 2026-06-05: Committed and pushed the URK Cloudflare Workers Static Assets deployment configuration. Next work should wait for Cloudflare to build from `main`, then smoke-test `https://urk.eonhive.com/`, `/docs/`, `/examples/minimal-runtime/`, `/packages/`, and `/playground/`.
+- 2026-06-05: Added repeatable post-deploy production smoke verification with `corepack yarn smoke:www`. Next work should run the smoke check after each Cloudflare deploy and then decide whether to tag a public release or add monitoring/analytics.
+- 2026-06-06: Completed the first public examples presentation pass. `/examples/` now has stronger visual example cards and a repo proof lab section that explains why root `examples/` routes are local proof surfaces rather than deployed public runtime islands; local browser inspection passed at desktop and mobile widths. Next visual work should promote one old proof into `packages/examples` only with a separate migration plan.
+
+- 2026-10-07: Implemented the user-requested URK v0.2 runtime and shared experience: typed context/services, startup planning, auto frames, scoped built-in cleanup, lifecycle hook, packaged CLI scaffolds, and dependency-aware builds. Runtime/tooling versions are 0.2.0 locally; publication/deployment remain separate. See current migration and validation docs.

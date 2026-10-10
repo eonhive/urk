@@ -61,7 +61,9 @@ Creates a small app with:
 - `src/kernel.ts`
 - `src/main.ts`
 - `src/adapters.ts`
+- `src/contracts.ts`
 - `src/controllers/app.controller.ts`
+- `public/content.json`
 
 ### `urk create-proof <name>`
 
@@ -198,3 +200,7 @@ Run static inspection:
 ```bash
 node /path/to/urk/packages/cli/dist/index.js inspect
 ```
+
+## v0.2 scaffolds
+
+New projects use v0.2 typed services, parallel adapter startup, scoped subscriptions, and awaited phase commands. Content loads from editable `public/content.json` with cancellation. The host includes pause, resume, stop, fresh-kernel recovery, and Vite hot-reload cleanup. Event-driven controllers have no update hook, so auto mode keeps the frame loop idle. Generated controller files likewise omit a placeholder update hook; add one only for real frame work. Node 22, Yarn, and existing commands remain supported.

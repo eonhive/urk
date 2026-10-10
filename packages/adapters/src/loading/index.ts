@@ -8,7 +8,7 @@
  * Notes: Vibe coded with Codex.
  */
 
-import type { AdapterRegistration } from '@urk/core';
+import { token, type AdapterRegistration } from '@urk/core';
 
 export interface LoadingStage {
   id: string;
@@ -65,15 +65,19 @@ function createEmptySnapshot(): LoadingSnapshot {
   };
 }
 
+export const LoadingCapability = token<LoadingAdapterApi>('loading');
+
 export function createLoadingAdapter(
   id = 'loading-adapter',
 ): AdapterRegistration<LoadingAdapterApi> {
   return {
     id,
     capability: 'loading',
+    token: LoadingCapability,
     setup(ctx) {
       let snapshot = createEmptySnapshot();
       const listeners = new Set<LoadingListener>();
+      ctx.scope.defer(() => listeners.clear());
 
       const publish = (): LoadingSnapshot => {
         const next = { ...snapshot, stages: [...snapshot.stages] };
@@ -162,6 +166,7 @@ export function createLoadingAdapter(
           return { ...snapshot, stages: [...snapshot.stages] };
         },
         subscribe(listener) {
+          if (ctx.signal.aborted) throw new Error('Loading adapter is disposed.');
           listeners.add(listener);
 
           return () => {

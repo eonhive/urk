@@ -18,6 +18,8 @@ Public-site deployment prep was updated on 2026-06-04 after a provider build tri
 
 Cloudflare Workers Static Assets deployment prep was updated on 2026-06-05. Root `wrangler.jsonc` now sets `assets.directory` to `./apps/www/dist`, which replaces the missing dashboard output-directory field in the Workers build flow. The documented Worker commands use `--keep-vars` to avoid replacing dashboard-managed variables during deploy/version upload.
 
+Live production smoke verification was made repeatable on 2026-06-05 with `corepack yarn smoke:www`. The command defaults to `https://urk.eonhive.com` and checks deployed routes, sitemap, robots, 404 handling, critical assets, and key page markers.
+
 ## Release-intended source changes
 
 - Root package/workspace policy: `package.json`, `tsconfig.json`, `.gitignore`, `.nvmrc`, `.yarnrc.yml`, and `yarn.lock`.
@@ -79,10 +81,11 @@ Cloudflare Workers Static Assets deployment prep was updated on 2026-06-05. Root
 - `corepack yarn build:www` was added on 2026-06-04 as the deployment-safe public-site build. It builds `@urk/core`, `@urk/adapters`, private `@urk/examples`, and `@urk/www` in order.
 - `wrangler.jsonc` was added on 2026-06-05 for Cloudflare Workers Static Assets with `assets.directory` set to `./apps/www/dist`.
 - Wrangler dry-runs passed on 2026-06-05 with `npx wrangler deploy --keep-vars --dry-run` and `npx wrangler versions upload --keep-vars --dry-run`.
+- `corepack yarn smoke:www` passed against `https://urk.eonhive.com` on 2026-06-05.
 
 ## Remaining release blockers
 
-- Configure Cloudflare Workers Build settings with the documented non-empty build, deploy, and version commands, then smoke-test the deployed routes.
+- Decide whether to tag the current public release state and whether to add external monitoring or analytics.
 - Do not publish private `@urk/examples`.
 
 ## Do not redo

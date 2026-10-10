@@ -4,7 +4,24 @@
 
 URK is the public, open-source runtime kernel for interactive browser experiences. It stays standalone-first, adapter-based, controller-driven, and explicit about runtime state.
 
-## What ships in v0
+## New in v0.2
+
+- Use `ctx.require(Token)` and `ctx.get(Token)` for inferred adapter or borrowed-service lookup.
+- Configure `frameMode: 'auto'` to avoid idle frame requests; legacy continuous scheduling remains the default.
+- Validate dependencies before setup. Keep sequential startup or opt into `adapterStartup: 'parallel'` for independent adapters. Await `ctx.state.transition(...)` for ordered phase commands.
+- Built-in adapters track resources as they acquire them, including partial setup and cancellable audio preloads.
+- React adds `useLifecycleSnapshot()` alongside explicit provider ownership.
+- One shared experience runs in standalone, React, Next, and the public website, with loading, selection, pause/resume, diagnostics, cleanup, and fresh-kernel recovery.
+
+All runtime/tooling package manifests are `0.2.0`; dependent public peers use `^0.2.0`. This checkout contains the implementation; npm publication and deployment are separate actions.
+
+```bash
+corepack yarn dev:v02
+```
+
+Open `http://127.0.0.1:5173/v02/` or `/v02/react.html`. The Next host is `/v02`, and the public website includes `/v02/`.
+
+## URK v0.2
 
 - `@urk/core` provides `Kernel`, `createKernel`, explicit runtime phases, registries, service lookup, the event bus, the scheduler abstraction, and the runtime inspector.
 - `@urk/adapters` provides the reference `audio`, `pointer`, `input`, `storage`, `loading`, `three`, and `ui-widgets` adapters.
@@ -63,6 +80,8 @@ Open:
 - `http://localhost:4321/docs/` for public docs
 - `http://localhost:4321/examples/minimal-runtime/` for the first live website-consumed URK runtime example
 - `http://localhost:5173/` for the private proof index when `urk-examples` is running
+- `http://localhost:5173/v02/` for the v0.2 standalone experience
+- `http://localhost:5173/v02/react.html` for the same experience through React
 - `http://localhost:5173/audio-proof/`
 - `http://localhost:5173/picking/`
 - `http://localhost:5173/loading-transition/`

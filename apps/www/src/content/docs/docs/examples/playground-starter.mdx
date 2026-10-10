@@ -1,6 +1,6 @@
 ---
 title: Playground starter
-description: Track the experimental playground direction without presenting it as a no-code builder.
+description: Explore the shared v0.2 runtime with 3D objects, keyboard controls, saved preferences, and optional sound.
 ---
 
 {/*
@@ -19,14 +19,16 @@ Status: experimental.
 
 The playground is a runtime lab for exploring URK concepts. It is not a no-code builder and not a stable product API.
 
-Open the current shell: [Playground](/playground/). The shell validates known-example config, updates state/adapters/controllers/event panels locally, and links to real example routes for runtime execution.
+Open the [live Playground](/playground/). It runs the shared v0.2 experience directly: pick Explore, Create, or Connect, rotate with arrow keys, enable sound, and exercise pause, cleanup, and recovery. [Usage details](/docs/guides/urk-v02/) explain the controls and saved preferences. The `/v02/` route remains available.
+
+The existing [config inspector](/playground/config/) validates known-example config, shows adapter/controller metadata, and links to individual examples.
 
 ## Intended lesson
 
-- inspect known example runtime shape
-- connect example metadata to playground presentation
-- validate config before runtime execution
-- avoid hiding kernel behavior behind a product shell
+- coordinate Three.js, pointer, keyboard, storage, audio, loading, and overlays
+- render on interaction and rest while idle
+- release resources when leaving the page and create a fresh kernel on return
+- inspect known-example config separately
 
 ## Current path
 
@@ -39,4 +41,4 @@ Open the current shell: [Playground](/playground/). The shell validates known-ex
 - Config is limited to current public examples.
 - Adapter and controller names must match selected example metadata.
 - Custom JavaScript is rejected by design.
-- Runtime execution still happens on dedicated example routes until a stable playground mount contract exists.
+- Shared runtime orchestration stays in the private examples package; the website owns mounting and navigation cleanup.

@@ -20,6 +20,7 @@ export interface UrkNextProviderProps extends Omit<UrkProviderProps, 'kernel'> {
 export function UrkNextProvider({
   createKernel,
   autoBoot,
+  ownership = 'provider',
   bootReason,
   shutdownReason,
   children,
@@ -30,6 +31,7 @@ export function UrkNextProvider({
     <UrkProvider
       kernel={kernel}
       autoBoot={autoBoot}
+      ownership={ownership}
       bootReason={bootReason}
       shutdownReason={shutdownReason}
     >
