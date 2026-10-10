@@ -108,7 +108,9 @@ corepack yarn workspace @urk/www preview --host 127.0.0.1 --port 4321
 corepack yarn smoke:www --local
 ```
 
-`--local` defaults to `http://localhost:4321` and checks generated routes, sitemap, 404 handling, and critical assets. It excludes Cloudflare's injected `robots.txt` response. Set `SITE_URL` explicitly when using another preview address; unknown command flags fail rather than silently weakening the check.
+`--local` defaults to `http://localhost:4321`. Both modes check generated routes, sitemap, robots, 404 handling, and critical assets. Set `SITE_URL` explicitly when using another preview address; unknown command flags fail rather than silently weakening the check.
+
+The website generates `robots.txt` through an [Astro static endpoint](https://v6.docs.astro.build/en/guides/endpoints/#static-file-endpoints), with public crawling allowed and a sitemap URL derived from the configured `SITE_URL`. Delivery does not depend on Cloudflare injecting a robots response or a `Content-Signal` field.
 
 ## Post-deploy smoke check
 
