@@ -645,3 +645,11 @@ Review reproduced an operational-state bug: an application write to the legacy `
 Added two focused regressions in `lifecycle-observation.test.mjs`, covering continuous and auto frame modes, duplicate calls, phase restoration, and actual update delivery. On Node 22.22.2 / Yarn 3.8.7, **122 core tests and declaration checks passed**, then **all 32 Chromium integration checks passed**. The integration command rebuilt affected runtime dependencies; full production builds are delegated to the PR gate. Logs: `/tmp/urk-v02-pause-{review,browser}.log`. `git diff --check` passed.
 
 The preceding candidate `e7ec4dc` passed its first [GitHub-hosted Ubuntu CI run](https://github.com/eonhive/urk/actions/runs/38025788225), including browser checks and artifact upload. Current-head hosted results are tracked on [PR #1](https://github.com/eonhive/urk/pull/1). No external review comments were present at this review. The documented Cloudflare production branch is `main`; merging therefore needs to account for automatic deployment as well as source integration.
+
+## Production delivery and robots correction — 2026-10-10
+
+After explicit merge/deployment approval, PR #1 merged as `8404cc4`. Its [main-branch CI run](https://github.com/eonhive/urk/actions/runs/38082288950) and Cloudflare production build passed. The live playground passed a Chromium check for picking, keyboard rotation, preferences, sound opt-in, pause/resume, idle rendering, disposal, fresh-kernel recovery, and a 390px layout with zero page errors.
+
+The deployed HTTP smoke exposed `/robots.txt` returning 404: Cloudflare did not supply the response assumed by the earlier check. Added `apps/www/src/pages/robots.txt.ts` to generate the response and canonical sitemap from Astro's configured site URL. Updated `scripts/smoke-www.mjs` so local and deployed modes both require that route; provider-specific `Content-Signal` content is no longer assumed. Updated deployment usage notes.
+
+Website diagnostics and static production build passed on Node 22.22.2 / Yarn 3.8.7. The local production smoke passed **11 routes and nine assets**, including the generated robots response; `git diff --check` passed. Log: `/tmp/urk-robots-validation.log`. No runtime code or npm publication changed. Follow-up production results are recorded with the delivery PR after deployment.

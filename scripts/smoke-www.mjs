@@ -4,7 +4,7 @@
  * Purpose: Verify local or deployed URK website routes, sitemap, 404 handling, and critical assets.
  * Author: Stan Nesi
  * Created: 2026-06-05
- * Updated: 2026-10-09
+ * Updated: 2026-10-10
  * Notes: Vibe coded with Codex.
  */
 
@@ -63,20 +63,16 @@ const routeChecks = [
     includes: [siteUrl],
   },
   {
+    path: '/robots.txt',
+    expectedStatus: 200,
+    includes: ['User-agent: *', `Sitemap: ${siteUrl}/sitemap-index.xml`],
+  },
+  {
     path: '/definitely-missing-urk-smoke-test/',
     expectedStatus: 404,
     includes: ['404'],
   },
 ];
-
-// Cloudflare supplies this response; it is absent from Astro's static output.
-if (!values.local) {
-  routeChecks.push({
-    path: '/robots.txt',
-    expectedStatus: 200,
-    includes: ['Content-Signal'],
-  });
-}
 
 const criticalAssetPatterns = [
   /^\/favicon\.svg$/,
