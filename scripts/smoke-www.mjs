@@ -1,14 +1,17 @@
 /**
  * Company: EonHive Inc.
  * Title: Public Website Smoke Check
- * Purpose: Verify the deployed URK website routes, sitemap, 404 handling, and critical assets.
+ * Purpose: Verify local or deployed URK website routes, sitemap, 404 handling, and critical assets.
  * Author: Stan Nesi
  * Created: 2026-06-05
- * Updated: 2026-06-05
+ * Updated: 2026-10-09
  * Notes: Vibe coded with Codex.
  */
 
-const DEFAULT_SITE_URL = 'https://urk.eonhive.com';
+import { parseArgs } from 'node:util';
+
+const { values } = parseArgs({ options: { local: { type: 'boolean', default: false } } });
+const DEFAULT_SITE_URL = values.local ? 'http://localhost:4321' : 'https://urk.eonhive.com';
 const REQUEST_TIMEOUT_MS = 15000;
 
 const siteUrl = normalizeSiteUrl(process.env.SITE_URL ?? DEFAULT_SITE_URL);
@@ -60,16 +63,20 @@ const routeChecks = [
     includes: [siteUrl],
   },
   {
-    path: '/robots.txt',
-    expectedStatus: 200,
-    includes: ['Content-Signal'],
-  },
-  {
     path: '/definitely-missing-urk-smoke-test/',
     expectedStatus: 404,
     includes: ['404'],
   },
 ];
+
+// Cloudflare supplies this response; it is absent from Astro's static output.
+if (!values.local) {
+  routeChecks.push({
+    path: '/robots.txt',
+    expectedStatus: 200,
+    includes: ['Content-Signal'],
+  });
+}
 
 const criticalAssetPatterns = [
   /^\/favicon\.svg$/,
@@ -107,7 +114,8 @@ try {
     results.push(`ok asset ${assetPath} (${response.size} bytes)`);
   }
 
-  console.log(`URK website smoke passed: ${siteUrl}`);
+  const mode = values.local ? 'local static output' : 'deployed site';
+  console.log(`URK website smoke passed (${mode}): ${siteUrl}`);
   for (const result of results) {
     console.log(`- ${result}`);
   }

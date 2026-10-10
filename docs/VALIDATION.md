@@ -620,3 +620,20 @@ Changed implementation: the shared Astro host, `pages/playground.astro`, `pages/
 Validation: website check passed for **42 files with zero errors/warnings/hints**; the shared examples package compiled; website (82 pages), standalone/React proof, and Next production builds passed. The full **32-check Chromium gate passed**, covering 17 ownership checks and 15 shared/website playground checks. After adding the restart guard, all 15 playground checks passed again, including rapid restart. A production-browser check verified sound, disposal, zero page errors, and desktop/390px layouts. Screenshots: `.codex/validation/playground-production-{desktop,mobile}.png`. `git diff --check` passed.
 
 The full website HTTP smoke command verified the new playground routes and then stopped at the pre-existing local `/robots.txt` 404. Local production does not pass that deployment-oriented check; no deployed-site result is claimed. Existing large-chunk/docs-404 build warnings remain. Logs: `/tmp/urk-v02-{website-build,proof-build,next-final,website-browser,playground-final}.log`. No core API, publication, or deployment change was made.
+
+## v0.2 release-candidate review — 2026-10-09
+
+Reviewed lifecycle cancellation, controller/adapter cleanup, framework ownership, public exports, and the shared playground host. Committed the accumulated implementation on `refactor/kernel-v2`; preserved prior website/audio work and excluded generated output and Yarn install-state changes.
+
+Fixed the local website check in `scripts/smoke-www.mjs`: explicit `--local` checks Astro's generated routes and assets without requiring Cloudflare's injected `robots.txt`. Default deployed mode retains that requirement. Usage is in `docs/DEPLOYMENT.md`; the earlier release ledger is labeled historical in `codex/RELEASE_HYGIENE.md`.
+
+Final local results on Node **22.22.2**, Yarn **3.8.7**, with `CI=true`:
+
+- Immutable install, all nine workspace production builds, aggregate/library/proof type checks, and website check passed (42 files; zero errors, warnings, or hints).
+- **6 build-runner, 120 core, 6 adapter/package, 3 React SSR, and 1 Next SSR tests passed.** Public declaration checks passed.
+- **32 Chromium integration checks passed**, including ownership, shared interactions, cancellation, idle rendering, disposal, Next navigation, and website restoration.
+- Package/browser size reporting passed. Current core/DOM/Three/React/Next fixture gzip bytes are **7,267 / 10,160 / 132,637 / 8,254 / 8,353**; earlier benchmark files remain historical baselines. No new speedup claim.
+- Local production smoke passed: 10 routes (including 404), plus nine assets. Unknown flags reject; deployed mode was separately confirmed to reject the absent local robots response.
+- `git diff --check` passed. Logs: `/tmp/urk-v02-release-checks.log` and `/tmp/urk-v02-release-browser.log`.
+
+Existing Astro language-server peer, website large-chunk, and docs-404 build warnings remain non-blocking. Chromium/macOS is the local browser evidence; hosted CI, broader performance workloads, and the supported toolchain matrix are not established by this run. No package publication or website deployment was performed.

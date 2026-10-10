@@ -1,6 +1,12 @@
 # RELEASE_HYGIENE.md
 
-## Status
+## v0.2 review candidate — 2026-10-09
+
+The v0.2 implementation is committed on `refactor/kernel-v2`. Local package versions are `0.2.0`; package publication and website deployment remain separate release actions. Current checks are recorded in [Validation](../docs/VALIDATION.md). Generated output and `.yarn/install-state.gz` remain excluded from commits; the new Playwright cache archives follow the repository's tracked-cache policy.
+
+The v0.1 history below records past release decisions and registry observations. Its versions and dated commit gates do not describe the current v0.2 candidate or current npm registry state.
+
+## v0.1 release history
 
 Last reviewed: 2026-06-05.
 
