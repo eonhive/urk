@@ -1,0 +1,19 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: URK v0.2 Experience Page
+ * Purpose: Make the implemented shared runtime available from the public website.
+ * Author: Stan Nesi
+ * Created: 2026-10-07
+ * Updated: 2026-10-07
+ * Notes: Vibe coded with Codex.
+ */
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import V02Playground from '@/components/urk-runtime/V02Playground.astro';
+---
+
+<BaseLayout title="URK v0.2" description="Explore URK v0.2 with selectable 3D objects, keyboard controls, saved preferences, and sound.">
+  <section class="site-section">
+    <V02Playground />
+  </section>
+</BaseLayout>

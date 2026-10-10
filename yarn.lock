@@ -1437,6 +1437,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@playwright/test@npm:1.63.0":
+  version: 1.63.0
+  resolution: "@playwright/test@npm:1.63.0"
+  dependencies:
+    playwright: 1.63.0
+  bin:
+    playwright: cli.js
+  checksum: ed4a641d14f9d2f6740a86a36602e33aa7fef2287fb8f3a02112cd881812a3431ede800db0e5ba74fff9fdd65071cdc1af50a3e6677e62295f41f82dcca01e0a
+  languageName: node
+  linkType: hard
+
 "@rolldown/pluginutils@npm:1.0.0-beta.27":
   version: 1.0.0-beta.27
   resolution: "@rolldown/pluginutils@npm:1.0.0-beta.27"
@@ -2387,11 +2398,11 @@ __metadata:
   resolution: "@urk/adapters@workspace:packages/adapters"
   dependencies:
     "@types/three": ^0.184.0
-    "@urk/core": ^0.1.1
+    "@urk/core": ^0.2.0
     three: ^0.184.0
     typescript: ^5.3.0
   peerDependencies:
-    "@urk/core": ^0.1.1
+    "@urk/core": ^0.2.0
     three: ^0.184.0
   peerDependenciesMeta:
     three:
@@ -2410,7 +2421,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@urk/core@^0.1.1, @urk/core@workspace:*, @urk/core@workspace:packages/core":
+"@urk/core@^0.2.0, @urk/core@workspace:*, @urk/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@urk/core@workspace:packages/core"
   dependencies:
@@ -2422,8 +2433,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@urk/examples@workspace:packages/examples"
   dependencies:
+    "@types/three": ^0.184.0
     "@urk/adapters": "workspace:*"
     "@urk/core": "workspace:*"
+    three: ^0.184.0
     typescript: ^5.3.0
   languageName: unknown
   linkType: soft
@@ -2437,6 +2450,7 @@ __metadata:
     "@types/react-dom": ^18.3.1
     "@urk/adapters": "workspace:*"
     "@urk/core": "workspace:*"
+    "@urk/examples": "workspace:*"
     "@urk/next-urk": "workspace:*"
     next: ^14.2.30
     react: ^18.3.1
@@ -2450,30 +2464,30 @@ __metadata:
   resolution: "@urk/next-urk@workspace:packages/next-urk"
   dependencies:
     "@types/react": ^18.3.12
-    "@urk/core": ^0.1.1
-    "@urk/react-urk": ^0.1.0
+    "@urk/core": ^0.2.0
+    "@urk/react-urk": ^0.2.0
     react: ^18.3.1
     react-dom: ^18.3.1
     typescript: ^5.3.0
   peerDependencies:
-    "@urk/core": ^0.1.1
-    "@urk/react-urk": ^0.1.0
+    "@urk/core": ^0.2.0
+    "@urk/react-urk": ^0.2.0
     next: ^14.2.0
     react: ^18.3.1
     react-dom: ^18.3.1
   languageName: unknown
   linkType: soft
 
-"@urk/react-urk@^0.1.0, @urk/react-urk@workspace:*, @urk/react-urk@workspace:packages/react-urk":
+"@urk/react-urk@^0.2.0, @urk/react-urk@workspace:*, @urk/react-urk@workspace:packages/react-urk":
   version: 0.0.0-use.local
   resolution: "@urk/react-urk@workspace:packages/react-urk"
   dependencies:
     "@types/react": ^18.3.12
-    "@urk/core": ^0.1.1
+    "@urk/core": ^0.2.0
     react: ^18.3.1
     typescript: ^5.3.0
   peerDependencies:
-    "@urk/core": ^0.1.1
+    "@urk/core": ^0.2.0
     react: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
@@ -5773,6 +5787,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:1.63.0":
+  version: 1.63.0
+  resolution: "playwright-core@npm:1.63.0"
+  bin:
+    playwright-core: cli.js
+  checksum: b4c190c4099d0620a9ba22a0e826194ad511c3149153a79c44dc632ac2058da7da01cf66f011ee3ee0f360bbd83aa2f67f04519eb3c7c2bea257c4f598537937
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.63.0":
+  version: 1.63.0
+  resolution: "playwright@npm:1.63.0"
+  dependencies:
+    playwright-core: 1.63.0
+  bin:
+    playwright: cli.js
+  checksum: 6f90bca3d61f509667b9fdc4ef9c845833e4cb3cbb1c0d4e26672efb66b97b7f7db47d6a947a66772a23c191859639a6db0211c7753e6a1a5bc42293fd226c5a
+  languageName: node
+  linkType: hard
+
 "postcss-nested@npm:^6.0.1":
   version: 6.2.0
   resolution: "postcss-nested@npm:6.2.0"
@@ -7131,11 +7165,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "urk-examples@workspace:examples"
   dependencies:
+    "@playwright/test": 1.63.0
     "@types/react": ^18.3.12
     "@types/react-dom": ^18.3.1
     "@types/three": ^0.184.0
     "@urk/adapters": "workspace:*"
     "@urk/core": "workspace:*"
+    "@urk/examples": "workspace:*"
     "@urk/react-urk": "workspace:*"
     "@vitejs/plugin-react": ^4.3.4
     react: ^18.3.1

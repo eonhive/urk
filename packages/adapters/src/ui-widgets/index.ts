@@ -8,7 +8,7 @@
  * Notes: Vibe coded with Codex.
  */
 
-import type { AdapterRegistration } from '@urk/core';
+import { token, type AdapterRegistration } from '@urk/core';
 
 export interface UiWidgetCallout {
   title: string;
@@ -31,15 +31,25 @@ function assertHtmlElement(value: unknown, serviceName: string): HTMLElement {
   return value;
 }
 
+export const UiWidgetsCapability = token<UiWidgetsAdapterApi>('ui-widgets');
+
 export function createUiWidgetsAdapter(
   id = 'ui-widgets-adapter',
 ): AdapterRegistration<UiWidgetsAdapterApi> {
   return {
     id,
     capability: 'ui-widgets',
+    token: UiWidgetsCapability,
     setup(ctx) {
       const host = assertHtmlElement(ctx.services.require('ui:host'), 'ui:host');
       const root = document.createElement('div');
+      let destroyed = false;
+      const destroy = (): void => {
+        if (destroyed) return;
+        destroyed = true;
+        root.remove();
+      };
+      ctx.scope.defer(destroy);
       const status = document.createElement('div');
       const callout = document.createElement('div');
       const title = document.createElement('div');
@@ -108,13 +118,8 @@ export function createUiWidgetsAdapter(
         hideCallout() {
           callout.style.display = 'none';
         },
-        destroy() {
-          root.remove();
-        },
+        destroy,
       };
-    },
-    dispose(_ctx, api) {
-      api.destroy();
     },
   };
 }

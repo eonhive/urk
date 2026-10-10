@@ -1,5 +1,13 @@
 # SESSION_HANDOFF.md
 
+## Current v0.2 implementation — 2026-10-07
+
+The user requested the complete runtime update, superseding the historical release-only next steps below. Core/adapters/wrappers/CLI manifests are `0.2.0`; runtime peers are `^0.2.0`. Typed shared lookup/services, configured dependency planning, auto frame mode, scoped built-in cleanup, the React lifecycle hook, packaged CLI scaffolding, and one shared standalone/React/Next/website experience are implemented. The earlier lifecycle/ownership/diagnostics work remains included.
+
+The live review preview is `/v02/` in the proof workspace; its React host is `/v02/react.html`, with `/v02` in Next and `/v02/` on the website. Shared logic is `packages/examples/src/v02/runtime.ts`. Root builds resolve local dependencies once. See `docs/MIGRATION_V02.md`, `docs/PERFORMANCE.md`, `docs/DEFERRED.md`, and the latest `docs/VALIDATION.md` section for actual implementation and limitations.
+
+No commit, tag, push, package publication, or deployment was performed. Do not reinterpret the historical unchanged-version or release-only instructions below as blocking the already-authorized v0.2 code update.
+
 ## Current status
 
 URK public-site example work is in a validated state. The public website now has eight runnable examples: `minimal-runtime`, `adapter-registration`, `controller-orchestration`, `runtime-state`, `event-routing`, `scene-ui-bridge`, `pointer-input-overlay`, and `embedded-docs-demo`.
@@ -36,7 +44,11 @@ Public-site deployment prep was corrected on 2026-06-04 after a provider build t
 
 Cloudflare Workers Static Assets deployment prep was corrected on 2026-06-05 after confirming the Worker dashboard has no output-directory text field. Root `wrangler.jsonc` now supplies `assets.directory: "./apps/www/dist"` for the Worker named `urk-site`, and the documented deploy/version commands preserve dashboard variables with `--keep-vars`.
 
-The Cloudflare Workers Static Assets deployment configuration is being committed and pushed to `main` so Cloudflare can build from Git. The next gate is deployed-route smoke testing after Cloudflare finishes the build.
+The Cloudflare Workers Static Assets deployment configuration was committed and pushed to `main` as `94b654c chore: configure URK Cloudflare Workers deploy`.
+
+Post-deploy production smoke verification is now repeatable through `corepack yarn smoke:www`. The command passed against `https://urk.eonhive.com` on 2026-06-05 and verified live routes, sitemap files, robots, 404 handling, critical assets, and the minimal runtime marker.
+
+The public examples presentation pass is complete on 2026-06-06. `/examples/` now uses stronger visual cards for the eight public runtime islands and surfaces the older root `examples/` workspace as a repo proof lab with source links and local route guidance.
 
 `.yarn/install-state.gz` remains intentionally unstaged. Do not assume unrelated modified or untracked files are safe to revert.
 
@@ -112,12 +124,19 @@ The Cloudflare Workers Static Assets deployment configuration is being committed
 - Updated deployment docs for the Worker dashboard fields: build command, deploy command, version command, root directory, and environment variables.
 - Validated Wrangler deploy and version upload dry-runs against the assets-only Worker config.
 - Prepared the Cloudflare Workers Static Assets deployment changes for commit and push to `main`.
+- Added `scripts/smoke-www.mjs` and root `corepack yarn smoke:www` for repeatable live-site verification.
+- Updated deployment and readiness docs to record the live Cloudflare deployment and smoke command.
+- Verified `corepack yarn smoke:www` against `https://urk.eonhive.com`.
+- Added visual metadata for current public examples and upgraded `ExampleCard` with distinct abstract runtime visuals.
+- Reworked `/examples/` hero and grid presentation so the public runtime islands feel less like plain telemetry cards.
+- Added a repo proof lab section on `/examples/` for root `examples/` routes such as `/picking/`, `/audio-proof/`, and `/scrollytelling/`, linking to source folders and explaining that they run locally through `corepack yarn dev:examples`.
+- Updated canonical examples and public-site plan docs to clarify that root `examples/` proofs are visible on the site as proof-lab source links, not deployed public runtime islands.
 
 ## In-progress work
 
 - The initial planned public example catalog is fully promoted; next work should not assume another planned example exists.
 - Production readiness verification, final-release hygiene inventory, intentional staging, staged diff review, release-candidate cleanup, final staged release-candidate review, local release-candidate commit, post-commit release prep, and release-prep metadata commit gate are complete.
-- Published-package reconciliation is complete. Public-site deploy build prep is complete and being pushed to `main`. Next work should wait for the Cloudflare build, then smoke-test the deployed routes.
+- Published-package reconciliation is complete. Public-site deployment is live on Cloudflare Workers Static Assets, repeatable smoke verification is in place, and the examples index has a first visual presentation pass. Next work should either commit/push the presentation pass or plan promotion of one root proof into `packages/examples`.
 
 ## Changed files
 
@@ -161,6 +180,7 @@ The Cloudflare Workers Static Assets deployment configuration is being committed
 - `apps/www/src/components/urk-runtime/PreviewPanel.astro`
 - `apps/www/src/components/urk-runtime/RuntimeLogPanel.astro`
 - `apps/www/src/components/urk-runtime/RuntimeStatePanel.astro`
+- `apps/www/src/components/marketing/ExampleCard.astro`
 - `apps/www/src/data/examples.ts`
 - `apps/www/src/pages/examples/index.astro`
 - `apps/www/src/pages/playground.astro`
@@ -187,6 +207,7 @@ The Cloudflare Workers Static Assets deployment configuration is being committed
 - `README.md`
 - `DEVELOPMENT.md`
 - `wrangler.jsonc`
+- `scripts/smoke-www.mjs`
 - `docs/DEPLOYMENT.md`
 - `packages/examples/package.json`
 - `codex/RELEASE_HYGIENE.md`
@@ -254,6 +275,14 @@ There are many unrelated pre-existing modified/untracked files from earlier work
 - `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH npx wrangler versions upload --dry-run`
 - `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH npx wrangler deploy --keep-vars --dry-run`
 - `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH npx wrangler versions upload --keep-vars --dry-run`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH SITE_URL=https://urk.eonhive.com corepack yarn smoke:www`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH corepack yarn smoke:www`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH corepack yarn workspace @urk/www check`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH SITE_URL=https://urk.eonhive.com corepack yarn workspace @urk/www build`
+- `rg -n "Runtime proofs should feel alive|Repo proof lab|corepack yarn dev:examples|Picking Proof|audio-proof|Open live example|View source folder" apps/www/dist/examples/index.html apps/www/src/pages/examples/index.astro apps/www/src/components/marketing/ExampleCard.astro apps/www/src/data/examples.ts`
+- `PATH=/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin:$PATH corepack yarn workspace @urk/www preview --host 127.0.0.1 --port 4327`
+- Codex in-app browser inspection of `http://127.0.0.1:4327/examples/` at desktop width.
+- Codex in-app browser inspection of `http://127.0.0.1:4327/examples/` at a 390px mobile viewport.
 - `git status --short --branch`
 - `git diff --name-status`
 - `git log -3 --oneline --decorate`
@@ -380,29 +409,38 @@ Node used for validation: `/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin`.
 - Deployment-safe website build check passed under Node 22 on 2026-06-05 with `SITE_URL=https://urk.eonhive.com corepack yarn build:www`.
 - `npx wrangler deploy --keep-vars --dry-run` passed on 2026-06-05; Wrangler read 288 files from `apps/www/dist` and found no bindings, which matches the assets-only Worker config.
 - `npx wrangler versions upload --keep-vars --dry-run` passed on 2026-06-05.
+- `corepack yarn smoke:www` passed against `https://urk.eonhive.com` on 2026-06-05. It verified 200 responses for `/`, `/docs/`, `/examples/minimal-runtime/`, `/packages/`, `/playground/`, sitemap, robots, a 404 for a known missing route, and critical home-page assets.
+- `corepack yarn smoke:www` also passed without `SITE_URL`, confirming the default target is `https://urk.eonhive.com`.
+- `@urk/www` Astro check passed with 0 errors, 0 warnings, and 0 hints after the examples presentation pass.
+- `@urk/www` production build passed with `SITE_URL=https://urk.eonhive.com` after the examples presentation pass.
+- Static generated-output checks confirmed `/examples/` includes the new visual hero copy, `Open live example` CTAs, repo proof lab copy, `corepack yarn dev:examples`, and source links for older proof routes.
+- `corepack yarn smoke:www` passed against `https://urk.eonhive.com` after the examples presentation pass, confirming the live site still serves the production baseline.
+- Local in-app browser inspection of `/examples/` passed at desktop width: the page rendered the new hero title, eight live visual example cards, seven repo proof cards, and `corepack yarn dev:examples`.
+- Local in-app browser inspection of `/examples/` passed at a 390px mobile viewport: the examples hero and repo proof callout collapsed to one column and page width did not overflow the viewport.
 
 ## Known issues
 
-- Production readiness verification is complete for packages, but the public website has not been deployed.
 - The release candidate and release-prep metadata commits have not been tagged or pushed in this thread.
-- Published package versions are live on npm and reconciled locally; public website deployment is still pending.
+- Published package versions are live on npm and reconciled locally; public website deployment is live at `https://urk.eonhive.com`.
 - `.yarn/install-state.gz` remains intentionally unstaged; include it only if a later release-policy decision accepts Yarn install-state churn.
 - Running `corepack yarn workspace @urk/examples build` before `@urk/core` and `@urk/adapters` artifacts exist can fail package entry resolution. Use `corepack yarn build:www` for public-site deployment.
 - The Cloudflare Worker dashboard does not provide a build-output-directory text field. `wrangler.jsonc` owns this through `assets.directory`.
+- Root `examples/` routes are not deployed public website routes. They are local proof-lab routes surfaced on `/examples/` as source links until a proof is intentionally promoted into `packages/examples`.
 - Running `corepack yarn workspace @urk/www check` without first selecting Node 22 fails because the default shell Node is `v18.17.1`; use `nvm use 22` first.
 - `corepack yarn install --immutable` exits successfully but currently reports a peer warning: `@astrojs/language-server` does not provide `typescript` to `@volar/kit`.
 - During dev-server smoke tests, rebuilding packages while Astro watches `dist/` can briefly produce Vite reload errors for missing transient files. The server recovers after the package build finishes.
-- The in-app browser did not expose a viewport resize capability during the accessibility QA pass; mobile coverage was validated through generated/static CSS checks rather than a resized live browser viewport.
+- The latest examples presentation pass did include a resized in-app browser check at a 390px mobile viewport. Earlier accessibility QA mobile coverage was static-only.
 - Manual browser smoke routes were not rerun during the production readiness hardening pass because the source change was limited to proof-workspace Vite chunking and verification focused on build, package, and generated-link health.
 - The worktree has substantial unrelated dirty state; do not revert unrelated files.
 
 ## Next recommended task
 
-Recommended next scope is public website deployment:
+Recommended next scope is public release closeout:
 
-- Wait for Cloudflare to build the pushed `main` branch.
-- Smoke-test `https://urk.eonhive.com/`, `/docs/`, `/examples/minimal-runtime/`, `/packages/`, and `/playground/`.
-- If Cloudflare still fails, inspect the build logs before changing repo code.
+- Decide whether to tag the current public release state.
+- Decide whether to add external uptime monitoring or analytics.
+- If the examples need more visual substance beyond the index/cards, choose one old proof, likely `picking` or `audio-proof`, and plan a real migration into `packages/examples`.
+- Run `SITE_URL=https://urk.eonhive.com corepack yarn smoke:www` after each Cloudflare deploy.
 - Keep the next task narrow and update `codex/SESSION_HANDOFF.md` before stopping.
 - Do not add new runtime APIs, package exports, or new example scope without a new roadmap decision.
 
@@ -429,6 +467,8 @@ Recommended next scope is public website deployment:
 - Current published npm latest versions are `@urk/core@0.1.2`, `@urk/adapters@0.1.4`, `@urk/react-urk@0.1.1`, `@urk/next-urk@0.1.1`, and `@urk/cli@0.1.1`.
 - Public-site deployment builds must use `corepack yarn build:www` or an equivalent dependency-safe order: `@urk/core`, `@urk/adapters`, private `@urk/examples`, then `@urk/www`.
 - Cloudflare Workers Static Assets is now the active dashboard path. `wrangler.jsonc` replaces the old Pages output-directory field with `assets.directory`.
+- `corepack yarn smoke:www` is the repeatable live-site acceptance check for `https://urk.eonhive.com`.
+- The public site intentionally separates public runtime islands (`packages/examples`) from local proof-lab routes (`examples/`). The examples index may link to proof source folders, but those routes should not be described as deployed public examples until migrated.
 - The release-candidate commit message is `chore: prepare URK public release candidate`.
 - The release-prep metadata commit message is `chore: prepare URK public package release metadata`.
 - The published-package reconciliation commit message is `chore: reconcile published URK npm releases`.
@@ -464,4 +504,6 @@ Recommended next scope is public website deployment:
 - Do not remove the private Three.js proof or hide its imports to solve bundle noise; the current fix is scoped vendor chunking.
 - Do not retry the broken deploy command that builds `@urk/examples` before `@urk/core` and `@urk/adapters`.
 - Do not add `main` or `assets.binding` to `wrangler.jsonc` unless URK intentionally adds Worker script logic.
+- Do not redo manual live-route smoke checks by hand unless the scripted `corepack yarn smoke:www` check fails or needs investigation.
+- Do not simply copy root `examples/` into the website. Promote one proof at a time into `packages/examples` with metadata, mount code, docs links, and validation.
 - Do not revert unrelated dirty workspace changes.

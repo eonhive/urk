@@ -4,7 +4,7 @@
  * Purpose: Provide a small scheduler contract for frame-driven runtime work.
  * Author: Stan Nesi
  * Created: 2026-04-12
- * Updated: 2026-04-12
+ * Updated: 2026-10-03
  * Notes: Vibe coded with Codex.
  */
 
@@ -16,6 +16,7 @@ export class BrowserFrameScheduler implements FrameScheduler {
   private lastTimeMs = 0;
   private frame = 0;
   private running = false;
+  private generation = 0;
 
   start(callback: FrameCallback): void {
     if (this.running) {
@@ -26,28 +27,33 @@ export class BrowserFrameScheduler implements FrameScheduler {
     this.running = true;
     this.frame = 0;
     this.lastTimeMs = this.now();
-    this.frameHandle = this.requestFrame(this.tick);
+    const generation = ++this.generation;
+    const tick = (timeMs: number): void => this.tick(timeMs, generation, tick);
+    this.frameHandle = this.requestFrame(tick);
   }
 
   stop(): void {
+    this.generation += 1;
+    this.running = false;
+    this.callback = null;
+
     if (this.frameHandle !== null) {
       this.cancelFrame(this.frameHandle);
     }
 
     this.frameHandle = null;
-    this.callback = null;
-    this.running = false;
   }
 
   isRunning(): boolean {
     return this.running;
   }
 
-  private tick = (timeMs: number): void => {
-    if (!this.running || !this.callback) {
+  private tick(timeMs: number, generation: number, nextTick: (timeMs: number) => void): void {
+    if (generation !== this.generation || !this.running || !this.callback) {
       return;
     }
 
+    this.frameHandle = null;
     const deltaMs = this.frame === 0 ? 0 : Math.max(0, timeMs - this.lastTimeMs);
     this.lastTimeMs = timeMs;
     this.frame += 1;
@@ -59,10 +65,11 @@ export class BrowserFrameScheduler implements FrameScheduler {
       frame: this.frame,
     });
 
-    if (this.running) {
-      this.frameHandle = this.requestFrame(this.tick);
+    // A callback may stop and restart the scheduler, which already owns its next request.
+    if (this.running && generation === this.generation) {
+      this.frameHandle = this.requestFrame(nextTick);
     }
-  };
+  }
 
   private now(): number {
     if (typeof performance !== 'undefined' && typeof performance.now === 'function') {

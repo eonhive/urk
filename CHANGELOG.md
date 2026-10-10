@@ -1,5 +1,19 @@
 # Changelog
 
+## URK 0.2.0 — implemented, unpublished — 2026-10-07
+
+- Added typed context lookup for adapters and borrowed services, with per-kernel provider collision guards.
+- Added configured dependency preflight and stable sequential startup planning.
+- Added auto frame mode alongside continuous compatibility scheduling.
+- Completed scoped built-in acquisition cleanup, partial setup rollback, and audio cancellation.
+- Added independent adapter imports, operational lifecycle observation, lazy diagnostics, and explicit React/Next ownership.
+- Added `useLifecycleSnapshot()` and one shared interactive experience in standalone, React, Next, and website hosts.
+- Updated CLI scaffolds to inferred lookups/auto mode and packaged dependency settings.
+- Added dependency-aware workspace builds and real root static checks.
+- Versioned runtime/tooling manifests together at `0.2.0` with compatible `^0.2.0` peers; retained Node 22 and Yarn.
+
+This is the local implementation. Package publication, a Git release tag, and website deployment have not been performed.
+
 ## Published npm packages - 2026-05-31
 
 URK package publication is now reconciled with npm latest.

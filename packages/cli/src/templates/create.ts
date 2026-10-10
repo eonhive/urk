@@ -38,6 +38,7 @@ export function createProjectTemplate(
   options: CreateProjectTemplateOptions,
 ): CreateProjectTemplateResult {
   const title = createTitleFromName(options.name);
+  const createdAt = new Date().toISOString().slice(0, 10);
   const packageJson: Record<string, unknown> = {
     name: options.name,
     version: '0.1.0',
@@ -71,7 +72,8 @@ It demonstrates a standalone-first URK browser runtime with:
 
 - one kernel created from \`@urk/core\`
 - one small DOM adapter stack from \`@urk/adapters/dom\`
-- one controller that moves the runtime from \`loading\` to \`ready\`
+- real cancellable content loading, scoped subscriptions, and ordered phase commands
+- an idle frame loop plus pause, resume, stop, and fresh-kernel controls
 - one overlay host mounted through the \`ui:host\` service
 
 ## Run
@@ -88,7 +90,9 @@ yarn dev
 - \`src/main.ts\` - DOM bootstrap and \`await kernel.boot()\`
 - \`src/kernel.ts\` - kernel factory and service registration
 - \`src/adapters.ts\` - dependency-light DOM adapter stack
-- \`src/controllers/app.controller.ts\` - one controller with the full lifecycle hooks
+- \`src/contracts.ts\` - the typed shell capability
+- \`src/controllers/app.controller.ts\` - event-driven loading and interaction
+- \`public/content.json\` - editable starter content
 - \`src/styles.css\` - standalone browser styling
 `,
     'tsconfig.json': `{
@@ -99,6 +103,7 @@ yarn dev
     "moduleResolution": "Bundler",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "strict": true,
+    "types": ["vite/client"],
     "noEmit": true,
     "skipLibCheck": true,
     "isolatedModules": true
@@ -111,8 +116,8 @@ yarn dev
  * Title: Vite Config
  * Purpose: Keep the standalone URK starter on a minimal Vite browser build.
  * Author: Stan Nesi
- * Created: 2026-05-03
- * Updated: 2026-05-03
+ * Created: ${createdAt}
+ * Updated: ${createdAt}
  * Notes: Vibe coded with Codex.
  */
 
@@ -125,8 +130,8 @@ export default defineConfig({});
   Title: ${title}
   Purpose: Mount the first standalone URK browser runtime scaffold.
   Author: Stan Nesi
-  Created: 2026-05-03
-  Updated: 2026-05-03
+  Created: ${createdAt}
+  Updated: ${createdAt}
   Notes: Vibe coded with Codex.
 -->
 <!doctype html>
@@ -143,10 +148,18 @@ export default defineConfig({});
         <h1>${title}</h1>
         <p class="intro">
           This starter keeps the runtime explicit: one kernel, a small DOM adapter stack,
-          one controller, named services, and visible runtime phases.
+          one controller, typed services, and visible lifecycle and experience state.
         </p>
 
+        <nav class="runtime-controls" aria-label="Runtime controls">
+          <button type="button" data-action="pause" disabled>Pause</button>
+          <button type="button" data-action="resume" disabled>Resume</button>
+          <button type="button" data-action="stop">Stop</button>
+          <button type="button" data-action="restart" disabled>Start fresh</button>
+        </nav>
         <dl class="status-grid">
+          <div class="status-card"><dt>Lifecycle</dt><dd data-role="lifecycle-value">created</dd></div>
+          <div class="status-card"><dt>Frame loop</dt><dd data-role="loop-value">Idle</dd></div>
           <div class="status-card">
             <dt>Runtime phase</dt>
             <dd data-role="phase-value">boot</dd>
@@ -178,8 +191,7 @@ export default defineConfig({});
           <span class="stage-meta">Controller-managed shell</span>
           <h2 data-role="message-value">Waiting to boot</h2>
           <p data-role="detail-value">
-            The app controller will begin staged loading, warm the DOM adapters, and move the
-            runtime into the ready phase.
+            The controller will load content and connect input. The kernel rests when no frame work is needed.
           </p>
         </article>
 
@@ -194,128 +206,155 @@ export default defineConfig({});
     'src/main.ts': `/**
  * Company: EonHive Inc.
  * Title: App Entry
- * Purpose: Boot the standalone URK kernel into a small browser shell.
+ * Purpose: Own the browser host and expose the URK lifecycle controls.
  * Author: Stan Nesi
- * Created: 2026-05-03
- * Updated: 2026-05-03
+ * Created: ${createdAt}
+ * Updated: ${createdAt}
  * Notes: Vibe coded with Codex.
  */
 
 import './styles.css';
-import { CANONICAL_RUNTIME_PHASES, createAppKernel, type AppKernelElements } from './kernel';
+import { ResourceScope, type Kernel } from '@urk/core';
+import { createAppKernel } from './kernel';
+import type { AppShell } from './contracts';
 
-function assertElement<T extends Element>(selector: string): T {
-  const element = document.querySelector<T>(selector);
-
-  if (!element) {
-    throw new Error(\`Missing required DOM element: \${selector}\`);
-  }
-
-  return element;
+function element<T extends Element>(selector: string): T {
+  const found = document.querySelector<T>(selector);
+  if (!found) throw new Error(\`Missing element: \${selector}\`);
+  return found;
 }
 
-const elements: AppKernelElements = {
-  phaseValue: assertElement<HTMLElement>('[data-role="phase-value"]'),
-  reasonValue: assertElement<HTMLElement>('[data-role="reason-value"]'),
-  stageValue: assertElement<HTMLElement>('[data-role="stage-value"]'),
-  progressValue: assertElement<HTMLElement>('[data-role="progress-value"]'),
-  messageValue: assertElement<HTMLElement>('[data-role="message-value"]'),
-  detailValue: assertElement<HTMLElement>('[data-role="detail-value"]'),
-  uiHost: assertElement<HTMLElement>('[data-role="ui-host"]'),
+const shell: AppShell = {
+  phaseValue: element('[data-role="phase-value"]'),
+  reasonValue: element('[data-role="reason-value"]'),
+  stageValue: element('[data-role="stage-value"]'),
+  progressValue: element('[data-role="progress-value"]'),
+  messageValue: element('[data-role="message-value"]'),
+  detailValue: element('[data-role="detail-value"]'),
 };
+const lifecycleValue = element<HTMLElement>('[data-role="lifecycle-value"]');
+const loopValue = element<HTMLElement>('[data-role="loop-value"]');
+const controls = element<HTMLElement>('.runtime-controls');
+const uiHost = element<HTMLElement>('[data-role="ui-host"]');
+const hostScope = new ResourceScope();
+let kernel: Kernel;
+let unsubscribeLifecycle = (): void => {};
+let closed = false;
 
-assertElement<HTMLElement>('[data-role="phase-list"]').textContent =
-  CANONICAL_RUNTIME_PHASES.join(', ');
+function renderLifecycle(): void {
+  const state = kernel.getLifecycleSnapshot().state;
+  lifecycleValue.textContent = state;
+  loopValue.textContent = kernel.getContext().scheduler.isRunning() ? 'Running' : 'Idle';
+  element<HTMLButtonElement>('[data-action="pause"]').disabled = state !== 'running';
+  element<HTMLButtonElement>('[data-action="resume"]').disabled = state !== 'paused';
+  element<HTMLButtonElement>('[data-action="stop"]').disabled = state === 'disposing' || state === 'disposed';
+  element<HTMLButtonElement>('[data-action="restart"]').disabled = state !== 'disposed' && state !== 'failed';
+}
 
-const kernel = createAppKernel(elements);
+function showError(error: unknown): void {
+  shell.messageValue.textContent = 'Runtime error';
+  shell.detailValue.textContent = error instanceof Error ? error.message : String(error);
+}
 
-window.addEventListener(
-  'beforeunload',
-  () => {
-    void kernel.shutdown('window:unload');
-  },
-  { once: true },
-);
-
-async function bootRuntime(): Promise<void> {
+async function start(): Promise<void> {
+  if (closed) return;
+  unsubscribeLifecycle();
+  kernel = createAppKernel(shell, uiHost);
+  const current = kernel;
+  unsubscribeLifecycle = current.subscribeLifecycle(renderLifecycle);
+  renderLifecycle();
   try {
     await kernel.boot();
-  } catch (runtimeError) {
-    elements.messageValue.textContent = 'Kernel boot failed';
-    elements.detailValue.textContent =
-      runtimeError instanceof Error ? runtimeError.message : 'Unexpected runtime failure';
-    throw runtimeError;
+  } catch (error) {
+    if (closed || kernel !== current) return;
+    // An explicit Stop is cancellation; a failed setup has already rendered its error phase.
+    if (!current.getContext().signal.aborted || current.getState().phase === 'error') showError(error);
   }
 }
 
-void bootRuntime();
+const onAction = (event: Event): void => {
+  const target = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-action]') : null;
+  const action = target?.dataset.action;
+  if (!action) return;
+  const perform = async (): Promise<void> => {
+    if (action === 'pause') kernel.pause();
+    if (action === 'resume') kernel.resume();
+    if (action === 'stop') await kernel.shutdown('host:stop');
+    if (action === 'restart') {
+      const previous = kernel;
+      await previous.shutdown('host:restart');
+      if (kernel === previous) await start();
+    }
+  };
+  void perform().catch(showError);
+};
+controls.addEventListener('click', onAction);
+hostScope.defer(() => controls.removeEventListener('click', onAction));
+hostScope.defer(() => unsubscribeLifecycle());
+
+function disposeHost(): void {
+  if (closed) return;
+  closed = true;
+  void kernel.shutdown('host:dispose').catch(showError);
+  void hostScope.dispose().catch(showError);
+}
+window.addEventListener('beforeunload', disposeHost, { once: true });
+hostScope.defer(() => window.removeEventListener('beforeunload', disposeHost));
+if (import.meta.hot) import.meta.hot.dispose(disposeHost);
+void start();
 `,
     'src/kernel.ts': `/**
  * Company: EonHive Inc.
  * Title: App Kernel
- * Purpose: Create the standalone URK kernel and register named services for the browser shell.
+ * Purpose: Compose an inert v2 kernel with typed borrowed services.
  * Author: Stan Nesi
- * Created: 2026-05-03
- * Updated: 2026-05-03
+ * Created: ${createdAt}
+ * Updated: ${createdAt}
  * Notes: Vibe coded with Codex.
  */
 
-import { createKernel, type Kernel, type RuntimePhase } from '@urk/core';
+import { createKernel, type Kernel } from '@urk/core';
 import { adapters } from './adapters';
-import { appController } from './controllers/app.controller';
+import { AppShellCapability, type AppShell } from './contracts';
+import { createAppController } from './controllers/app.controller';
 
-export type AppShellService = {
+export function createAppKernel(shell: AppShell, uiHost: HTMLElement): Kernel {
+  return createKernel({
+    frameMode: 'auto',
+    adapterStartup: 'parallel',
+    serviceBindings: [{ token: AppShellCapability, value: shell }],
+    services: { 'ui:host': uiHost },
+    adapters,
+    controllers: [createAppController()],
+  });
+}
+`,
+    'src/contracts.ts': `/**
+ * Company: EonHive Inc.
+ * Title: Application Contracts
+ * Purpose: Define the typed browser shell shared with the runtime.
+ * Author: Stan Nesi
+ * Created: ${createdAt}
+ * Updated: ${createdAt}
+ * Notes: Vibe coded with Codex.
+ */
+
+import { token } from '@urk/core';
+
+export interface AppShell {
   phaseValue: HTMLElement;
   reasonValue: HTMLElement;
   stageValue: HTMLElement;
   progressValue: HTMLElement;
   messageValue: HTMLElement;
   detailValue: HTMLElement;
-};
+}
 
-export type AppKernelElements = AppShellService & {
-  uiHost: HTMLElement;
-};
-
-export const CANONICAL_RUNTIME_PHASES: RuntimePhase[] = [
-  'boot',
-  'loading',
-  'ready',
-  'transition',
-  'paused',
-  'error',
-];
-
-/**
- * A kernel is the root URK runtime object. It owns lifecycle, runtime phases, adapters,
- * controllers, shared services, and the update loop for a browser experience.
- */
-export function createAppKernel(elements: AppKernelElements): Kernel {
-  /**
-   * A service is any named shared value the runtime can look up later. This starter shares
-   * one shell object for controller-driven DOM updates plus the special ui:host element.
-   */
-  const shellService: AppShellService = {
-    phaseValue: elements.phaseValue,
-    reasonValue: elements.reasonValue,
-    stageValue: elements.stageValue,
-    progressValue: elements.progressValue,
-    messageValue: elements.messageValue,
-    detailValue: elements.detailValue,
-  };
-
-  return createKernel({
-    services: {
-      'app:shell': shellService,
-      /**
-       * ui:host is the HTMLElement the ui-widgets adapter mounts into. It gives overlay
-       * widgets one explicit browser host instead of letting adapters attach anywhere.
-       */
-      'ui:host': elements.uiHost,
-    },
-    adapters,
-    controllers: [appController],
-  });
+export const AppShellCapability = token<AppShell>('app:shell');
+`,
+    'public/content.json': `{
+  "message": "Your URK v2 runtime is ready",
+  "detail": "Press H for help. Pause, stop, and create a fresh kernel using the controls. Edit public/content.json to change this content."
 }
 `,
     'src/adapters.ts': `/**
@@ -323,8 +362,8 @@ export function createAppKernel(elements: AppKernelElements): Kernel {
  * Title: App Adapters
  * Purpose: Keep the standalone URK adapter stack explicit and dependency-light.
  * Author: Stan Nesi
- * Created: 2026-05-03
- * Updated: 2026-05-03
+ * Created: ${createdAt}
+ * Updated: ${createdAt}
  * Notes: Vibe coded with Codex.
  */
 
@@ -351,228 +390,80 @@ export const adapters: Array<AdapterRegistration<unknown>> = [
     'src/controllers/app.controller.ts': `/**
  * Company: EonHive Inc.
  * Title: App Controller
- * Purpose: Orchestrate the first standalone URK loading flow and browser shell updates.
+ * Purpose: Load real content and own event-driven interaction without an idle frame loop.
  * Author: Stan Nesi
- * Created: 2026-05-03
- * Updated: 2026-05-03
+ * Created: ${createdAt}
+ * Updated: ${createdAt}
  * Notes: Vibe coded with Codex.
  */
 
-import type {
-  InputAdapterApi,
-  LoadingAdapterApi,
-  LoadingSnapshot,
-  UiWidgetsAdapterApi,
-} from '@urk/adapters/dom';
-import type {
-  ControllerRegistration,
-  FrameInfo,
-  RuntimeContext,
-  RuntimeSnapshot,
-} from '@urk/core';
-import type { AppShellService } from '../kernel';
+import { LoadingCapability, InputCapability, UiWidgetsCapability } from '@urk/adapters/dom';
+import type { ControllerRegistration } from '@urk/core';
+import { AppShellCapability } from '../contracts';
 
-const STAGES = [
-  { id: 'connect-shell', label: 'Connect Browser Shell' },
-  { id: 'sync-capabilities', label: 'Sync DOM Capabilities' },
-  { id: 'activate-ready', label: 'Activate Ready Runtime' },
-] as const;
-
-const CONNECT_SHELL_DURATION_MS = 700;
-const SYNC_CAPABILITIES_DURATION_MS = 900;
-const ACTIVATE_READY_DURATION_MS = 800;
-
-function getShell(ctx: RuntimeContext): AppShellService {
-  return ctx.services.require<AppShellService>('app:shell');
-}
-
-function renderPhase(snapshot: RuntimeSnapshot, ctx: RuntimeContext): void {
-  const shell = getShell(ctx);
-
-  /**
-   * A runtime phase is the explicit state the kernel is in right now. URK keeps phases named
-   * and visible so shells and tools can explain what the runtime is doing at any moment.
-   */
-  shell.phaseValue.textContent = snapshot.phase;
-  shell.reasonValue.textContent = snapshot.reason ?? 'No reason provided';
-}
-
-function renderLoading(snapshot: LoadingSnapshot, ctx: RuntimeContext): void {
-  const shell = getShell(ctx);
-
-  shell.stageValue.textContent = snapshot.stageLabel ?? 'Waiting to start';
-  shell.progressValue.textContent = \`\${Math.round(snapshot.progress * 100)}%\`;
-}
-
-function renderMessage(message: string, detail: string, ctx: RuntimeContext): void {
-  const shell = getShell(ctx);
-
-  shell.messageValue.textContent = message;
-  shell.detailValue.textContent = detail;
-}
-
-export const appController: ControllerRegistration = (() => {
-  /**
-   * A controller is the runtime orchestration unit in URK. It reads adapters, reacts to
-   * state changes, and decides what the standalone experience should do over time.
-   */
-  let elapsedMs = 0;
-  let completed = false;
-  let unbindHelpKey: (() => void) | null = null;
-
+export function createAppController(): ControllerRegistration {
   return {
     id: 'app-controller',
-    init(ctx) {
-      renderPhase(ctx.state.getSnapshot(), ctx);
-      renderMessage(
-        'Booting the kernel',
-        'The kernel is creating runtime context, services, and the first controller lifecycle pass.',
-        ctx,
-      );
-    },
-    start(ctx) {
-      const loading = ctx.adapters.require<LoadingAdapterApi>('loading');
-      const input = ctx.adapters.require<InputAdapterApi>('input');
-      const widgets = ctx.adapters.require<UiWidgetsAdapterApi>('ui-widgets');
+    async start(ctx) {
+      const shell = ctx.require(AppShellCapability);
+      const loading = ctx.require(LoadingCapability);
+      const input = ctx.require(InputCapability);
+      const widgets = ctx.require(UiWidgetsCapability);
+      ctx.scope.defer(loading.subscribe(snapshot => {
+        shell.stageValue.textContent = snapshot.stageLabel ?? 'Ready';
+        shell.progressValue.textContent = \`\${Math.round(snapshot.progress * 100)}%\`;
+      }));
+      loading.begin([
+        { id: 'content', label: 'Load content' },
+        { id: 'interaction', label: 'Connect input' },
+      ]);
+      shell.messageValue.textContent = 'Loading your content';
+      shell.detailValue.textContent = 'The request is cancelled if this runtime stops.';
 
-      loading.begin([...STAGES], 'Booting the standalone URK runtime');
-      renderLoading(loading.getSnapshot(), ctx);
-      renderMessage(
-        'Starting staged loading',
-        'The controller is warming the browser shell and the DOM adapter stack.',
-        ctx,
-      );
-
-      widgets.setStatus('Phase: loading');
-      widgets.showCallout({
-        title: 'Keyboard help',
-        body: 'Press H at any time to reopen this help overlay.',
-        tone: 'active',
-      });
-
-      unbindHelpKey = input.bindKey({
+      const response = await fetch(new URL('content.json', document.baseURI), { signal: ctx.signal });
+      if (!response.ok) throw new Error(\`Content request failed: \${response.status}\`);
+      const content: unknown = await response.json();
+      ctx.signal.throwIfAborted();
+      if (!content || typeof content !== 'object' ||
+          !('message' in content) || typeof content.message !== 'string' ||
+          !('detail' in content) || typeof content.detail !== 'string') {
+        throw new Error('Content must contain message and detail strings.');
+      }
+      loading.setStage('content', 1);
+      shell.messageValue.textContent = content.message;
+      shell.detailValue.textContent = content.detail;
+      ctx.scope.defer(input.bindKey({
         code: 'KeyH',
-        handler() {
-          widgets.showCallout({
-            title: 'URK Starter',
-            body: 'This starter is driven by one kernel, three DOM adapters, one controller, and explicit runtime phases.',
-            tone: 'active',
-          });
+        handler(event) {
+          if (event.ctrlKey || event.metaKey || event.altKey || ctx.state.getSnapshot().phase === 'paused') return;
+          widgets.showCallout({ title: 'URK v2', body: 'Typed capabilities, scoped cleanup, and an idle frame loop.', tone: 'active' });
         },
-      });
+      }));
+      loading.setStage('interaction', 1);
+      loading.complete('Ready');
+      await ctx.state.transition('ready', 'app:loaded');
     },
-    update(frame: FrameInfo, ctx) {
-      if (completed) {
-        return;
-      }
-
-      const loading = ctx.adapters.require<LoadingAdapterApi>('loading');
-      const widgets = ctx.adapters.require<UiWidgetsAdapterApi>('ui-widgets');
-      const deltaMs = frame.deltaMs === 0 ? 16 : frame.deltaMs;
-
-      elapsedMs += deltaMs;
-
-      if (elapsedMs < CONNECT_SHELL_DURATION_MS) {
-        loading.setStage(
-          'connect-shell',
-          elapsedMs / CONNECT_SHELL_DURATION_MS,
-          'Connecting shell services and the dedicated overlay host',
-        );
-        renderLoading(loading.getSnapshot(), ctx);
-        renderMessage(
-          'Connecting browser services',
-          'Named services make the DOM shell explicit instead of hidden inside a framework wrapper.',
-          ctx,
-        );
-        return;
-      }
-
-      if (elapsedMs < CONNECT_SHELL_DURATION_MS + SYNC_CAPABILITIES_DURATION_MS) {
-        loading.setStage(
-          'sync-capabilities',
-          (elapsedMs - CONNECT_SHELL_DURATION_MS) / SYNC_CAPABILITIES_DURATION_MS,
-          'Warming the loading, input, and ui-widgets browser capabilities',
-        );
-        renderLoading(loading.getSnapshot(), ctx);
-        renderMessage(
-          'Syncing DOM capabilities',
-          'Adapters are the bridge from raw browser APIs into small reusable runtime capabilities.',
-          ctx,
-        );
-        return;
-      }
-
-      if (
-        elapsedMs <
-        CONNECT_SHELL_DURATION_MS + SYNC_CAPABILITIES_DURATION_MS + ACTIVATE_READY_DURATION_MS
-      ) {
-        loading.setStage(
-          'activate-ready',
-          (elapsedMs - CONNECT_SHELL_DURATION_MS - SYNC_CAPABILITIES_DURATION_MS) /
-            ACTIVATE_READY_DURATION_MS,
-          'Moving the runtime from loading into ready',
-        );
-        renderLoading(loading.getSnapshot(), ctx);
-        renderMessage(
-          'Activating ready runtime',
-          'The controller is about to complete loading and set the runtime phase to ready.',
-          ctx,
-        );
-        return;
-      }
-
-      loading.complete('Standalone runtime ready');
-      renderLoading(loading.getSnapshot(), ctx);
-      renderMessage(
-        'Runtime ready',
-        'The kernel is now in the ready phase and the overlay host is available for runtime UI.',
-        ctx,
-      );
-      widgets.setStatus('Phase: ready');
-      ctx.state.setPhase('ready', 'app:ready');
-      completed = true;
-    },
-    onStateChange(next: RuntimeSnapshot, _previous: RuntimeSnapshot, ctx) {
-      const widgets = ctx.adapters.get<UiWidgetsAdapterApi>('ui-widgets');
-
-      renderPhase(next, ctx);
-
-      if (!widgets) {
-        return;
-      }
-
-      widgets.setStatus(\`Phase: \${next.phase}\`);
-
-      if (next.phase === 'error') {
-        widgets.showCallout({
-          title: 'Runtime error',
-          body: next.reason ?? 'An unknown runtime error occurred.',
-          tone: 'selected',
-        });
-      }
+    onStateChange(next, _previous, ctx) {
+      const shell = ctx.require(AppShellCapability);
+      shell.phaseValue.textContent = next.phase;
+      shell.reasonValue.textContent = next.reason ?? 'No reason provided';
+      ctx.get(UiWidgetsCapability)?.setStatus(\`Experience: \${next.phase}\`);
     },
     dispose(ctx) {
-      const widgets = ctx.adapters.get<UiWidgetsAdapterApi>('ui-widgets');
-
-      unbindHelpKey?.();
-      unbindHelpKey = null;
-      widgets?.hideCallout();
-      renderMessage(
-        'Runtime disposed',
-        'The controller released its bindings and the kernel shut down cleanly.',
-        ctx,
-      );
+      const shell = ctx.require(AppShellCapability);
+      shell.messageValue.textContent = 'Runtime stopped';
+      shell.detailValue.textContent = 'Owned subscriptions have been released. Start fresh to create another kernel.';
     },
   };
-})();
+}
 `,
     'src/styles.css': `/**
  * Company: EonHive Inc.
  * Title: App Styles
  * Purpose: Style the standalone URK browser scaffold without introducing framework dependencies.
  * Author: Stan Nesi
- * Created: 2026-05-03
- * Updated: 2026-05-03
+ * Created: ${createdAt}
+ * Updated: ${createdAt}
  * Notes: Vibe coded with Codex.
  */
 
@@ -667,6 +558,11 @@ body {
   color: #475569;
   line-height: 1.65;
 }
+
+.runtime-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.runtime-controls button { padding: 9px 13px; border: 1px solid #cbd5e1; border-radius: 10px; background: white; color: #102033; font: inherit; cursor: pointer; }
+.runtime-controls button:disabled { opacity: 0.45; cursor: default; }
+.runtime-controls button:focus-visible { outline: 2px solid #0284c7; outline-offset: 2px; }
 
 .status-grid {
   margin: 0;

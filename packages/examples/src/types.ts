@@ -9,6 +9,7 @@
  */
 
 export type ExampleId =
+  | 'audio-proof'
   | 'minimal-runtime'
   | 'adapter-registration'
   | 'controller-orchestration'

@@ -7,18 +7,21 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "test": "echo 'manual browser acceptance only for this milestone'",
-    "lint": "echo 'no lint yet'"
+    "test": "corepack yarn workspace @urk/react-urk build && node --test tests/*.test.mjs",
+    "lint": "tsc --noEmit",
+    "test:browser": "playwright test"
   },
   "dependencies": {
     "@urk/adapters": "workspace:*",
     "@urk/core": "workspace:*",
+    "@urk/examples": "workspace:*",
     "@urk/react-urk": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "three": "^0.184.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/three": "^0.184.0",

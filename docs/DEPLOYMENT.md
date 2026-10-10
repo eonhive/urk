@@ -96,3 +96,26 @@ SITE_URL=https://example.com corepack yarn build:www
 ```
 
 The command should rebuild package artifacts in dependency order and produce `apps/www/dist`.
+
+To check a local production preview, use the same `SITE_URL` for the build and smoke command. In separate terminals:
+
+```bash
+SITE_URL=http://localhost:4321 corepack yarn build:www
+corepack yarn workspace @urk/www preview --host 127.0.0.1 --port 4321
+```
+
+```bash
+corepack yarn smoke:www --local
+```
+
+`--local` defaults to `http://localhost:4321` and checks generated routes, sitemap, 404 handling, and critical assets. It excludes Cloudflare's injected `robots.txt` response. Set `SITE_URL` explicitly when using another preview address; unknown command flags fail rather than silently weakening the check.
+
+## Post-deploy smoke check
+
+Run this after Cloudflare deploys `main`:
+
+```bash
+SITE_URL=https://urk.eonhive.com corepack yarn smoke:www
+```
+
+The command checks the live home, docs, minimal runtime example, packages, playground, sitemap, robots, 404 handling, and critical assets. `SITE_URL` is optional and defaults to `https://urk.eonhive.com`.

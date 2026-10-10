@@ -49,6 +49,12 @@ export function App() {
 }
 ```
 
-`UrkNextProvider` stays client-only and delegates runtime lifecycle to `UrkProvider` from `@urk/react-urk`.
+`UrkNextProvider` defaults to `ownership="provider"` and delegates lifecycle to `UrkProvider` from `@urk/react-urk`. It cancels pending startup when its cleanup task runs after unmount. It also forwards `ownership="external"` or `"legacy"` when a host intentionally selects those contracts; an external owner must arrange cleanup itself.
 
-This package is validated for this milestone through type-check/build plus the standalone App Router proof in `apps/next-proof`, including wrapper-facing runtime inspector consumption.
+`useClientKernel()` keeps its existing signature and stable factory/instance checks. A client boundary can be server-rendered, so the factory may execute during render on the server as well as the client. Construct an inert kernel and registrations there; acquire DOM, audio, rendering, or timer resources only inside lifecycle hooks. Do not call boot inside the factory.
+
+Real App Router navigation and fresh-instance cleanup are covered by `corepack yarn test:integration`. `corepack yarn workspace @urk/next-proof test` verifies inert server rendering. See [validation evidence](../../docs/VALIDATION.md).
+
+## v0.2 shared experience
+
+The real App Router proof exposes `/v02`, mounting the same experience used by standalone/React/website hosts through `UrkNextProvider`. Factories remain inert and the provider owns cleanup by default. Wrapper/core peers are versioned `^0.2.0`; publication remains separate from the local implementation.

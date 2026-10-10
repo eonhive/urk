@@ -17,9 +17,11 @@ Current role:
 - provide the mount contract used by runtime islands
 - keep non-current entries labeled as planned or experimental if new entries are added
 - keep demo behavior out of Astro presentation components
+- present each current example with a distinct visual summary on `/examples/`
 
 Current runnable public examples:
 
+- `/examples/audio-proof/` in `apps/www` - visual Audio Lab adapted from the original local audio proof
 - `/examples/minimal-runtime/` in `apps/www`
 - `/examples/adapter-registration/` in `apps/www`
 - `/examples/controller-orchestration/` in `apps/www`
@@ -36,6 +38,8 @@ The proof workspace lives at `examples/` and is started with:
 ```bash
 corepack yarn workspace urk-examples dev
 ```
+
+The public website surfaces the originals as a repo proof lab on `/examples/`, with source links and local route instructions. Audio now also has a public adaptation at `/examples/audio-proof/`, implemented in `packages/examples/src/audio-proof/`. It reuses the original WAV assets with a focused transport controller, site-owned visual deck, source excerpts, docs links, and teardown. Other original proofs still run locally.
 
 ## Proof routes
 

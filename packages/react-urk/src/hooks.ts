@@ -8,9 +8,10 @@
  * Notes: Vibe coded with Codex.
  */
 
-import { useContext, useEffect, useRef, useSyncExternalStore } from 'react';
+import { useCallback, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
 import type {
   KernelEvent,
+  LifecycleSnapshot,
   RuntimeInspector,
   RuntimeInspectorSnapshot,
   RuntimePhase,
@@ -32,35 +33,30 @@ export function useKernel() {
   return kernel;
 }
 
+export function useLifecycleSnapshot(): LifecycleSnapshot {
+  const kernel = useKernel();
+  const subscribe = useCallback((listener: () => void) => kernel.subscribeLifecycle(listener), [kernel]);
+  const getSnapshot = useCallback(() => kernel.getLifecycleSnapshot(), [kernel]);
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+}
+
 export function useRuntimeSnapshot(): RuntimeSnapshot {
   const kernel = useKernel();
   const store = kernel.getContext().state;
-  const snapshotRef = useRef<RuntimeSnapshot>(store.getSnapshot());
-
-  const getStableSnapshot = (): RuntimeSnapshot => {
-    const next = store.getSnapshot();
-    const previous = snapshotRef.current;
-
-    if (
-      previous.phase === next.phase &&
-      previous.reason === next.reason &&
-      previous.updatedAt === next.updatedAt
-    ) {
-      return previous;
+  const snapshotRef = useRef<{ revision: number; snapshot: RuntimeSnapshot } | null>(null);
+  const getSnapshot = useCallback((): RuntimeSnapshot => {
+    const revision = store.getRevision();
+    if (!snapshotRef.current || snapshotRef.current.revision !== revision) {
+      snapshotRef.current = { revision, snapshot: store.getSnapshot() };
     }
-
-    snapshotRef.current = next;
-    return next;
-  };
-
-  return useSyncExternalStore(
-    (onStoreChange: () => void) =>
-      store.subscribe(() => {
-        onStoreChange();
-      }),
-    getStableSnapshot,
-    getStableSnapshot,
+    return snapshotRef.current.snapshot;
+  }, [store]);
+  const subscribe = useCallback(
+    (onStoreChange: () => void) => store.subscribe(onStoreChange),
+    [store],
   );
+
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
 export function useRuntimePhase(): RuntimePhase {
@@ -73,28 +69,13 @@ export function useRuntimeInspector(): RuntimeInspector {
 
 export function useRuntimeInspectorSnapshot(): RuntimeInspectorSnapshot {
   const inspector = useRuntimeInspector();
-  const snapshotRef = useRef<RuntimeInspectorSnapshot>(inspector.getSnapshot());
-
-  const getStableSnapshot = (): RuntimeInspectorSnapshot => {
-    const next = inspector.getSnapshot();
-    const previous = snapshotRef.current;
-
-    if (previous.updatedAt === next.updatedAt) {
-      return previous;
-    }
-
-    snapshotRef.current = next;
-    return next;
-  };
-
-  return useSyncExternalStore(
-    (onStoreChange: () => void) =>
-      inspector.subscribe(() => {
-        onStoreChange();
-      }),
-    getStableSnapshot,
-    getStableSnapshot,
+  const getSnapshot = useCallback(() => inspector.getSnapshot(), [inspector]);
+  const subscribe = useCallback(
+    (onStoreChange: () => void) => inspector.subscribe(onStoreChange),
+    [inspector],
   );
+
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
 export function useEventBus() {

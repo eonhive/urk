@@ -8,7 +8,7 @@
  * Notes: Vibe coded with Codex.
  */
 
-import type { AdapterRegistration } from '@urk/core';
+import { token, type AdapterRegistration } from '@urk/core';
 
 export interface AudioTrackDefinition {
   id: string;
@@ -75,14 +75,15 @@ function formatTrackError(track: AudioTrackDefinition, action: 'preload' | 'play
   return `Failed ${action} for audio track: ${track.label}`;
 }
 
+export const AudioCapability = token<AudioAdapterApi>('audio');
+
 export function createAudioAdapter(
   id = 'audio-adapter',
 ): AdapterRegistration<AudioAdapterApi> {
-  let teardown: (() => void) | null = null;
-
   return {
     id,
     capability: 'audio',
+    token: AudioCapability,
     isSupported() {
       return typeof window !== 'undefined' && typeof Audio !== 'undefined';
     },
@@ -90,6 +91,7 @@ export function createAudioAdapter(
       const tracks = new Map<string, RegisteredTrack>();
       const loadedTrackIds = new Set<string>();
       const listeners = new Set<AudioListener>();
+      ctx.scope.defer(() => { tracks.clear(); loadedTrackIds.clear(); listeners.clear(); });
       let snapshot = createEmptySnapshot();
 
       const publish = (
@@ -108,6 +110,8 @@ export function createAudioAdapter(
         };
 
         const next = cloneSnapshot(snapshot);
+
+        if (ctx.signal.aborted) return next;
 
         ctx.events.emit({
           type: 'audio:changed',
@@ -159,6 +163,7 @@ export function createAudioAdapter(
       };
 
       const preloadElement = async (record: RegisteredTrack): Promise<void> => {
+        if (ctx.signal.aborted) throw new Error('Audio adapter is disposed.');
         if (loadedTrackIds.has(record.definition.id) || record.element.readyState >= 3) {
           loadedTrackIds.add(record.definition.id);
           return;
@@ -176,12 +181,19 @@ export function createAudioAdapter(
             reject(new Error(formatTrackError(record.definition, 'preload')));
           };
 
+          const onAbort = (): void => {
+            cleanup();
+            reject(new Error('Audio preload cancelled.'));
+          };
+
           const cleanup = (): void => {
+            ctx.signal.removeEventListener('abort', onAbort);
             record.element.removeEventListener('canplaythrough', onReady);
             record.element.removeEventListener('loadeddata', onReady);
             record.element.removeEventListener('error', onError);
           };
 
+          ctx.signal.addEventListener('abort', onAbort, { once: true });
           record.element.addEventListener('canplaythrough', onReady, { once: true });
           record.element.addEventListener('loadeddata', onReady, { once: true });
           record.element.addEventListener('error', onError, { once: true });
@@ -229,27 +241,20 @@ export function createAudioAdapter(
         }
       };
 
-      teardown = (): void => {
-        for (const record of tracks.values()) {
-          record.element.pause();
-          record.element.removeEventListener('ended', record.onEnded);
-          record.element.removeEventListener('error', record.onError);
-          record.element.src = '';
-          record.element.load();
-        }
-
-        tracks.clear();
-        loadedTrackIds.clear();
-        listeners.clear();
-      };
 
       return {
         registerTrack(track) {
+          if (ctx.signal.aborted) throw new Error('Audio adapter is disposed.');
           if (tracks.has(track.id)) {
             throw new Error(`Audio track already registered: ${track.id}`);
           }
 
           const element = new Audio(track.src);
+          ctx.scope.defer(() => {
+            element.pause();
+            element.src = '';
+            element.load();
+          });
           element.preload = 'auto';
 
           const onEnded = (): void => {
@@ -306,6 +311,8 @@ export function createAudioAdapter(
             onError,
           };
 
+          ctx.scope.defer(() => element.removeEventListener('ended', onEnded));
+          ctx.scope.defer(() => element.removeEventListener('error', onError));
           element.addEventListener('ended', onEnded);
           element.addEventListener('error', onError);
           applyElementSettings(record);
@@ -321,6 +328,7 @@ export function createAudioAdapter(
           await preloadTrack(record, shouldSetLoading);
         },
         async play(trackId) {
+          if (ctx.signal.aborted) throw new Error('Audio adapter is disposed.');
           const nextTrackId = trackId ?? snapshot.activeTrackId;
 
           if (!nextTrackId) {
@@ -361,6 +369,10 @@ export function createAudioAdapter(
 
           try {
             await nextRecord.element.play();
+            if (ctx.signal.aborted) {
+              stopElement(nextRecord);
+              throw new Error('Audio playback cancelled.');
+            }
             publish({
               activeTrackId: nextTrackId,
               status: 'playing',
@@ -442,6 +454,7 @@ export function createAudioAdapter(
           return cloneSnapshot(snapshot);
         },
         subscribe(listener) {
+          if (ctx.signal.aborted) throw new Error('Audio adapter is disposed.');
           listeners.add(listener);
 
           return () => {
@@ -449,10 +462,6 @@ export function createAudioAdapter(
           };
         },
       };
-    },
-    dispose() {
-      teardown?.();
-      teardown = null;
     },
   };
 }

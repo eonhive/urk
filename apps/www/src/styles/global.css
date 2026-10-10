@@ -4,7 +4,7 @@
  * Purpose: Apply the canonical URK brand system to the website shell, docs framing, examples, and brand board.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-05-14
+ * Updated: 2026-06-06
  * Notes: Vibe coded with Codex.
  */
 
@@ -255,6 +255,346 @@ button:disabled,
 .site-card--muted {
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--urk-card-muted) 96%, transparent), color-mix(in srgb, var(--urk-background) 92%, transparent));
+}
+
+.examples-hero-section {
+  padding-top: 5.5rem;
+}
+
+.examples-hero {
+  display: grid;
+  align-items: center;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 0.86fr) minmax(20rem, 0.64fr);
+}
+
+.examples-hero__visual {
+  min-height: 31rem;
+  padding: 1.25rem;
+  background:
+    radial-gradient(circle at 20% 16%, color-mix(in srgb, var(--urk-primary) 32%, transparent), transparent 30%),
+    radial-gradient(circle at 82% 22%, color-mix(in srgb, var(--urk-success) 24%, transparent), transparent 28%),
+    linear-gradient(145deg, color-mix(in srgb, var(--urk-surface-strong) 94%, transparent), color-mix(in srgb, var(--urk-background) 94%, transparent));
+}
+
+.examples-hero__glow {
+  position: absolute;
+  inset: 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--urk-primary) 35%, transparent);
+  border-radius: calc(var(--urk-radius-lg) - 0.25rem);
+  background:
+    linear-gradient(90deg, transparent 0 31px, color-mix(in srgb, var(--urk-grid-dot) 78%, transparent) 32px),
+    linear-gradient(180deg, transparent 0 31px, color-mix(in srgb, var(--urk-grid-dot) 78%, transparent) 32px);
+  background-size: 32px 32px;
+}
+
+.examples-hero__kicker,
+.examples-hero__caption {
+  position: relative;
+  z-index: 1;
+  font-family: var(--urk-font-code);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--urk-muted);
+}
+
+.examples-hero__stage {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 23rem;
+  place-items: center;
+}
+
+.examples-hero__stage::before,
+.examples-hero__stage::after {
+  content: "";
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--urk-primary) 42%, transparent);
+  border-radius: 999px;
+}
+
+.examples-hero__stage::before {
+  width: min(72%, 20rem);
+  aspect-ratio: 1;
+}
+
+.examples-hero__stage::after {
+  width: min(44%, 12rem);
+  aspect-ratio: 1;
+  border-color: color-mix(in srgb, var(--urk-success) 38%, transparent);
+}
+
+.examples-hero__node {
+  position: absolute;
+  z-index: 2;
+  width: min(13.5rem, 68%);
+  padding: 1rem;
+  border: 1px solid var(--urk-border-strong);
+  border-radius: var(--urk-radius-md);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--urk-surface-strong) 92%, transparent), color-mix(in srgb, var(--urk-card-muted) 96%, transparent));
+  color: var(--urk-foreground);
+  text-decoration: none;
+  box-shadow: var(--urk-shadow-glow);
+}
+
+.examples-hero__node span {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--urk-muted);
+  font-family: var(--urk-font-code);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.examples-hero__node strong {
+  display: block;
+  font-family: var(--urk-font-display);
+  font-size: 1.12rem;
+  letter-spacing: -0.035em;
+}
+
+.examples-hero__node--1 {
+  left: 0.5rem;
+  top: 2.75rem;
+}
+
+.examples-hero__node--2 {
+  right: 0.4rem;
+  top: 9.5rem;
+}
+
+.examples-hero__node--3 {
+  bottom: 2.7rem;
+  left: 18%;
+}
+
+.examples-hero__caption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.example-card {
+  isolation: isolate;
+}
+
+.example-card__visual {
+  position: relative;
+  min-height: 11rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--example-accent, var(--urk-primary)) 44%, var(--urk-border));
+  border-radius: var(--urk-radius-md);
+  background:
+    radial-gradient(circle at 22% 24%, color-mix(in srgb, var(--example-accent, var(--urk-primary)) 34%, transparent), transparent 32%),
+    radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--example-secondary, var(--urk-success)) 24%, transparent), transparent 30%),
+    linear-gradient(145deg, color-mix(in srgb, var(--urk-background) 82%, transparent), color-mix(in srgb, var(--urk-surface-strong) 88%, transparent));
+}
+
+.example-card__orb {
+  position: absolute;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--example-accent, var(--urk-primary)) 22%, transparent);
+  filter: blur(0.2px);
+}
+
+.example-card__orb--one {
+  left: 1rem;
+  top: 1rem;
+  width: 5.8rem;
+  height: 5.8rem;
+}
+
+.example-card__orb--two {
+  right: 1.1rem;
+  bottom: 1rem;
+  width: 4.2rem;
+  height: 4.2rem;
+  background: color-mix(in srgb, var(--example-secondary, var(--urk-success)) 26%, transparent);
+}
+
+.example-card__rail {
+  position: absolute;
+  inset: auto 1rem 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.example-card__rail span {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.45rem 0.62rem;
+  border: 1px solid color-mix(in srgb, var(--example-accent, var(--urk-primary)) 34%, var(--urk-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--urk-background) 66%, transparent);
+  color: var(--urk-foreground);
+  font-family: var(--urk-font-code);
+  font-size: 0.68rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.example-card__label {
+  position: absolute;
+  right: 0.85rem;
+  top: 0.85rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--example-accent, var(--urk-primary)) 22%, transparent);
+  color: var(--urk-foreground);
+  font-family: var(--urk-font-code);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.example-card__cta {
+  color: color-mix(in srgb, var(--example-accent, var(--urk-primary)) 76%, white);
+  font-family: var(--urk-font-code);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.example-card--core,
+.repo-proof-card--core {
+  --example-accent: var(--urk-primary);
+  --example-secondary: var(--urk-info);
+}
+
+.example-card--audio {
+  --example-accent: #ef956e;
+  --example-secondary: #55b9ac;
+}
+
+.example-card--audio .example-card__orb--one {
+  width: 9rem;
+  height: 9rem;
+  left: calc(50% - 4.5rem);
+  top: 1rem;
+  border: 1px solid #527471;
+  background: radial-gradient(circle, #ef956e 0 24%, transparent 25%),
+    repeating-radial-gradient(circle, #132426 0 2px, #334a49 3px, #102122 4px 6px);
+}
+
+.example-card--audio .example-card__orb--two {
+  display: none;
+}
+
+.example-card--audio .example-card__rail {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.example-card--adapter,
+.repo-proof-card--adapter {
+  --example-accent: var(--urk-success);
+  --example-secondary: var(--urk-primary);
+}
+
+.example-card--controller,
+.repo-proof-card--controller {
+  --example-accent: var(--urk-warning);
+  --example-secondary: var(--urk-primary);
+}
+
+.example-card--state,
+.repo-proof-card--state {
+  --example-accent: var(--urk-info);
+  --example-secondary: var(--urk-success);
+}
+
+.example-card--event,
+.repo-proof-card--event {
+  --example-accent: #ff6b9a;
+  --example-secondary: var(--urk-warning);
+}
+
+.example-card--bridge,
+.repo-proof-card--bridge {
+  --example-accent: #2fd2cb;
+  --example-secondary: var(--urk-primary);
+}
+
+.example-card--input,
+.repo-proof-card--input {
+  --example-accent: #ff7a45;
+  --example-secondary: var(--urk-info);
+}
+
+.example-card--docs,
+.repo-proof-card--docs {
+  --example-accent: #b58cff;
+  --example-secondary: var(--urk-success);
+}
+
+.repo-proof-callout {
+  display: grid;
+  align-items: center;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.repo-proof-callout__command {
+  display: block;
+  min-width: min(100%, 22rem);
+  padding: 1rem;
+  border: 1px solid var(--urk-code-border);
+  border-radius: var(--urk-radius-md);
+  background: var(--urk-code-background);
+  color: var(--urk-code-text);
+  font-family: var(--urk-font-code);
+  font-size: 0.9rem;
+  overflow-x: auto;
+}
+
+.repo-proof-card {
+  display: grid;
+  gap: 1rem;
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+
+.repo-proof-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--example-accent, var(--urk-primary)) 50%, var(--urk-border));
+}
+
+.repo-proof-card__visual {
+  display: grid;
+  min-height: 6.4rem;
+  align-items: end;
+  gap: 0.6rem;
+  grid-template-columns: 0.75fr 1fr 0.55fr;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--example-accent, var(--urk-primary)) 34%, var(--urk-border));
+  border-radius: var(--urk-radius-md);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--example-accent, var(--urk-primary)) 20%, transparent), transparent 42%),
+    color-mix(in srgb, var(--urk-background) 54%, transparent);
+}
+
+.repo-proof-card__visual span {
+  display: block;
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(180deg, var(--example-accent, var(--urk-primary)), color-mix(in srgb, var(--example-secondary, var(--urk-success)) 72%, transparent));
+}
+
+.repo-proof-card__visual span:nth-child(1) {
+  height: 3.2rem;
+}
+
+.repo-proof-card__visual span:nth-child(2) {
+  height: 4.7rem;
+}
+
+.repo-proof-card__visual span:nth-child(3) {
+  height: 2.4rem;
 }
 
 .site-button {
@@ -1189,6 +1529,15 @@ html[data-theme="light"] .brand-logo--theme-auto .brand-logo__img--on-light {
     padding: 3.75rem 0;
   }
 
+  .examples-hero,
+  .repo-proof-callout {
+    grid-template-columns: 1fr;
+  }
+
+  .examples-hero__visual {
+    min-height: 26rem;
+  }
+
   .site-header__inner,
   .site-footer__inner {
     flex-direction: column;
@@ -1260,6 +1609,43 @@ html[data-theme="light"] .brand-logo--theme-auto .brand-logo__img--on-light {
 
   .site-card {
     border-radius: var(--urk-radius-md);
+  }
+
+  .examples-hero-section {
+    padding-top: 3.5rem;
+  }
+
+  .examples-hero__visual {
+    min-height: 23rem;
+  }
+
+  .examples-hero__stage {
+    min-height: 16.5rem;
+  }
+
+  .examples-hero__node {
+    width: min(11.8rem, 76%);
+    padding: 0.85rem;
+  }
+
+  .examples-hero__node--1 {
+    left: 0.35rem;
+    top: 1.75rem;
+  }
+
+  .examples-hero__node--2 {
+    right: 0.35rem;
+    top: 7.2rem;
+  }
+
+  .examples-hero__node--3 {
+    bottom: 1.4rem;
+    left: 0.35rem;
+  }
+
+  .repo-proof-callout__command {
+    min-width: 0;
+    width: 100%;
   }
 
   .site-code-block {

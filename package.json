@@ -1,6 +1,6 @@
 {
   "name": "urk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Universal Runtime Kernel - public, open-source runtime for interactive browser experiences",
   "private": true,
   "type": "module",
@@ -17,13 +17,20 @@
     "apps/next-proof"
   ],
   "scripts": {
-    "build": "corepack yarn workspace @urk/core build && corepack yarn workspace @urk/adapters build && corepack yarn workspace @urk/examples build && corepack yarn workspace @urk/react-urk build && corepack yarn workspace @urk/next-urk build && corepack yarn workspace @urk/cli build && corepack yarn workspace urk-examples build && corepack yarn workspace @urk/www build && corepack yarn workspace @urk/next-proof build",
-    "build:www": "corepack yarn workspace @urk/core build && corepack yarn workspace @urk/adapters build && corepack yarn workspace @urk/examples build && corepack yarn workspace @urk/www build",
+    "build": "node scripts/build.mjs",
+    "build:www": "node scripts/build.mjs @urk/www",
+    "smoke:www": "node scripts/smoke-www.mjs",
     "dev": "corepack yarn workspace @urk/www dev",
     "dev:examples": "corepack yarn workspace urk-examples dev",
     "dev:next-proof": "corepack yarn workspace @urk/next-proof dev",
-    "test": "corepack yarn workspace @urk/core test && corepack yarn workspace @urk/adapters test && corepack yarn workspace @urk/examples test && corepack yarn workspace @urk/react-urk test && corepack yarn workspace @urk/next-urk test && corepack yarn workspace @urk/cli test && corepack yarn workspace urk-examples test && corepack yarn workspace @urk/www test && corepack yarn workspace @urk/next-proof test",
-    "lint": "corepack yarn workspace @urk/core lint && corepack yarn workspace @urk/adapters lint && corepack yarn workspace @urk/examples lint && corepack yarn workspace @urk/react-urk lint && corepack yarn workspace @urk/next-urk lint && corepack yarn workspace @urk/cli lint && corepack yarn workspace urk-examples lint && corepack yarn workspace @urk/www lint && corepack yarn workspace @urk/next-proof lint"
+    "test": "corepack yarn test:build && corepack yarn workspace @urk/core test && corepack yarn workspace @urk/adapters test && corepack yarn workspace urk-examples test && corepack yarn workspace @urk/next-proof test && corepack yarn workspace @urk/www check",
+    "lint": "corepack yarn typecheck && corepack yarn workspace @urk/www check",
+    "test:integration": "node scripts/build.mjs @urk/examples @urk/next-urk && corepack yarn workspace urk-examples test:browser",
+    "build:runtime": "node scripts/build.mjs @urk/core @urk/adapters @urk/examples @urk/react-urk @urk/next-urk @urk/cli",
+    "dev:v02": "node scripts/build.mjs @urk/examples @urk/next-urk && corepack yarn workspace urk-examples dev --host 127.0.0.1",
+    "typecheck": "tsc --noEmit --jsx react-jsx",
+    "report:size": "node scripts/bundle-report.mjs",
+    "test:build": "node --test scripts/build.test.mjs"
   },
   "devDependencies": {
     "@types/three": "^0.184.0",

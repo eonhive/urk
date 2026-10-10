@@ -8,7 +8,7 @@
  * Notes: Vibe coded with Codex.
  */
 
-import type { AdapterRegistration, RuntimeContext } from '@urk/core';
+import { token, type AdapterRegistration, type RuntimeContext } from '@urk/core';
 
 export type StorageArea = 'local' | 'session';
 
@@ -130,6 +130,8 @@ function collectNamespacedKeys(
   return keys;
 }
 
+export const StorageCapability = token<StorageAdapterApi>('storage');
+
 export function createStorageAdapter(
   options: StorageAdapterOptions = {},
 ): AdapterRegistration<StorageAdapterApi> {
@@ -139,6 +141,7 @@ export function createStorageAdapter(
   return {
     id,
     capability: 'storage',
+    token: StorageCapability,
     setup(ctx) {
       const backends: Record<StorageArea, StorageBackendLike> = {
         local: resolveBackend(ctx, 'local'),

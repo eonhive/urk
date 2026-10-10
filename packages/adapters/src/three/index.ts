@@ -8,7 +8,7 @@
  * Notes: Vibe coded with Codex.
  */
 
-import type { AdapterRegistration } from '@urk/core';
+import { token, type AdapterRegistration } from '@urk/core';
 import * as THREE from 'three';
 
 export interface ThreeAdapterSize {
@@ -55,14 +55,15 @@ function getPixelRatio(): number {
   return Math.min(window.devicePixelRatio || 1, 2);
 }
 
+export const ThreeCapability = token<ThreeAdapterApi>('three');
+
 export function createThreeAdapter(
   id = 'three-adapter',
 ): AdapterRegistration<ThreeAdapterApi> {
-  let disposeResizeTracking: (() => void) | null = null;
-
   return {
     id,
     capability: 'three',
+    token: ThreeCapability,
     isSupported() {
       return typeof window !== 'undefined' && typeof document !== 'undefined';
     },
@@ -74,6 +75,8 @@ export function createThreeAdapter(
         alpha: true,
         antialias: true,
       });
+      ctx.scope.defer(() => renderer.dispose());
+      ctx.scope.defer(() => renderer.domElement.remove());
       const raycaster = new THREE.Raycaster();
       const raycastPointer = new THREE.Vector2();
 
@@ -106,21 +109,15 @@ export function createThreeAdapter(
           resize();
         });
 
+        ctx.scope.defer(() => observer.disconnect());
         observer.observe(host);
-        disposeResizeTracking = () => {
-          observer.disconnect();
-        };
       } else if (typeof window !== 'undefined') {
         const onResize = (): void => {
           resize();
         };
 
+        ctx.scope.defer(() => window.removeEventListener('resize', onResize));
         window.addEventListener('resize', onResize);
-        disposeResizeTracking = () => {
-          window.removeEventListener('resize', onResize);
-        };
-      } else {
-        disposeResizeTracking = null;
       }
 
       return {
@@ -167,12 +164,6 @@ export function createThreeAdapter(
           return raycaster.intersectObjects(objects, true);
         },
       };
-    },
-    dispose(_ctx, api) {
-      disposeResizeTracking?.();
-      disposeResizeTracking = null;
-      api.getRenderer().dispose();
-      api.getCanvas().remove();
     },
   };
 }

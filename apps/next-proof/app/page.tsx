@@ -8,8 +8,9 @@
  * Notes: Vibe coded with Codex.
  */
 
+import Link from 'next/link';
 import { NextProofClient } from './next-proof-client';
 
 export default function Page() {
-  return <NextProofClient />;
+  return <><Link href="/v02">Try URK v0.2</Link><NextProofClient /></>;
 }

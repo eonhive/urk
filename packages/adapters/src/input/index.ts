@@ -8,7 +8,7 @@
  * Notes: Vibe coded with Codex.
  */
 
-import type { AdapterRegistration, RuntimeContext } from '@urk/core';
+import { token, type AdapterRegistration, type RuntimeContext } from '@urk/core';
 
 export type InputEventPhase = 'down' | 'up';
 
@@ -88,14 +88,15 @@ function createInputEvent(
   };
 }
 
+export const InputCapability = token<InputAdapterApi>('input');
+
 export function createInputAdapter(
   id = 'input-adapter',
 ): AdapterRegistration<InputAdapterApi> {
-  let disposeTargetListeners: (() => void) | null = null;
-
   return {
     id,
     capability: 'input',
+    token: InputCapability,
     isSupported() {
       return typeof window !== 'undefined' && typeof document !== 'undefined';
     },
@@ -155,22 +156,25 @@ export function createInputAdapter(
         pressedCodes.clear();
       };
 
-      target.addEventListener('keydown', onKeyDown);
-      target.addEventListener('keyup', onKeyUp);
-      resetTarget.addEventListener('blur', onBlur);
-
-      // Keep the public API minimal while still ensuring dispose can tear down DOM listeners.
-      disposeTargetListeners = () => {
-        target.removeEventListener('keydown', onKeyDown);
-        target.removeEventListener('keyup', onKeyUp);
-        resetTarget.removeEventListener('blur', onBlur);
+      ctx.scope.defer(() => {
+        pressedCodes.clear();
+        bindings.clear();
+        listeners.clear();
+      });
+      const listen = (element: InputTarget, type: string, listener: EventListener): void => {
+        ctx.scope.defer(() => element.removeEventListener(type, listener));
+        element.addEventListener(type, listener);
       };
+      listen(target, 'keydown', onKeyDown);
+      listen(target, 'keyup', onKeyUp);
+      listen(resetTarget, 'blur', onBlur);
 
       return {
         isPressed(code) {
           return pressedCodes.has(code);
         },
         bindKey(binding) {
+          if (ctx.signal.aborted) throw new Error('Input adapter is disposed.');
           const normalizedBinding: BoundInputBinding = {
             code: binding.code,
             phase: binding.phase ?? 'down',
@@ -185,6 +189,7 @@ export function createInputAdapter(
           };
         },
         subscribe(listener) {
+          if (ctx.signal.aborted) throw new Error('Input adapter is disposed.');
           listeners.add(listener);
 
           return () => {
@@ -197,11 +202,6 @@ export function createInputAdapter(
           listeners.clear();
         },
       };
-    },
-    dispose(_ctx, api) {
-      disposeTargetListeners?.();
-      disposeTargetListeners = null;
-      api.clear();
     },
   };
 }

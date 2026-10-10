@@ -326,7 +326,7 @@ function renderRegistryList(items: Array<{ title: string; meta: string }>): stri
     .join('');
 }
 
-function renderEvents(events: KernelEvent[]): string {
+function renderEvents(events: readonly KernelEvent[]): string {
   if (events.length === 0) {
     return '<li><strong>No events yet</strong><span class="inspector-events__meta">The inspector will populate as the kernel boots.</span></li>';
   }

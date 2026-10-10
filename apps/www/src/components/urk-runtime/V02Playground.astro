@@ -1,0 +1,79 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: URK Playground Host
+ * Purpose: Share the website playground and own cleanup across navigation and history restoration.
+ * Author: Stan Nesi
+ * Created: 2026-10-08
+ * Updated: 2026-10-09
+ * Notes: Vibe coded with Codex.
+ */
+---
+
+<urk-playground>
+  <p>Loading the URK playground…</p>
+  <noscript>Enable JavaScript to interact with the playground.</noscript>
+</urk-playground>
+<nav class="playground-links" aria-label="Playground resources">
+  <a href="/docs/guides/urk-v02/">How it works</a>
+  <a href="/playground/config/">Inspect example configs</a>
+</nav>
+
+<style>
+  urk-playground { display: block; }
+  .playground-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 0 1.5rem; }
+  .playground-links a { color: var(--urk-muted); font-size: 0.875rem; text-underline-offset: 0.25em; }
+  .playground-links a:hover { text-decoration: underline; }
+  @media (max-width: 960px) {
+    /* The stacked site navigation must scroll away so the scene remains reachable. */
+    :global(body:has(urk-playground) .site-header) { position: static; }
+  }
+</style>
+
+<script>
+  import { mountV02Workbench } from '@urk/examples/v02';
+
+  class UrkPlayground extends HTMLElement {
+    private workbench?: ReturnType<typeof mountV02Workbench>;
+    private cleanup: Promise<void> = Promise.resolve();
+    private generation = 0;
+
+    connectedCallback(): void {
+      window.addEventListener('pagehide', this.stop);
+      window.addEventListener('pageshow', this.start);
+      this.start();
+    }
+
+    disconnectedCallback(): void {
+      window.removeEventListener('pagehide', this.stop);
+      window.removeEventListener('pageshow', this.start);
+      this.stop();
+    }
+
+    private start = (): void => {
+      if (this.workbench) return;
+      const generation = ++this.generation;
+      // History restoration can arrive while old resources are still being released.
+      void this.cleanup.then(() => {
+        if (!this.isConnected || generation !== this.generation) return;
+        this.replaceChildren();
+        this.workbench = mountV02Workbench(this);
+      }).catch(error => {
+        if (this.isConnected && generation === this.generation) this.textContent = 'The playground could not start. Reload to try again.';
+        console.error('Playground startup failed:', error);
+      });
+    };
+
+    private stop = (): void => {
+      this.generation++;
+      const workbench = this.workbench;
+      this.workbench = undefined;
+      if (!workbench) return;
+      this.cleanup = workbench.teardown().catch(error => {
+        console.error('Playground cleanup failed:', error);
+      });
+    };
+  }
+
+  if (!customElements.get('urk-playground')) customElements.define('urk-playground', UrkPlayground);
+</script>

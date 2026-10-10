@@ -8,7 +8,7 @@
  * Notes: Vibe coded with Codex.
  */
 
-import type { AdapterRegistration } from '@urk/core';
+import { token, type AdapterRegistration } from '@urk/core';
 
 export interface PointerTargetDefinition {
   id: string;
@@ -65,14 +65,18 @@ function getSurfaceCoordinates(
   };
 }
 
+export const PointerCapability = token<PointerAdapterApi>('pointer');
+
 export function createPointerAdapter(
   id = 'pointer-adapter',
 ): AdapterRegistration<PointerAdapterApi> {
   return {
     id,
     capability: 'pointer',
+    token: PointerCapability,
     setup(ctx) {
       const cleanups = new Map<string, () => void>();
+      ctx.scope.defer(() => cleanups.clear());
 
       const emit = <TPayload>(type: string, payload: TPayload): void => {
         ctx.events.emit({
@@ -85,6 +89,7 @@ export function createPointerAdapter(
 
       return {
         bindTarget(target) {
+          if (ctx.signal.aborted) throw new Error('Pointer adapter is disposed.');
           if (cleanups.has(target.id)) {
             throw new Error(`Pointer target already bound: ${target.id}`);
           }
@@ -116,24 +121,29 @@ export function createPointerAdapter(
             });
           };
 
-          target.element.addEventListener('pointerenter', onEnter);
-          target.element.addEventListener('pointerleave', onLeave);
-          target.element.addEventListener('click', onSelect);
-
+          let bound = true;
           const cleanup = (): void => {
+            if (!bound) return;
+            bound = false;
+            cleanups.delete(target.id);
             target.element.removeEventListener('pointerenter', onEnter);
             target.element.removeEventListener('pointerleave', onLeave);
             target.element.removeEventListener('click', onSelect);
           };
-
+          ctx.scope.defer(cleanup);
           cleanups.set(target.id, cleanup);
-
-          return () => {
+          try {
+            target.element.addEventListener('pointerenter', onEnter);
+            target.element.addEventListener('pointerleave', onLeave);
+            target.element.addEventListener('click', onSelect);
+          } catch (error) {
             cleanup();
-            cleanups.delete(target.id);
-          };
+            throw error;
+          }
+          return cleanup;
         },
         bindSurface(surface) {
+          if (ctx.signal.aborted) throw new Error('Pointer adapter is disposed.');
           const cleanupKey = `surface:${surface.id}`;
 
           if (cleanups.has(cleanupKey)) {
@@ -170,22 +180,26 @@ export function createPointerAdapter(
             } satisfies PointerSurfaceEventPayload);
           };
 
-          surface.element.addEventListener('pointermove', onMove);
-          surface.element.addEventListener('pointerleave', onLeave);
-          surface.element.addEventListener('click', onSelect);
-
+          let bound = true;
           const cleanup = (): void => {
+            if (!bound) return;
+            bound = false;
+            cleanups.delete(cleanupKey);
             surface.element.removeEventListener('pointermove', onMove);
             surface.element.removeEventListener('pointerleave', onLeave);
             surface.element.removeEventListener('click', onSelect);
           };
-
+          ctx.scope.defer(cleanup);
           cleanups.set(cleanupKey, cleanup);
-
-          return () => {
+          try {
+            surface.element.addEventListener('pointermove', onMove);
+            surface.element.addEventListener('pointerleave', onLeave);
+            surface.element.addEventListener('click', onSelect);
+          } catch (error) {
             cleanup();
-            cleanups.delete(cleanupKey);
-          };
+            throw error;
+          }
+          return cleanup;
         },
         clear() {
           for (const cleanup of cleanups.values()) {
@@ -195,9 +209,6 @@ export function createPointerAdapter(
           cleanups.clear();
         },
       };
-    },
-    dispose(_ctx, api) {
-      api.clear();
     },
   };
 }

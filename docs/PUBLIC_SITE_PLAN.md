@@ -196,6 +196,8 @@ Current state:
 
 ## 6. Examples Structure
 
+2026-09-21: Audio Lab is the ninth public runtime example at `/examples/audio-proof/`, adapted from the local audio proof. It adds an interactive visual deck with real audio playback, volume/mute controls, and lifecycle teardown. The original proof remains available locally; other local proofs are still candidates for individual promotion.
+
 Source of truth: `packages/examples`.
 
 Initial examples:
@@ -290,9 +292,9 @@ MVP:
 - shareable example later
 
 Current state:
-- `/playground/` is an experimental known-example config shell.
-- The shell validates JSON, current example IDs, adapter/controller names, and the no-custom-code boundary.
-- Runtime execution remains on the dedicated example routes until a stable playground mount contract exists.
+- `/playground/` runs the shared v0.2 experience: Three.js picking, keyboard controls, storage, opt-in audio, loading, overlays, and lifecycle controls. `/v02/` uses the same website host.
+- The host releases resources on navigation and creates a fresh kernel after history restoration. Runtime orchestration remains in the private examples package.
+- `/playground/config/` preserves the earlier config inspector, validating JSON, current example IDs, adapter/controller names, and the no-custom-code boundary.
 
 Do not build:
 - marketplace
@@ -375,6 +377,7 @@ Scope: Boundary, Architecture, Decisions, Deferred, generated frontmatter.
 
 Current QA pass:
 - 2026-05-14: public site shell, examples index, and runtime panels received a focused keyboard/focus/mobile/reduced-motion pass.
+- 2026-06-06: `/examples/` received a visual presentation pass and now distinguishes public website runtime islands from the local repo proof lab in `examples/`.
 
 Build quality:
 - `@urk/www check` passes.
