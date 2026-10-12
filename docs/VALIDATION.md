@@ -653,3 +653,16 @@ After explicit merge/deployment approval, PR #1 merged as `8404cc4`. Its [main-b
 The deployed HTTP smoke exposed `/robots.txt` returning 404: Cloudflare did not supply the response assumed by the earlier check. Added `apps/www/src/pages/robots.txt.ts` to generate the response and canonical sitemap from Astro's configured site URL. Updated `scripts/smoke-www.mjs` so local and deployed modes both require that route; provider-specific `Content-Signal` content is no longer assumed. Updated deployment usage notes.
 
 Website diagnostics and static production build passed on Node 22.22.2 / Yarn 3.8.7. The local production smoke passed **11 routes and nine assets**, including the generated robots response; `git diff --check` passed. Log: `/tmp/urk-robots-validation.log`. No runtime code or npm publication changed. Follow-up production results are recorded with the delivery PR after deployment.
+
+## URK visual identity and playground refresh — 2026-10-11
+
+Rebuilt the homepage and shared playground presentation around the supplied visual references: faceted cyan/violet branding, original transparent hero artwork, coordinated dark/light themes, and a responsive scene/inspector layout. The homepage is static; the interactive runtime starts in the playground. Existing public APIs and host ownership remain unchanged. Theme changes request one coalesced scene redraw, and theme controls work when browser storage is blocked.
+
+Validation on Node **22.22.2** / Yarn **3.8.7**:
+
+- **51 focused browser checks passed** across Chromium, Firefox, and WebKit for standalone, React, Next, website navigation, preferences, sound, cancellation, disposal, idle rendering, and branding. After final artwork and contrast adjustments, all **six brand checks** passed again, including 1440px/390px layouts and blocked storage.
+- Affected examples, Next, and website production builds passed. Root type checking, examples/Next checks, and website diagnostics passed; the website reported **43 files, zero errors/warnings/hints**.
+- Local production smoke passed **11 routes and 14 assets**. `git diff --check` passed. Core/SSR suites were not repeated for this presentation slice; their previous results remain recorded above.
+- Package size reporting and the existing runtime microbenchmark completed. Raw results are in `benchmarks/results/{bundles,runtime}-brand-v02.json`; methodology and limitations are in `docs/PERFORMANCE.md`. No overall speed improvement or physical-device Safari result is claimed.
+
+Updated design canon, decision D018, performance evidence, and roadmap status. Existing website bundle-size warnings remain. Logs: `/tmp/urk-brand-{browser,final-visual,host-builds,final-check}.log`. This branch does not publish packages or deploy the redesign.

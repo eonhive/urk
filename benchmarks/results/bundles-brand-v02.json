@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-11T14:24:52.339Z",
+  "head": "64a3da508b33fa522adc4595cb79b989ebe6bb80",
+  "workingChanges": true,
+  "tools": {
+    "node": "v22.22.2",
+    "npm": "10.9.7",
+    "packageManager": "yarn@3.8.7",
+    "vite": "5.4.21"
+  },
+  "lockfileSha256": "e22ee39ba4c39b67340659881db49160833cbe44b7812f57e777d355e64de25b",
+  "protocol": {
+    "target": "es2020",
+    "format": "es",
+    "minifier": "esbuild",
+    "sourcemaps": false,
+    "gzipLevel": 9,
+    "brotliQuality": 11,
+    "imports": "built public exports",
+    "scope": "Exported library surfaces, not a full application. React/Next framework peers are external."
+  },
+  "packages": [
+    {
+      "name": "@urk/core",
+      "version": "0.2.0",
+      "archiveBytes": 37983,
+      "unpackedBytes": 184897,
+      "files": 94,
+      "integrity": "sha512-ewpuXfj/rC+DiSoF9nFjjU648liM8qk8ValWS9tWS04ci9d9BupUD6dBQ2xubV5DfL9eOCTtDxmsXSzeTqQ1ZA=="
+    },
+    {
+      "name": "@urk/adapters",
+      "version": "0.2.0",
+      "archiveBytes": 21702,
+      "unpackedBytes": 109110,
+      "files": 46,
+      "integrity": "sha512-ADA+VPqh7E97u4ovfmnqWiCwN0RtZtWtZx8KSjE7A7KBpnFinR6oTmJoZcU9cTUReHyT8BK/B1U8ys/216rZ1g=="
+    },
+    {
+      "name": "@urk/react-urk",
+      "version": "0.2.0",
+      "archiveBytes": 6586,
+      "unpackedBytes": 22395,
+      "files": 14,
+      "integrity": "sha512-JXdQreMxhTBH3QtWN4UzQEP1c4lsKuYTQjMUzGPdULi1lQRDN7jewHSjKz7nYy2487StbnihdXoMbhsc+5L+qQ=="
+    },
+    {
+      "name": "@urk/next-urk",
+      "version": "0.2.0",
+      "archiveBytes": 3208,
+      "unpackedBytes": 9032,
+      "files": 14,
+      "integrity": "sha512-jkkqH/owBdawLQ90ImkSxX/RMeDQkB9/EJn+HgYRW4yBeJQ+HLToEeee+yXncJssBVWwF2/++QQtQMEDcLpKIg=="
+    },
+    {
+      "name": "@urk/cli",
+      "version": "0.2.0",
+      "archiveBytes": 50475,
+      "unpackedBytes": 212014,
+      "files": 70,
+      "integrity": "sha512-rlnj8OoQnje2bSt4tkljoZVZU00FAqa413gC4wVsKeVt0WGKBpXumHs0Ac9MFc1KLdDSGQDkQdcTM8nUysvvrQ=="
+    }
+  ],
+  "bundles": [
+    {
+      "name": "core",
+      "entry": [
+        "export { createKernel } from '@urk/core';"
+      ],
+      "rawBytes": 33163,
+      "gzipBytes": 7267,
+      "brotliBytes": 6596,
+      "sha256": "c343ddc9fade8d38965b2a13ec99ee3bccfcdaf290a91c04f0c9a7340b706e39",
+      "modules": 13,
+      "includesThree": false,
+      "externalImports": [],
+      "externalPeers": []
+    },
+    {
+      "name": "dom",
+      "entry": [
+        "export { createKernel } from '@urk/core';",
+        "export * from '@urk/adapters/dom';"
+      ],
+      "rawBytes": 42471,
+      "gzipBytes": 10160,
+      "brotliBytes": 9162,
+      "sha256": "99ee945a072d8a28c21347e57a12cd3bb37e172dec70c0f3c5f28e1838521c63",
+      "modules": 19,
+      "includesThree": false,
+      "externalImports": [],
+      "externalPeers": []
+    },
+    {
+      "name": "three",
+      "entry": [
+        "export { createKernel } from '@urk/core';",
+        "export * from '@urk/adapters/three';"
+      ],
+      "rawBytes": 529062,
+      "gzipBytes": 132638,
+      "brotliBytes": 110118,
+      "sha256": "9373d13798c8697c52533caca809db8654fb84012f8ebe0b99d3f3a28718ca88",
+      "modules": 17,
+      "includesThree": true,
+      "externalImports": [],
+      "externalPeers": []
+    },
+    {
+      "name": "react",
+      "entry": [
+        "export { createKernel } from '@urk/core';",
+        "export * from '@urk/react-urk';"
+      ],
+      "rawBytes": 35887,
+      "gzipBytes": 8255,
+      "brotliBytes": 7484,
+      "sha256": "bfdcacc627bc37aa32d9737f73037ec8d3ca73e0b8f51716a52d278f6e111884",
+      "modules": 15,
+      "includesThree": false,
+      "externalImports": [
+        "react",
+        "react/jsx-runtime"
+      ],
+      "externalPeers": [
+        "react",
+        "react-dom"
+      ]
+    },
+    {
+      "name": "next",
+      "entry": [
+        "export { createKernel } from '@urk/core';",
+        "export * from '@urk/next-urk';"
+      ],
+      "rawBytes": 36331,
+      "gzipBytes": 8353,
+      "brotliBytes": 7576,
+      "sha256": "bd5c7b07c54464e40067e8a84d46b89b4b95bca5da1a801f33275f852027df80",
+      "modules": 17,
+      "includesThree": false,
+      "externalImports": [
+        "react",
+        "react/jsx-runtime"
+      ],
+      "externalPeers": [
+        "react",
+        "react-dom",
+        "next"
+      ]
+    }
+  ]
+}

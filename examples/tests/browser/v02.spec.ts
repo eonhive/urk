@@ -4,7 +4,7 @@
  * Purpose: Verify shared interaction, persistence, idle rendering, and cleanup in real hosts.
  * Author: Stan Nesi
  * Created: 2026-10-07
- * Updated: 2026-10-08
+ * Updated: 2026-10-11
  * Notes: Vibe coded with Codex.
  */
 
@@ -78,7 +78,7 @@ for (const [host, url] of [
     expect((await resourceState(page)).plays).toBe(0);
 
     // Picking the center object exercises Three's raycaster, not a DOM selection button.
-    await viewport.click({ position: { x: (await viewport.boundingBox())!.width / 2, y: 170 } });
+    await viewport.click({ position: { x: (await viewport.boundingBox())!.width / 2, y: (await viewport.boundingBox())!.height / 2 } });
     await expect(page.locator('[data-card="Create"]')).toHaveAttribute('aria-pressed', 'true');
     await viewport.press('3');
     await expect(page.locator('[data-card="Connect"]')).toHaveAttribute('aria-pressed', 'true');

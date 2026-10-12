@@ -4,7 +4,7 @@
  * Purpose: Apply the canonical URK brand system to the website shell, docs framing, examples, and brand board.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-06-06
+ * Updated: 2026-10-11
  * Notes: Vibe coded with Codex.
  */
 
@@ -150,18 +150,14 @@ button:disabled,
 .site-body {
   min-height: 100vh;
   background:
-    linear-gradient(90deg, transparent 0 23px, var(--urk-grid-dot) 24px),
-    linear-gradient(180deg, transparent 0 23px, var(--urk-grid-dot) 24px),
-    radial-gradient(circle at 14% 12%, color-mix(in srgb, var(--urk-primary) 16%, transparent), transparent 28%),
-    radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--urk-success) 11%, transparent), transparent 24%),
-    linear-gradient(180deg, var(--urk-background) 0%, var(--urk-background-elevated) 100%);
-  background-size: 24px 24px, 24px 24px, auto, auto, auto;
+    radial-gradient(ellipse at 80% 5%, color-mix(in srgb, var(--urk-cyan) 5%, transparent), transparent 35%),
+    var(--urk-background);
   color: var(--urk-foreground);
   font-family: var(--urk-font-body);
 }
 
 .site-shell {
-  width: min(1200px, calc(100% - 2rem));
+  width: min(1240px, calc(100% - 3rem));
   margin: 0 auto;
 }
 
@@ -218,7 +214,7 @@ button:disabled,
 
 .site-section-title {
   font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 0.96;
+  line-height: 1.12;
   letter-spacing: -0.055em;
 }
 
@@ -635,9 +631,10 @@ button:disabled,
 }
 
 .site-button--primary {
-  border-color: color-mix(in srgb, var(--urk-primary) 62%, white 8%);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--urk-primary) 92%, white 8%), var(--urk-primary));
-  color: #f8f9ff;
+  border-color: transparent;
+  background: var(--urk-gradient);
+  color: #071522;
+  box-shadow: 0 3px 20px #35dff218;
 }
 
 .site-button--secondary {
@@ -767,6 +764,10 @@ button:disabled,
   border: 1px solid var(--urk-code-border);
   border-radius: var(--urk-radius-md);
   background: var(--urk-code-background);
+  --urk-muted: #9aafc5;
+  --urk-foreground: #e4edf9;
+  --urk-border: #396078;
+  --urk-success: #36d9b3;
 }
 
 .site-code-block-shell .site-code-block {
@@ -857,7 +858,7 @@ button:disabled,
 }
 
 .site-brand__wordmark {
-  width: min(11.75rem, 34vw);
+  width: 6.8rem;
 }
 
 .site-nav {
@@ -873,10 +874,9 @@ button:disabled,
   border: 1px solid transparent;
   color: var(--urk-muted);
   font-size: 0.84rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  letter-spacing: 0;
   text-decoration: none;
-  text-transform: uppercase;
   transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
 }
 
@@ -1245,52 +1245,44 @@ html[data-theme="light"] .brand-logo--theme-auto .brand-logo__img--on-light {
 }
 
 .brand-preview--dark {
-  --urk-background: #090c14;
-  --urk-background-elevated: #0f1520;
-  --urk-surface: #131a26;
-  --urk-surface-strong: #1a2332;
+  --urk-background: #06101b;
+  --urk-background-elevated: #091725;
+  --urk-surface: #0c1d2c;
+  --urk-surface-strong: #132a3d;
   --urk-surface-soft: rgba(255, 255, 255, 0.03);
-  --urk-card: rgba(19, 26, 38, 0.94);
-  --urk-card-muted: rgba(15, 21, 32, 0.88);
-  --urk-foreground: #e8ecf3;
-  --urk-foreground-strong: #f7f9ff;
-  --urk-muted: #96a0b4;
-  --urk-border: rgba(86, 98, 121, 0.55);
-  --urk-border-strong: rgba(122, 136, 164, 0.74);
-  --urk-primary: #7b61ff;
-  --urk-success: #2fcb7a;
-  --urk-warning: #d9a441;
-  --urk-error: #e05666;
-  background:
-    linear-gradient(90deg, transparent 0 23px, rgba(150, 160, 180, 0.16) 24px),
-    linear-gradient(180deg, transparent 0 23px, rgba(150, 160, 180, 0.16) 24px),
-    linear-gradient(180deg, #090c14, #0f1520);
-  background-size: 24px 24px, 24px 24px, auto;
+  --urk-card: rgba(12, 29, 44, 0.94);
+  --urk-card-muted: rgba(9, 23, 37, 0.94);
+  --urk-foreground: #e4edf9;
+  --urk-foreground-strong: #f6f9ff;
+  --urk-muted: #9aafc5;
+  --urk-border: #20384b;
+  --urk-border-strong: #396078;
+  --urk-primary: #a78bfa;
+  --urk-success: #36d9b3;
+  --urk-warning: #ffd166;
+  --urk-error: #ff8585;
+  background: var(--urk-background);
   color: var(--urk-foreground);
 }
 
 .brand-preview--light {
-  --urk-background: #f6f1e8;
-  --urk-background-elevated: #fcfaf5;
+  --urk-background: #f0f5ff;
+  --urk-background-elevated: #f8faff;
   --urk-surface: #ffffff;
-  --urk-surface-strong: #efe8dc;
+  --urk-surface-strong: #e4ecfa;
   --urk-surface-soft: rgba(22, 28, 40, 0.03);
   --urk-card: rgba(255, 255, 255, 0.96);
-  --urk-card-muted: rgba(252, 250, 245, 0.94);
-  --urk-foreground: #161c28;
-  --urk-foreground-strong: #0c1119;
-  --urk-muted: #5e6a7c;
+  --urk-card-muted: rgba(248, 250, 255, 0.94);
+  --urk-foreground: #14263d;
+  --urk-foreground-strong: #081629;
+  --urk-muted: #51647e;
   --urk-border: rgba(126, 142, 164, 0.32);
   --urk-border-strong: rgba(88, 101, 120, 0.45);
-  --urk-primary: #6c4dff;
+  --urk-primary: #6940cf;
   --urk-success: #1f9a5f;
   --urk-warning: #b7791f;
   --urk-error: #c6404c;
-  background:
-    linear-gradient(90deg, transparent 0 23px, rgba(94, 106, 124, 0.12) 24px),
-    linear-gradient(180deg, transparent 0 23px, rgba(94, 106, 124, 0.12) 24px),
-    linear-gradient(180deg, #fcfaf5, #f6f1e8);
-  background-size: 24px 24px, 24px 24px, auto;
+  background: var(--urk-background);
   color: var(--urk-foreground);
 }
 
@@ -1661,4 +1653,15 @@ html[data-theme="light"] .brand-logo--theme-auto .brand-logo__img--on-light {
   .runtime-entity-list {
     display: grid;
   }
+}
+
+/* Compact navigation keeps the experience within reach on narrow screens. */
+@media (max-width: 960px) {
+  .site-header { position: static; }
+  .site-header__inner { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; padding: 0.8rem 0; }
+  .site-header__actions { grid-column: 2; grid-row: 1; display: flex; width: auto; gap: 0.5rem; }
+  .site-header__actions .site-button { width: auto; min-height: 44px; font-size: 0.75rem; padding: 0.65rem; }
+  .site-nav { grid-column: 1 / -1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0; padding: 0; }
+  .site-nav__link { padding: 0.7rem 0.45rem; font-size: 0.75rem; min-height: 44px; }
+  .site-shell { width: calc(100% - 2rem); }
 }

@@ -4,7 +4,7 @@
  * Purpose: Share loading, interaction, ownership, and recovery across standalone and framework hosts.
  * Author: Stan Nesi
  * Created: 2026-10-07
- * Updated: 2026-10-09
+ * Updated: 2026-10-11
  * Notes: Vibe coded with Codex.
  */
 
@@ -90,21 +90,23 @@ export function createV02Experience(
           ctx.scope.defer(() => root.remove());
           root.dataset.urkOwned = 'v02';
           root.className = 'surface';
-          root.innerHTML = `<div class="scene-shell">
+          root.innerHTML = `<div class="scene-shell"><div class="scene-topline" aria-hidden="true"><span>SCENE / INTERACTIVE OBJECTS</span><span>3D</span></div>
             <div class="viewport" tabindex="0" role="group" aria-label="Interactive objects" aria-describedby="${ctx.id}-help"></div>
             <div class="scene-overlay" data-overlay></div></div>
           <div class="scene-caption" id="${ctx.id}-help"><span>Pick an object. Find your next move.</span>
             <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> select · arrow keys rotate</span></div>
           <div class="cards">
-            <button data-card="Explore" aria-pressed="false"><strong>Explore</strong><small>Choose a direction.</small></button>
-            <button data-card="Create" aria-pressed="false"><strong>Create</strong><small>Make the next move.</small></button>
-            <button data-card="Connect" aria-pressed="false"><strong>Connect</strong><small>Bring it together.</small></button>
+            <button data-card="Explore" aria-pressed="false"><span class="choice-number" aria-hidden="true">01</span><strong>Explore</strong><small>Choose a direction.</small></button>
+            <button data-card="Create" aria-pressed="false"><span class="choice-number" aria-hidden="true">02</span><strong>Create</strong><small>Make the next move.</small></button>
+            <button data-card="Connect" aria-pressed="false"><span class="choice-number" aria-hidden="true">03</span><strong>Connect</strong><small>Bring it together.</small></button>
           </div><div class="interaction-bar">
             <button data-sound aria-pressed="false">Enable sound</button>
             <label class="volume">Volume <input type="range" min="0" max="1" step="0.05" aria-label="Volume"></label>
             <span class="storage-label" data-storage></span>
             <output class="local-status" data-sound-status aria-live="polite">Sound is off. Enable it to hear selections.</output>
           </div>`;
+          host.classList.add('v02-surface-host');
+          ctx.scope.defer(() => host.classList.remove('v02-surface-host'));
           host.append(root);
           if (options.failSetup) throw new Error('Deliberate setup failure. The acquired surface was cleaned up.');
           const viewport = root.querySelector<HTMLElement>('.viewport')!;
@@ -279,21 +281,36 @@ export function attachV02Controls(
 ): () => Promise<void> {
   const scope = new ResourceScope();
   const root = document.createElement('div');
-  root.innerHTML = `<style>${styles}</style><div class="eyebrow">UNIVERSAL RUNTIME KERNEL · V0.2</div>
-    <h1>One experience. Any host.</h1><p>Pick a shape, turn it with your arrow keys, and add a little sound. Your preferences stay with you; the scene rests between interactions.</p>
-    <div class="metrics"><div><span>Runtime</span><output data-testid="v02-lifecycle"></output></div>
-      <div><span>Experience</span><output data-testid="v02-phase"></output></div>
-      <div><span>Frame loop</span><output data-testid="v02-frames"></output></div>
-      <div><span>Owned surfaces</span><output data-testid="v02-owned"></output></div></div>
-    <div class="toolbar"><button data-action="pause">Pause</button><button data-action="resume">Resume</button>
-      <button data-action="restart">Start fresh</button><button data-action="failure">Try setup failure</button>
-      <button data-action="unmount">Unmount</button><button data-action="diagnostics">Show diagnostics</button></div>
-    <output data-testid="v02-message"></output><pre data-testid="v02-diagnostics">Diagnostics off</pre>`;
+  host.classList.add('v02-controls-host');
+  scope.defer(() => host.classList.remove('v02-controls-host'));
+  root.className = 'workbench-controls';
+  root.innerHTML = `<style>${styles}</style>
+    <header class="workbench-heading"><div><div class="eyebrow">CREATE · COMBINE · EXPLORE</div>
+      <h1>URK Playground <span class="version-badge">v0.2</span></h1>
+      <p>A small scene. A world of possibilities. Make your next move.</p></div>
+      <span class="workbench-badge">LIVE EXPERIENCE</span></header>
+    <div class="toolbar" role="group" aria-label="Runtime controls"><span class="workspace-label">◆ &nbsp; Interactive objects</span>
+      <button data-action="pause">Pause</button><button data-action="resume">Resume</button>
+      <button data-action="restart">Start fresh</button></div>
+    <aside class="workbench-inspector" aria-label="Runtime inspector"><h2>Inspector <span>LIVE</span></h2>
+      <div class="metrics"><div><span>Runtime</span><output data-testid="v02-lifecycle"></output></div>
+        <div><span>Experience</span><output data-testid="v02-phase"></output></div>
+        <div><span>Frame loop</span><output data-testid="v02-frames"></output></div>
+        <div><span>Owned surfaces</span><output data-testid="v02-owned"></output></div></div>
+      <div class="inspector-note"><strong>Quiet by design.</strong><p>The scene redraws when you interact. Between changes, rendering rests.</p></div>
+      <h3>Explore the lifecycle</h3><div class="inspector-actions"><button data-action="diagnostics" aria-pressed="false">Show diagnostics</button>
+        <button data-action="failure">Try setup failure</button><button data-action="unmount">Unmount</button></div>
+      <output data-testid="v02-message" role="status"></output><pre data-testid="v02-diagnostics">Diagnostics off</pre>
+    </aside>`;
   host.append(root);
   scope.defer(() => root.remove());
   const output = (name: string): HTMLElement => root.querySelector(`[data-testid="v02-${name}"]`)!;
   const refresh = (): void => {
-    output('lifecycle').textContent = kernel.getLifecycleSnapshot().state;
+    const state = kernel.getLifecycleSnapshot().state;
+    output('lifecycle').textContent = state;
+    output('lifecycle').dataset.state = state;
+    root.querySelector<HTMLButtonElement>('[data-action="pause"]')!.disabled = state !== 'running';
+    root.querySelector<HTMLButtonElement>('[data-action="resume"]')!.disabled = state !== 'paused';
     output('phase').textContent = kernel.getState().phase;
     output('frames').textContent = kernel.getContext().scheduler.isRunning() ? 'Running' : 'Idle';
     output('owned').textContent = String(host.parentElement?.querySelectorAll('[data-urk-owned="v02"]').length ?? 0);
@@ -337,6 +354,9 @@ export function attachV02Controls(
             detachDiagnostics = inspector.subscribe(render);
             render();
           }
+          const button = root.querySelector<HTMLButtonElement>('[data-action="diagnostics"]')!;
+          button.textContent = detachDiagnostics ? 'Hide diagnostics' : 'Show diagnostics';
+          button.setAttribute('aria-pressed', String(Boolean(detachDiagnostics)));
           break;
         }
       }

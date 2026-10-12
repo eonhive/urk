@@ -10,7 +10,7 @@
 
 import { expect, test } from '@playwright/test';
 
-const website = 'http://127.0.0.1:4322';
+const website = `http://127.0.0.1:${process.env.URK_WEBSITE_PORT ?? '4322'}`;
 
 test('main navigation opens v2 and back navigation restores a fresh silent experience', async ({ page }) => {
   await page.goto(website);

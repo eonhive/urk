@@ -4,15 +4,32 @@
   Purpose: Primary uRK wordmark for dark public-site surfaces.
   Author: Stan Nesi
   Created: 2026-05-01
-  Updated: 2026-05-01
+  Updated: 2026-10-11
   Notes: Vibe coded with Codex.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 214 64" fill="none">
-  <g stroke="#E8ECF3" stroke-width="8.5" stroke-linecap="square" stroke-linejoin="miter">
-    <path d="M20 16v22c0 8 6 14 14 14h6c8 0 14-6 14-14V16"/>
-    <path d="M92 52V12h18c12 0 20 7 20 18s-8 18-20 18H92"/>
-    <path d="M110 34l22 18"/>
-    <path d="M164 12v40"/>
-    <path d="M194 12l-30 20 30 20"/>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 208 64"
+  role="img"
+  aria-label="URK"
+>
+  <g stroke-linejoin="round" stroke="#06101b" stroke-width="1.2">
+    <path fill="#7bdffb" d="M32 3 57 17 44.5 24 19.5 10Z" />
+    <path fill="#b990ff" d="m32 3 12.5 7-25 14L7 17Z" />
+    <path fill="#23d9ee" d="m7 17 12.5 7v15L7 46Z" />
+    <path fill="#30b9e7" d="m7 46 12.5-7L32 46v15Z" />
+    <path fill="#ac76ef" d="m32 46 12.5-7L57 46 32 61Z" />
+    <path fill="#d2a4ff" d="M57 17v29l-12.5-7V24Z" />
+  </g>
+  <g
+    fill="none"
+    stroke="#f6f9ff"
+    stroke-width="7"
+    stroke-linecap="square"
+    stroke-linejoin="round"
+  >
+    <path d="M82 18v22c0 13 25 13 25 0V18" />
+    <path d="M126 51V18h14c17 0 17 20 0 20h-14m15 0 13 13" />
+    <path d="M173 18v33m23-33-23 17 24 16" />
   </g>
 </svg>

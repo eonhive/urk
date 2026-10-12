@@ -4,7 +4,7 @@
  * Purpose: Initialize and control the public website theme without depending on a framework runtime.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-05-01
+ * Updated: 2026-10-11
  * Notes: Vibe coded with Codex.
  */
 
@@ -20,6 +20,11 @@ function getSystemTheme(): ThemeName {
 
 function isThemeName(value: string | null): value is ThemeName {
   return value === DARK || value === LIGHT;
+}
+
+function readStoredTheme(): string | null {
+  try { return window.localStorage.getItem(STORAGE_KEY); }
+  catch { return null; }
 }
 
 function applyTheme(nextTheme: ThemeName): void {
@@ -40,7 +45,8 @@ export const themeInitScript = `
   (() => {
     const storageKey = '${STORAGE_KEY}';
     const root = document.documentElement;
-    const stored = window.localStorage.getItem(storageKey);
+    let stored = null;
+    try { stored = window.localStorage.getItem(storageKey); } catch {}
     const system = window.matchMedia('(prefers-color-scheme: light)').matches ? '${LIGHT}' : '${DARK}';
     const theme = stored === '${LIGHT}' || stored === '${DARK}' ? stored : system;
     root.dataset.theme = theme;
@@ -55,7 +61,7 @@ export function attachThemeToggles(): void {
     return;
   }
 
-  const stored = window.localStorage.getItem(STORAGE_KEY);
+  const stored = readStoredTheme();
   let activeTheme: ThemeName = isThemeName(stored) ? stored : getSystemTheme();
   applyTheme(activeTheme);
 
@@ -67,7 +73,8 @@ export function attachThemeToggles(): void {
 
   const onToggle = (): void => {
     activeTheme = activeTheme === DARK ? LIGHT : DARK;
-    window.localStorage.setItem(STORAGE_KEY, activeTheme);
+    try { window.localStorage.setItem(STORAGE_KEY, activeTheme); }
+    catch { /* Theme selection still works for this page when storage is blocked. */ }
     applyTheme(activeTheme);
     syncButtons();
   };

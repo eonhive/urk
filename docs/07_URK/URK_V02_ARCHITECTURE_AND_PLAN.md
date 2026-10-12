@@ -1,26 +1,26 @@
 # URK v0.2: Architecture and Implementation Plan
 
-Status: runtime architecture implemented locally; delivery and release evidence incomplete.
-Prepared: October 3, 2026. Implementation status reviewed: October 7, 2026.
+Status: runtime architecture merged and website deployed; broader release evidence and npm publication remain separate.
+Prepared: October 3, 2026. Implementation status reviewed: October 11, 2026.
 Original proposal baseline: eonhive/urk, main, commit 94b654c107ff6fbe2e554fc81c093d4372cdb001.
 
 ## Current implementation status
 
 This remains the target design. The original specification below is preserved as written; its references to "proposed" or "current" APIs describe the October 3 baseline, not the present working tree. The current implementation is documented in [Architecture](../ARCHITECTURE.md), with exact executed checks in [Validation](../VALIDATION.md). Local package versions are 0.2.0; no release has been published.
 
-The main runtime work is implemented, but **the entire plan is not complete**. The numbered PRs below were delivery milestones, not pull requests that have been created or merged.
+The main runtime work is implemented, but **the entire plan is not complete**. The numbered PRs below describe design milestones. The implementation shipped in [PR #1](https://github.com/eonhive/urk/pull/1); [PR #2](https://github.com/eonhive/urk/pull/2) corrected production robots delivery.
 
 | Original milestone | Current status | Implementation or remaining work |
 | --- | --- | --- |
 | 1. Baseline | Recorded | Real lifecycle, compatibility, package, SSR, and browser checks replace placeholder evidence. Results are in the validation record. |
-| 2. Lifecycle | Implemented locally | Shared complete boot/shutdown, immediate cancellation, rollback, terminal disposal, scheduler generations, and failure aggregation. The lifecycle store is now the kernel's operational source of truth. |
-| 3. Ownership | Implemented locally | Component scopes, reservation before setup, partial acquisition cleanup, borrowed-resource preservation, and built-in adapter cleanup migration. Cancellation remains cooperative. |
-| 4. Execution and diagnostics | Implemented locally | Started-only ordered update entries; lazy, detachable diagnostics; immutable revisioned snapshots. Startup inserts update entries instead of rebuilding the whole list. |
-| 5. Integration | Implemented locally | Explicit React/Next ownership, stable subscriptions, effect replay, pending-start unmount, and actual Next navigation. |
-| 6. API and exports | Implemented locally | Typed adapter/service access through `ctx.get`/`ctx.require`, lifecycle snapshots, guarded compatibility paths, seven adapter subpaths, and isolated packed-package checks. |
+| 2. Lifecycle | Merged | Shared complete boot/shutdown, immediate cancellation, rollback, terminal disposal, scheduler generations, and failure aggregation. The lifecycle store is now the kernel's operational source of truth. |
+| 3. Ownership | Merged | Component scopes, reservation before setup, partial acquisition cleanup, borrowed-resource preservation, and built-in adapter cleanup migration. Cancellation remains cooperative. |
+| 4. Execution and diagnostics | Merged | Started-only ordered update entries; lazy, detachable diagnostics; immutable revisioned snapshots. Startup inserts update entries instead of rebuilding the whole list. |
+| 5. Integration | Merged | Explicit React/Next ownership, stable subscriptions, effect replay, pending-start unmount, and actual Next navigation. |
+| 6. API and exports | Merged | Typed adapter/service access through `ctx.get`/`ctx.require`, lifecycle snapshots, guarded compatibility paths, seven adapter subpaths, and isolated packed-package checks. |
 | 7. Proof and performance | Partially complete | Shared standalone/React/Next/website experience, auto scheduling, repeated mount/dispose, comparable local startup/dispatch/lookup measurements, and a repeatable package/compressed-bundle baseline exist. Broader diagnostics/event/adapter-start workloads and heap/GC evidence remain. |
 | 8. Development workflow | Partially complete | Dependency-aware builds, real static checks, updated CLI scaffolds, and documentation exist. Repeatable cold/warm build measurements and a supported toolchain matrix remain. |
-| Section 11 CI gates | Configured; hosted run pending | `.github/workflows/ci.yml` wires production builds, static checks, existing unit/contract/packed/SSR/browser gates, size reports, and diagnostic artifacts. The complete command sequence passed locally with `CI=true`; a GitHub-hosted run and evidence-based regression budgets remain unverified. |
+| Section 11 CI gates | Passing on GitHub | `.github/workflows/ci.yml` wires production builds, static checks, existing unit/contract/packed/SSR/browser gates, size reports, and diagnostic artifacts. The merged source passed [GitHub-hosted Ubuntu CI](https://github.com/eonhive/urk/actions/runs/38082911205). Evidence-based regression budgets remain deferred. |
 
 ### Simplifications made while following the design
 
@@ -32,10 +32,10 @@ The main runtime work is implemented, but **the entire plan is not complete**. T
 
 ### Remaining work to close this plan
 
-1. Confirm the first hosted CI run after pushing the configured workflow. Existing gates and the repeatable package/bundle-size report are wired and pass locally.
+1. Prepare the npm release after the current source and design review; publishing still requires a separate release decision.
 2. Record cold/warm build measurements and the supported toolchain matrix.
 3. Extend performance evidence to the remaining representative workloads and resource trends, then set justified regression budgets. Current medians and raw samples are in [Performance](../PERFORMANCE.md); they do not establish an overall application speedup.
-4. Review the complete delivery evidence before calling the full plan finished. Publishing packages or deploying the website is a separate release action.
+4. Review the complete delivery evidence before calling the full plan finished. The existing website is deployed; subsequent deployment and npm publication remain separate release actions.
 
 The latest internal refactor improves measured startup and lookup cost without changing the public package shape. Busy dispatch was 1.6% slower in its recorded comparison; that result is retained rather than described as a universal speedup.
 
