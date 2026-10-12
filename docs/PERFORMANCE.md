@@ -73,3 +73,11 @@ React/Next framework peers are external; the actual remaining imports are `react
 Archive sizes include declarations, maps, package metadata, and the CLI's template files. They are not browser transfer sizes. The JSON includes package integrity values, bundle hashes, Node/npm/Yarn/Vite versions, lockfile hash, HEAD, and dirty-tree status so later comparisons can distinguish code and toolchain changes.
 
 CI now produces and retains this report alongside browser diagnostics. No arbitrary size threshold is enforced from a single baseline. Representative diagnostics/event/adapter-start workloads, heap/GC evidence, build timing, and justified regression budgets remain outstanding.
+
+## Release preparation baseline — 2026-10-11
+
+The unchanged core was measured again with Node 22.22.2 on Apple M1 / Darwin 24.6.0. [Raw results](../benchmarks/results/runtime-brand-v02.json) now include complete boot timing, seven sorted raw boot/dispatch samples after two warmups, and a SHA-256 digest of the built core JavaScript. Construction and cleanup remain outside the boot interval. These no-op-controller measurements are not page-load, adapter-I/O, GPU, or historical-release comparisons.
+
+Auto mode with no updaters again dispatched **zero** of 5,000 manual frame opportunities. With 1,000 no-op update controllers, the recorded auto-mode boot median was **1.831 ms**. Do not interpret cross-mode JIT/timing differences as a speedup.
+
+The fresh [package/bundle report](../benchmarks/results/bundles-brand-v02.json) packs all five public packages at 0.2.0. Core is **33,163 minified / 7,267 gzip / 6,596 Brotli bytes** under the existing fixture protocol; Three and framework peer boundaries are unchanged. This updates the baseline to the merged lifecycle code, rather than attributing size changes since October 7 to the visual redesign. No regression budget or npm publication is implied.

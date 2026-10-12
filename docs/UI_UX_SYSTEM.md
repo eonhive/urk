@@ -4,7 +4,7 @@ Title: URK Public Website UI/UX System
 Purpose: Define the public website interface system, interaction rules, states, and responsive behavior for URK.
 Author: Stan Nesi
 Created: 2026-05-05
-Updated: 2026-05-14
+Updated: 2026-10-11
 Notes: Vibe coded with Codex.
 -->
 
@@ -12,15 +12,15 @@ Notes: Vibe coded with Codex.
 
 ## Product Frame
 
-URK - Universal Runtime Kernel is a public open-source runtime kernel for browser-native interactive experiences. The website should look and behave like credible developer tooling: precise, minimal, readable, runtime-native, and serious without being cold.
+URK - Universal Runtime Kernel is a public open-source runtime kernel for browser-native interactive experiences. The website should look and behave like credible developer tooling: clear, creative, modular, and welcoming, while showing real runtime behavior.
 
 UI means User Interface. UX means User Experience.
 
 ## Design Goals
 
 - Dark-first, with complete light-mode support.
-- Technical and precise, not playful.
-- Polished developer-tool look, not generic software-as-a-service marketing.
+- Creative and precise: original miniature-world art, a faceted cyan–violet mark, and readable controls.
+- Deep navy dark surfaces and cool blue light surfaces; gradients reserved for key headlines and primary actions.
 - Highly readable documentation.
 - Credible open-source presentation with visible runtime proof surfaces.
 - Clear separation between static content and live URK runtime islands.
@@ -37,7 +37,7 @@ Canonical implementation lives in `apps/www/src/styles/tokens.css`.
 | `--urk-color-border` | Hairline borders and structural dividers. |
 | `--urk-color-card` | Default card and panel surface. |
 | `--urk-color-card-hover` | Interactive card hover surface. |
-| `--urk-color-primary` | Violet kernel accent and primary actions. |
+| `--urk-color-primary` | Violet text and active accents; primary actions use `--urk-gradient`. |
 | `--urk-color-primary-hover` | Primary action hover state. |
 | `--urk-color-success` | Runtime success and current status. |
 | `--urk-color-warning` | Experimental, adapter, or caution state. |
@@ -82,7 +82,7 @@ Legacy aliases such as `--urk-background`, `--urk-foreground`, and `--urk-primar
 | ThemeToggle | Dark/light mode control. | `ThemeToggle.astro`. |
 | SearchInput | Documentation search. | Starlight search, themed through tokens. |
 | CommandMenu placeholder | Later keyboard command surface. | Do not build until real commands exist. |
-| PlaygroundShell | Experimental runtime lab layout. | `playground.astro` shell, not a stable builder. |
+| PlaygroundShell | Experimental runtime lab layout. | Shared v0.2 scene and lifecycle inspector, with config tools on their existing subroute. |
 
 ## Component Rules
 
@@ -104,7 +104,7 @@ Legacy aliases such as `--urk-background`, `--urk-foreground`, and `--urk-primar
 - Long docs use a collapsible sidebar on mobile and a visible table of contents on larger screens.
 - Runtime panels stack as schema/config, preview, then event log on mobile.
 - Code blocks keep horizontal scroll inside the block, never the page.
-- Header navigation may wrap before it becomes a menu; no link should be hidden without an accessible replacement.
+- Header uses two compact rows below 960px, with visible navigation and theme controls; it scrolls with the page.
 
 ## Accessibility Rules
 
@@ -121,7 +121,7 @@ Legacy aliases such as `--urk-background`, `--urk-foreground`, and `--urk-primar
 
 ## Interaction Rules
 
-- Homepage answers "What is URK?" in the first viewport through headline, subheadline, trust chips, and runtime flow.
+- Homepage introduces a tiny runtime for interactive experiences through original artwork, concise copy, capability links, and a direct playground action.
 - Homepage must point to a real runtime example so the site proves URK is running somewhere.
 - Docs prioritize learning flow over feature marketing.
 - Examples prioritize live proof: preview, schema/config, state, event log, source, reset, explanation, docs, next example.
@@ -129,7 +129,7 @@ Legacy aliases such as `--urk-background`, `--urk-foreground`, and `--urk-primar
 - Theme toggle is visible in the header but visually secondary to navigation and `Get started`.
 - Tabs should preserve selection in the page only; do not introduce global state for simple docs panels.
 - Reset/restart for examples uses teardown plus remount until a stable runtime reset API exists.
-- Playground accepts schema/config first, not arbitrary JavaScript.
+- The main playground uses the shared 3D experience; the existing schema/config editor stays at `/playground/config/`.
 - Command menu remains a placeholder until there are real commands worth invoking.
 
 ## Empty, Loading, and Error States
@@ -151,7 +151,7 @@ Legacy aliases such as `--urk-background`, `--urk-foreground`, and `--urk-primar
 - Docs: teach in sequence with clear prerequisites and next pages.
 - Examples: prove one runtime concept per page.
 - Packages: be honest about maturity and install paths.
-- Playground: present an experimental runtime lab, not a product builder.
+- Playground: prioritize the scene and interaction, with a compact lifecycle inspector and clear pause/resume/recovery controls.
 - Brand page: document identity and assets without distracting from product IA.
 
 ## Implementation Notes
@@ -162,3 +162,13 @@ Legacy aliases such as `--urk-background`, `--urk-foreground`, and `--urk-primar
 - URK runtime islands mount client-side and must fail locally.
 - Future planned surfaces should say `Planned` or `Experimental`; do not style them like shipped runtime features.
 - Keyboard and responsive QA should prefer durable semantics first: visible skip link, `aria-current`, grouped runtime controls, labeled logs, and live progress/status regions before visual-only polish.
+
+## v0.2 identity — 2026-10-11
+
+Use uppercase **URK** in the public identity. Universal Runtime Kernel and existing package names stay unchanged. Editable faceted SVG marks, theme-specific lockups, favicon, icons, and social artwork live in `apps/www/public/brand/` and the public root. `src/data/brand.ts` documents the palette and downloads. Fonts remain self-hosted Space Grotesk, Geist, and IBM Plex Mono.
+
+The homepage hero is illustrative artwork, linked separately from the working playground. References guide visual direction; they do not introduce an editor, pricing, marketplace, or hosted publishing product. Primary copy is “A tiny runtime. Big possibilities.”
+
+Shared playground controls expose pause/resume availability and diagnostics state. Theme changes redraw once through a scoped observer without starting a continuous loop; paused/disposed scenes still cancel pending drawing. Storage failure must leave the theme control usable for the current page. The scene remains dark in both themes for consistent object contrast.
+
+The original hero was generated with the built-in image tool, then given a transparent background for both themes. The optimized [WebP](../apps/www/public/brand/art/runtime-world.webp) and exact [prompt set](../apps/www/public/brand/art/runtime-world.prompt.txt) are kept with the brand assets. SVG marks and icons remain code-native.

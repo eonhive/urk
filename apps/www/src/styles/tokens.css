@@ -4,7 +4,7 @@
  * Purpose: Define the canonical URK public-site fonts, semantic colors, spacing, and motif variables.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-05-01
+ * Updated: 2026-10-11
  * Notes: Vibe coded with Codex.
  */
 
@@ -41,34 +41,37 @@
 }
 
 :root {
+  --urk-cyan: #35dff2;
+  --urk-violet: #b38bff;
+  --urk-gradient: linear-gradient(110deg, #35e6ef, #72cfff 48%, #c08aff);
   --urk-font-display: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
   --urk-font-body: "Geist", "Inter", "Avenir Next", "Segoe UI", sans-serif;
   --urk-font-code: "IBM Plex Mono", "JetBrains Mono", "SFMono-Regular", monospace;
 
-  --urk-background: #090c14;
-  --urk-background-elevated: #0f1520;
-  --urk-surface: #131a26;
-  --urk-surface-strong: #1a2332;
+  --urk-background: #06101b;
+  --urk-background-elevated: #091725;
+  --urk-surface: #0c1d2c;
+  --urk-surface-strong: #132a3d;
   --urk-surface-soft: rgba(255, 255, 255, 0.03);
-  --urk-card: rgba(19, 26, 38, 0.94);
-  --urk-card-muted: rgba(15, 21, 32, 0.88);
-  --urk-card-hover: rgba(26, 35, 50, 0.98);
-  --urk-foreground: #e8ecf3;
-  --urk-foreground-strong: #f7f9ff;
-  --urk-muted: #96a0b4;
-  --urk-border: rgba(86, 98, 121, 0.55);
-  --urk-border-strong: rgba(122, 136, 164, 0.74);
-  --urk-primary: #7b61ff;
-  --urk-primary-hover: #8c76ff;
-  --urk-primary-soft: rgba(123, 97, 255, 0.18);
-  --urk-success: #2fcb7a;
-  --urk-warning: #d9a441;
-  --urk-error: #e05666;
-  --urk-info: #48b7ff;
-  --urk-code-background: #0e131d;
+  --urk-card: rgba(12, 29, 44, 0.94);
+  --urk-card-muted: rgba(9, 23, 37, 0.94);
+  --urk-card-hover: rgba(19, 42, 61, 0.98);
+  --urk-foreground: #e4edf9;
+  --urk-foreground-strong: #f6f9ff;
+  --urk-muted: #9aafc5;
+  --urk-border: #20384b;
+  --urk-border-strong: #396078;
+  --urk-primary: #a78bfa;
+  --urk-primary-hover: #c2aaff;
+  --urk-primary-soft: rgba(167, 139, 250, 0.12);
+  --urk-success: #36d9b3;
+  --urk-warning: #ffd166;
+  --urk-error: #ff8585;
+  --urk-info: #35dff2;
+  --urk-code-background: #07121e;
   --urk-code-border: rgba(86, 98, 121, 0.58);
   --urk-code-text: #d7def0;
-  --urk-focus-ring: rgba(123, 97, 255, 0.42);
+  --urk-focus-ring: #35dff2;
   --urk-grid-dot: rgba(150, 160, 180, 0.18);
   --urk-flow-line: rgba(123, 97, 255, 0.35);
   --urk-success-soft: rgba(47, 203, 122, 0.16);
@@ -77,10 +80,10 @@
   --urk-shadow: 0 28px 56px rgba(3, 8, 18, 0.28);
   --urk-shadow-card: var(--urk-shadow);
   --urk-shadow-glow: 0 0 42px rgba(123, 97, 255, 0.2);
-  --urk-radius-xl: 1.5rem;
-  --urk-radius-lg: 1.25rem;
-  --urk-radius-md: 0.95rem;
-  --urk-radius-sm: 0.7rem;
+  --urk-radius-xl: 1.125rem;
+  --urk-radius-lg: 0.875rem;
+  --urk-radius-md: 0.625rem;
+  --urk-radius-sm: 0.5rem;
 
   --urk-color-background: var(--urk-background);
   --urk-color-foreground: var(--urk-foreground);
@@ -117,21 +120,23 @@
 }
 
 html[data-theme="light"] {
-  --urk-background: #f6f1e8;
-  --urk-background-elevated: #fcfaf5;
+  --urk-cyan: #007b91;
+  --urk-violet: #7440cf;
+  --urk-background: #f0f5ff;
+  --urk-background-elevated: #f8faff;
   --urk-surface: #ffffff;
-  --urk-surface-strong: #efe8dc;
+  --urk-surface-strong: #e4ecfa;
   --urk-surface-soft: rgba(22, 28, 40, 0.03);
   --urk-card: rgba(255, 255, 255, 0.96);
-  --urk-card-muted: rgba(252, 250, 245, 0.94);
+  --urk-card-muted: rgba(248, 250, 255, 0.94);
   --urk-card-hover: #ffffff;
-  --urk-foreground: #161c28;
-  --urk-foreground-strong: #0c1119;
-  --urk-muted: #5e6a7c;
+  --urk-foreground: #14263d;
+  --urk-foreground-strong: #081629;
+  --urk-muted: #51647e;
   --urk-border: rgba(126, 142, 164, 0.32);
   --urk-border-strong: rgba(88, 101, 120, 0.45);
-  --urk-primary: #6c4dff;
-  --urk-primary-hover: #5637ee;
+  --urk-primary: #6940cf;
+  --urk-primary-hover: #5327b8;
   --urk-primary-soft: rgba(108, 77, 255, 0.1);
   --urk-success: #1f9a5f;
   --urk-warning: #b7791f;
@@ -140,7 +145,7 @@ html[data-theme="light"] {
   --urk-code-background: #121821;
   --urk-code-border: rgba(88, 101, 120, 0.44);
   --urk-code-text: #edf2ff;
-  --urk-focus-ring: rgba(108, 77, 255, 0.28);
+  --urk-focus-ring: #007d93;
   --urk-grid-dot: rgba(94, 106, 124, 0.16);
   --urk-flow-line: rgba(108, 77, 255, 0.24);
   --urk-success-soft: rgba(31, 154, 95, 0.12);

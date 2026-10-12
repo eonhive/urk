@@ -4,7 +4,7 @@
  * Purpose: Run reproducible React and Next ownership tests against isolated local hosts.
  * Author: Stan Nesi
  * Created: 2026-10-04
- * Updated: 2026-10-04
+ * Updated: 2026-10-11
  * Notes: Vibe coded with Codex.
  */
 
@@ -12,6 +12,7 @@ import { defineConfig } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = fileURLToPath(new URL('../', import.meta.url));
+const websitePort = process.env.URK_WEBSITE_PORT ?? '4322';
 
 export default defineConfig({
   testDir: './tests/browser',
@@ -23,7 +24,10 @@ export default defineConfig({
   reporter: process.env.CI
     ? [['list'], ['html', { outputFolder: '../.codex/validation/ownership-report', open: 'never' }]]
     : 'list',
-  use: { browserName: 'chromium', headless: true, trace: 'retain-on-failure' },
+  projects: (process.env.URK_BROWSER_MATRIX === '1'
+    ? ['chromium', 'firefox', 'webkit'] as const
+    : ['chromium'] as const).map(browserName => ({ name: browserName, use: { browserName } })),
+  use: { headless: true, trace: 'retain-on-failure' },
   webServer: [{
     command: 'corepack yarn workspace urk-examples dev --host 127.0.0.1 --port 5174 --strictPort',
     cwd: repoRoot,
@@ -38,9 +42,9 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 120000,
   }, {
-    command: 'corepack yarn workspace @urk/www dev --host 127.0.0.1 --port 4322',
+    command: `corepack yarn workspace @urk/www dev --host 127.0.0.1 --port ${websitePort}`,
     cwd: repoRoot,
-    url: 'http://127.0.0.1:4322/playground/',
+    url: `http://127.0.0.1:${websitePort}/playground/`,
     reuseExistingServer: false,
     timeout: 120000,
   }],

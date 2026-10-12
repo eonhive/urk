@@ -4,7 +4,7 @@
  * Purpose: Own a selectable Three.js scene that renders only when its view changes.
  * Author: Stan Nesi
  * Created: 2026-10-07
- * Updated: 2026-10-07
+ * Updated: 2026-10-11
  * Notes: Vibe coded with Codex.
  */
 
@@ -35,7 +35,7 @@ export function createPlaygroundScene(ctx: RuntimeContext) {
     () => new THREE.BoxGeometry(1.05, 1.05, 1.05),
     () => new THREE.TorusKnotGeometry(0.43, 0.15, 96, 16),
   ];
-  const colors = [0x5eead4, 0xbba4ff, 0xffc17d];
+  const colors = [0x35dff2, 0xb38bff, 0x6dabff];
   const objects = choices.map((name, index) => {
     const geometry = geometryFactories[index]();
     ctx.scope.defer(() => geometry.dispose());
@@ -76,6 +76,10 @@ export function createPlaygroundScene(ctx: RuntimeContext) {
   };
   ctx.signal.addEventListener('abort', cancelRender, { once: true });
   ctx.scope.defer(() => { cancelRender(); ctx.signal.removeEventListener('abort', cancelRender); });
+  // Theme changes can invalidate a composited canvas without resizing its host.
+  const themeObserver = new MutationObserver(requestRender);
+  ctx.scope.defer(() => themeObserver.disconnect());
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   if (typeof ResizeObserver !== 'undefined') {
     const observer = new ResizeObserver(requestRender);
     ctx.scope.defer(() => observer.disconnect());

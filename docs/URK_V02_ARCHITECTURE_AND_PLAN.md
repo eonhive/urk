@@ -1,6 +1,6 @@
 # URK v0.2: Architecture and Implementation Plan
 
-Status: proposed implementation specification, not an implemented release.
+Status: original October 3 proposal, retained as design history. For current completion, use the [maintained status map](07_URK/URK_V02_ARCHITECTURE_AND_PLAN.md), [Architecture](ARCHITECTURE.md), and [Validation](VALIDATION.md).
 Prepared: October 3, 2026.
 Repository baseline: eonhive/urk, main, commit 94b654c107ff6fbe2e554fc81c093d4372cdb001, rechecked for this plan.
 No repository files were changed, and no runtime benchmarks or build results are claimed by this document.

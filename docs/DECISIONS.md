@@ -97,3 +97,7 @@ The architecture document now describes these concrete responsibilities instead 
 Add `RuntimeStore.transition` to serialize the entire commit/notification operation without changing synchronous `setPhase`. Shutdown closes commands immediately and waits for active notification work before cleanup. Rejection closes the command queue; controller rejection retains fatal-runtime behavior. Handlers cannot await commands queued behind themselves.
 
 Add `adapterStartup: 'parallel'` using stable dependency batches; retain sequential startup by default. Keep sibling ownership in admission order, independent of completion timing. Setup failure cancels immediately before partial cleanup, preserving the original boot error. The existing shared experience adopts both APIs. No new package, scheduler subsystem, or measured performance claim accompanies these additions.
+
+## D-018 — Express URK through a creative, consistent public identity
+
+The user-requested v0.2 redesign uses uppercase URK, an editable faceted cyan–violet mark, midnight/cool-light surfaces, and original illustrative art. Keep Universal Runtime Kernel, package names, core APIs, and runtime boundaries unchanged. The website and shared playground use the same accents and fonts; the playground remains the real interactive proof. The visual references do not authorize fictional product features or paid plans. See [UI/UX System](UI_UX_SYSTEM.md).
