@@ -1,30 +1,35 @@
 ---
-title: "@urk/next-urk"
+title: "@urk/next"
 description: Reference the publishable Next.js wrapper package and its client-boundary role.
 ---
 
 {/*
   Company: EonHive Inc.
   Title: Next URK Package Reference
-  Purpose: Document the current @urk/next-urk wrapper package without making Next.js the runtime source of truth.
+  Purpose: Document the current @urk/next wrapper package without making Next.js the runtime source of truth.
   Author: Stan Nesi
   Created: 2026-05-06
   Updated: 2026-05-06
   Notes: Vibe coded with Codex.
 */}
 
-# @urk/next-urk
+# @urk/next
 
-`@urk/next-urk` is a thin Next App Router client-boundary wrapper built on top of `@urk/react-urk`.
+`@urk/next` is a thin Next App Router client-boundary wrapper built on top of `@urk/react`.
 
 Status: experimental, publishable, downstream wrapper.
 
-Package page: [@urk/next-urk](/packages/next-urk/)
+Package page: [@urk/next](/packages/next-urk/)
+
+The v0.2 `@urk/next-urk` package forwards to `@urk/next`, which depends on
+`@urk/react`. Client boundaries, inert SSR, and lifecycle ownership are unchanged.
+Previously published `0.1.x` installs need an explicit upgrade; the new names are
+not published by this source change.
 
 ## Install
 
 ```bash
-pnpm add @urk/core @urk/react-urk @urk/next-urk next react react-dom
+pnpm add @urk/core @urk/react @urk/next next react react-dom
 ```
 
 ## Public API
@@ -33,7 +38,7 @@ pnpm add @urk/core @urk/react-urk @urk/next-urk next react react-dom
 - `useClientKernel()`
 - `UrkNextProvider`
 - `UrkNextProviderProps`
-- all current `@urk/react-urk` exports re-exported unchanged
+- all current `@urk/react` exports re-exported unchanged
 
 ## Minimal usage
 
@@ -42,7 +47,7 @@ pnpm add @urk/core @urk/react-urk @urk/next-urk next react react-dom
 
 import { createKernel } from '@urk/core';
 import { createLoadingAdapter } from '@urk/adapters/dom';
-import { UrkNextProvider, useRuntimePhase } from '@urk/next-urk';
+import { UrkNextProvider, useRuntimePhase } from '@urk/next';
 
 function createAppKernel() {
   return createKernel({
@@ -74,4 +79,4 @@ Use `apps/next-proof` as the repo-only proof that this wrapper works in a real A
 
 - [Integration wrappers](/docs/concepts/integration-wrappers/)
 - [Use URK with Next.js](/docs/guides/next-later/)
-- [@urk/react-urk](/docs/reference/react-urk/)
+- [@urk/react](/docs/reference/react-urk/)

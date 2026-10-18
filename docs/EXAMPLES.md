@@ -21,7 +21,7 @@ Current role:
 
 Current runnable public examples:
 
-- `/examples/audio-proof/` in `apps/www` - visual Audio Lab adapted from the original local audio proof
+- `/examples/audio-proof/` in `apps/www` - shared reactive Audio Lab with measured audio and Three visuals
 - `/examples/minimal-runtime/` in `apps/www`
 - `/examples/adapter-registration/` in `apps/www`
 - `/examples/controller-orchestration/` in `apps/www`
@@ -39,10 +39,12 @@ The proof workspace lives at `examples/` and is started with:
 corepack yarn workspace urk-examples dev
 ```
 
-The public website surfaces the originals as a repo proof lab on `/examples/`, with source links and local route instructions. Audio now also has a public adaptation at `/examples/audio-proof/`, implemented in `packages/examples/src/audio-proof/`. It reuses the original WAV assets with a focused transport controller, site-owned visual deck, source excerpts, docs links, and teardown. Other original proofs still run locally.
+The public website surfaces the originals as a repo proof lab on `/examples/`, with source links and local route instructions. Audio Lab at `/examples/audio-proof/` and the standalone `/audio-proof/analysis.html` mount the same implementation from `packages/examples/src/audio-proof/`. It shares native controls, measured audio plots, a reactive Three scene, finite layout motion, diagnostics, and cleanup. The original transport proof remains local.
 
 ## Proof routes
 
+- `/audio-proof/analysis.html` - the shared Audio Lab: waveform, spectrum, normalized meters, reactive Three visuals, and finite layout motion
+- `/motion-playground/` - numeric/DOM motion, pause, replacement, reduced motion, and idle frame demand
 - `/audio-proof/` - audio transport, staged loading, mute/volume, pause/resume, shutdown
 - `/picking/` - DOM plus Three picking, keyboard movement, storage, overlay feedback
 - `/loading-transition/` - staged loading, transition veil, replayable handoff

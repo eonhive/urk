@@ -133,7 +133,7 @@ export function createInputAdapter(
       };
 
       const onKeyDown = (nativeEvent: Event): void => {
-        if (!(nativeEvent instanceof KeyboardEvent)) {
+        if (ctx.signal.aborted || !(nativeEvent instanceof KeyboardEvent)) {
           return;
         }
 
@@ -143,7 +143,7 @@ export function createInputAdapter(
       };
 
       const onKeyUp = (nativeEvent: Event): void => {
-        if (!(nativeEvent instanceof KeyboardEvent)) {
+        if (ctx.signal.aborted || !(nativeEvent instanceof KeyboardEvent)) {
           return;
         }
 
@@ -161,13 +161,23 @@ export function createInputAdapter(
         bindings.clear();
         listeners.clear();
       });
-      const listen = (element: InputTarget, type: string, listener: EventListener): void => {
+      const listen = (element: EventTarget, type: string, listener: EventListener): void => {
         ctx.scope.defer(() => element.removeEventListener(type, listener));
         element.addEventListener(type, listener);
       };
       listen(target, 'keydown', onKeyDown);
       listen(target, 'keyup', onKeyUp);
       listen(resetTarget, 'blur', onBlur);
+      listen(document, 'visibilitychange', () => {
+        if (document.hidden) pressedCodes.clear();
+      });
+      if (target instanceof HTMLElement) {
+        listen(target, 'focusout', event => {
+          const next = (event as FocusEvent).relatedTarget;
+          if (!(next instanceof Node) || !target.contains(next)) pressedCodes.clear();
+        });
+      }
+      listen(ctx.signal, 'abort', onBlur);
 
       return {
         isPressed(code) {

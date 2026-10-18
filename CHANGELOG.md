@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.3 interactive rendering/UI integration slice - unpublished - 2026-10-13
+
+- Extended the shared v0.2 experience with native layout/rotation controls, hover feedback, finite Row/Arc transitions, reduced motion, and pause/resume that preserves transition progress.
+- Made narrow scenes keep overlay feedback clear of selectable objects; status feedback now has accessible live-region semantics.
+- Added changed-size notifications to the existing Three adapter, preserved unchanged drawing buffers, and fixed picking before rendering. Input resets on focus loss and cancellation; pointer/Three calls stop at abort.
+- Added Three context-loss/restoration events and shared-scene recovery feedback. Restoration redraws the existing scene while preserving selection, rotation, pause state, and unfinished transition progress; shutdown suppresses late recovery and releases listeners.
+- Added scoped pixel-ratio monitoring for fixed-size Three hosts. Resolution changes use the existing resize event and paused redraw path, retain the 2x cap, and apply the latest ratio after context recovery without polling or duplicate listeners.
+- Made shared-playground touch feedback tap-only while preserving native clicks and vertical scrolling. Mouse/pen hover remains available; leaving, pausing, or losing graphics clears the transient cursor. Added touch, cancellation, and listener-cleanup regressions without changing the pointer adapter contract.
+- Made active playground transitions honor live reduced-motion changes on their existing frames. Paused/unavailable scenes retain frozen progress until eligible to resume; idle preference changes add no frames or listeners. Added cross-host recovery, queued-layout, and cleanup regressions.
+- Preserved keyboard focus when shared host controls are replaced during restart or setup-failure recovery, without overriding focus moved elsewhere. Prevented old control cleanup from removing the replacement's layout class; final teardown still releases it. Added cross-browser focus and responsive-layout regressions.
+- Kept focus on the available Pause/Resume button after local keyboard activation. External lifecycle updates and unfocused actions leave focus alone, including focus redirected by application observers. Added native Enter/Space and tab-navigation regressions across all three hosts and browser engines.
+- Added a native selection-details disclosure with a real per-object Wireframe action. Closing preserves selection; hover stays separate. Pause and graphics loss disable material changes, recovery preserves them, and fresh kernels reset them. Scoped listeners and existing scene disposal own cleanup; no public overlay API or rendering layer was added.
+- Kept React/Next ownership and SSR behavior; stabilized the Next proof's factory across rerenders. Added browser regressions for interactions, resize, idle drawing, and cancellation cleanup.
+- Kept package versions at `0.2.0`, independent adapter subpaths, legacy aliases, and existing shared-experience routes/exports. No new runtime layer or dependency.
+
+## Package naming cleanup - unpublished - 2026-10-12
+
+- Moved the wrapper implementations to `packages/react` and `packages/next`, named `@urk/react` and `@urk/next`; Next depends on React.
+- Retained the published old names as v0.2 forwarding packages under `packages/compat`, sharing context, providers, and hooks.
+- Added `@urk/adapters/ui-overlay` and matching factory/type/token aliases without changing the legacy UI widget capability identity or Three.js adapter.
+- Updated workspaces, builds, CLI detection, examples, and affected docs. Existing `0.1.x` installs are not rewritten; publication remains separate.
+
 ## URK 0.2.0 — implemented, unpublished — 2026-10-07
 
 - Added typed context lookup for adapters and borrowed services, with per-kernel provider collision guards.

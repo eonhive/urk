@@ -1,10 +1,10 @@
 /**
  * Company: EonHive Inc.
  * Title: Audio Proof Metadata
- * Purpose: Describe the public audio transport demonstration.
+ * Purpose: Describe the shared audio-analysis and reactive scene example.
  * Author: Stan Nesi
  * Created: 2026-09-21
- * Updated: 2026-09-21
+ * Updated: 2026-10-17
  * Notes: Vibe coded with Codex.
  */
 
@@ -14,27 +14,27 @@ export const audioProofMeta: ExampleMeta = {
   id: 'audio-proof',
   slug: 'audio-proof',
   title: 'Audio Lab',
-  purpose: 'Play three sounds and watch the runtime respond.',
+  purpose: 'Hear one sound drive plots, meters, and a reactive 3D scene.',
   summary:
-    'A visual audio deck adapted from the original repo proof, with real playback, track selection, volume, mute, and lifecycle controls.',
+    'One shared Audio Lab for standalone and website hosts: real waveform and spectrum analysis, frequency meters, a reactive Three scene, and scoped motion.',
   difficulty: 'intermediate',
   status: 'current',
   boundary:
-    'URK coordinates browser audio transport and lifecycle. The website owns the deck; the animation indicates playback, not measured audio levels.',
+    'Audio analysis provides measured signal data; the controller owns rendering and media policy. Three and motion remain optional adapters. These values are not beat detection.',
   teaches: [
-    'Register audio and loading capabilities with a standalone kernel.',
+    'Read one reusable analysis snapshot per temporary runtime frame.',
     'Start sound from a user gesture and surface playback failures locally.',
-    'Pause audio with the runtime and release media resources on teardown.',
+    'Combine direct audio reactivity with finite scene-layout tweens and scoped cleanup.',
   ],
-  adapters: ['loading', 'audio'],
-  controllers: ['audio-demo-controller'],
+  adapters: ['audio', 'motion', 'three (optional scene)'],
+  controllers: ['audio-analysis-controller'],
   panels: ['preview', 'state', 'events', 'adapters', 'source', 'schema'],
   schemaSource: JSON.stringify(
     {
       surface: 'audio-proof',
-      adapters: ['loading', 'audio'],
-      controllers: ['audio-demo-controller'],
-      tracks: ['bed', 'pulse', 'confirm'],
+      adapters: ['audio', 'motion', 'three (optional scene)'],
+      controllers: ['audio-analysis-controller'],
+      tracks: ['analysis', 'bed', 'pulse', 'confirm'],
       autoplay: false,
     },
     null,
@@ -45,22 +45,24 @@ export const audioProofMeta: ExampleMeta = {
       path: 'packages/examples/src/audio-proof/mount.ts',
       label: 'Audio capability and lifecycle',
       language: 'ts',
-      excerpt: `const kernel = createKernel({
-  id: 'urk-www-audio-proof',
-  adapters: [createLoadingAdapter(), createAudioAdapter()],
-  controllers: [createAudioController(view)],
+      excerpt: `const audio = ctx.require(AudioCapability);
+// Begin both calls in the user's click handler.
+await Promise.all([
+  audio.analysis.enable({ fftSize: 2048, smoothing: 0.8 }),
+  audio.play(selectedTrackId),
+]);
+
+// Read once per runtime frame; all visuals consume this snapshot.
+const release = ctx.registerFrameWork(() => {
+  const snapshot = audio.analysis.read();
+  renderPlots(snapshot);
+  renderScene(snapshot);
 });
-
-// Inside the controller, in response to a click:
-const audio = ctx.adapters.require<AudioAdapterApi>('audio');
-await audio.play(selectedTrackId);
-
-// Controller disposal stops audio before adapters release their resources.
-audio.stop();`,
+ctx.scope.defer(release);`,
     },
   ],
   explanation:
-    'The original examples/audio-proof remains a local integration proof. This website version uses its three WAV assets with a smaller controller and a site-owned deck. Tracks load when played. Audio snapshots drive the transport display; the existing runtime panels remain available below the demo. Runtime Resume restores controls; press Play to resume sound explicitly.',
+    'Both hosts mount the same private Audio Lab. One AnalyserNode supplies waveform, spectrum, normalized RMS and frequency bands. A Three sculpture responds to bass, mids, and treble; Orbit/Row layout changes use finite numeric tweens. Disabling analysis preserves audio playback. Pause, hidden tabs, shutdown, and unmount stop owned work; Start fresh creates a new kernel without autoplay. Graphics failure leaves the audio controls and Canvas plots available.',
   relatedDocs: [
     { title: 'Audio Lab guide', href: '/docs/examples/audio-proof/' },
     { title: 'Adapters', href: '/docs/reference/adapters/' },

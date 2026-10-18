@@ -13,6 +13,7 @@ export type SupportedAdapterName =
   | 'input'
   | 'loading'
   | 'storage'
+  | 'ui-overlay'
   | 'ui-widgets';
 
 export type SupportedAdapterDefinition = {
@@ -52,6 +53,12 @@ export const SUPPORTED_ADAPTERS: Record<
     importName: 'createStorageAdapter',
     factoryCall: 'createStorageAdapter()',
     comment: 'Exposes a small namespaced local and session storage capability.',
+  },
+  'ui-overlay': {
+    name: 'ui-overlay',
+    importName: 'createUiOverlayAdapter',
+    factoryCall: 'createUiOverlayAdapter()',
+    comment: 'Mounts a tiny overlay status and callout UI into the shared ui:host service.',
   },
   'ui-widgets': {
     name: 'ui-widgets',

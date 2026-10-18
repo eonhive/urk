@@ -1,0 +1,56 @@
+---
+/**
+ * Company: EonHive Inc.
+ * Title: Website Selection Example Host
+ * Purpose: Own selection proof mounting, restart, and page-history cleanup.
+ * Author: Stan Nesi
+ * Created: 2026-10-15
+ * Updated: 2026-10-15
+ * Notes: Vibe coded with Codex.
+ */
+interface Props { mode: 'scene' | 'projects' }
+const { mode } = Astro.props;
+---
+<urk-selection-example data-mode={mode}>
+  <button type="button" class="site-button site-button--secondary" data-selection-restart>Restart example</button>
+  <div data-selection-host><p>Loading selection example…</p><noscript>Enable JavaScript to use this example.</noscript></div>
+</urk-selection-example>
+<script>
+  import { mountSelectionProof } from '@urk/examples/selection-details';
+
+  class SelectionExample extends HTMLElement {
+    private proof?: ReturnType<typeof mountSelectionProof>;
+    private cleanup = Promise.resolve();
+    private generation = 0;
+    connectedCallback(): void {
+      window.addEventListener('pagehide', this.stop);
+      window.addEventListener('pageshow', this.start);
+      this.querySelector('[data-selection-restart]')?.addEventListener('click', this.restart);
+      this.start();
+    }
+    disconnectedCallback(): void {
+      window.removeEventListener('pagehide', this.stop);
+      window.removeEventListener('pageshow', this.start);
+      this.querySelector('[data-selection-restart]')?.removeEventListener('click', this.restart);
+      this.stop();
+    }
+    private start = (): void => {
+      if (this.proof) return;
+      const next = ++this.generation;
+      void this.cleanup.then(() => {
+        if (!this.isConnected || next !== this.generation) return;
+        const host = this.querySelector<HTMLElement>('[data-selection-host]')!;
+        host.replaceChildren();
+        this.proof = mountSelectionProof(host, this.dataset.mode === 'scene' ? 'scene' : 'projects');
+      }).catch(() => { this.querySelector('[data-selection-host]')!.textContent = 'The example could not restart. Reload to try again.'; });
+    };
+    private stop = (): void => {
+      this.generation++;
+      const proof = this.proof;
+      this.proof = undefined;
+      if (proof) this.cleanup = proof.teardown();
+    };
+    private restart = (): void => { this.stop(); this.start(); };
+  }
+  if (!customElements.get('urk-selection-example')) customElements.define('urk-selection-example', SelectionExample);
+</script>

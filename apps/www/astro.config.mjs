@@ -21,6 +21,8 @@ const siteUrl = process.env.SITE_URL ?? 'http://localhost:4321';
 export default defineConfig({
   site: siteUrl,
   output: 'static',
+  // Exercise site behavior without author tooling that requires browser storage.
+  devToolbar: { enabled: process.env.URK_INTEGRATION_TEST !== '1' },
   integrations: [
     starlight({
       title: 'URK Docs',
@@ -105,8 +107,8 @@ export default defineConfig({
             { label: '@urk/core', link: '/docs/reference/core/' },
             { label: '@urk/adapters', link: '/docs/reference/adapters/' },
             { label: '@urk/examples', link: '/docs/reference/examples/' },
-            { label: '@urk/react-urk', link: '/docs/reference/react-urk/' },
-            { label: '@urk/next-urk', link: '/docs/reference/next-urk/' },
+            { label: '@urk/react', link: '/docs/reference/react-urk/' },
+            { label: '@urk/next', link: '/docs/reference/next-urk/' },
             { label: 'CLI commands', link: '/docs/reference/cli/' },
             { label: 'Runtime types', link: '/docs/reference/runtime-types/' },
             { label: 'Adapter contract types', link: '/docs/reference/adapter-contract-types/' },
@@ -133,6 +135,8 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    // Prepare optional video graphics before entry so lazy loading cannot trigger a dev-page reload.
+    optimizeDeps: { include: ['three', '@urk/adapters/three/video'] },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

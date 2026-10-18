@@ -25,8 +25,9 @@ packages/core            runtime kernel
 packages/adapters        capability adapters
 packages/examples        private website-consumed examples
 packages/cli             developer tooling
-packages/react-urk       React integration wrapper
-packages/next-urk        Next.js integration wrapper
+packages/react           React integration wrapper
+packages/next            Next.js integration wrapper
+packages/compat          Legacy package-name forwarders
 examples/                repo-only proofs
 apps/next-proof          repo-only Next.js proof
 ```
@@ -41,7 +42,7 @@ apps/next-proof          repo-only Next.js proof
 | Runtime state | Explicit phases, snapshots, transitions, and visibility. | `packages/core` |
 | Scene/experience | Concrete experience composition and surface coordination. | Examples and host apps |
 | UI bridge | Overlay, panel, loading UI, and cross-surface synchronization. | Adapters plus examples |
-| Wrappers | Outer framework compatibility. | `packages/react-urk`, `packages/next-urk` |
+| Wrappers | Outer framework compatibility. | `packages/react`, `packages/next` |
 
 ## Dependency direction
 

@@ -8,5 +8,7 @@ export * from './input/index.js';
 export * from './pointer/index.js';
 export * from './storage/index.js';
 export * from './three/index.js';
-export * from './ui-widgets/index.js';
+export * from './ui-overlay/index.js';
 export * from './contracts.js';
+export * from './video/index.js';
+export * from './motion/index.js';

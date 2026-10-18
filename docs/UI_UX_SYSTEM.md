@@ -16,6 +16,9 @@ URK - Universal Runtime Kernel is a public open-source runtime kernel for browse
 
 UI means User Interface. UX means User Experience.
 
+Runtime controls, overlays, and panel ownership are documented separately in
+[Runtime UI & Interaction](RUNTIME_UI_UX_SYSTEM.md).
+
 ## Design Goals
 
 - Dark-first, with complete light-mode support.
@@ -169,6 +172,6 @@ Use uppercase **URK** in the public identity. Universal Runtime Kernel and exist
 
 The homepage hero is illustrative artwork, linked separately from the working playground. References guide visual direction; they do not introduce an editor, pricing, marketplace, or hosted publishing product. Primary copy is “A tiny runtime. Big possibilities.”
 
-Shared playground controls expose pause/resume availability and diagnostics state. Theme changes redraw once through a scoped observer without starting a continuous loop; paused/disposed scenes still cancel pending drawing. Storage failure must leave the theme control usable for the current page. The scene remains dark in both themes for consistent object contrast.
+Shared playground controls expose pause/resume availability and diagnostics state. Theme changes redraw once through a scoped observer without starting a continuous loop. Pause cancels animation; resize/theme changes may repaint a frozen scene, while disposal cancels all drawing. Layout transitions are finite and respect reduced motion; layout and rotation use native controls. Narrow layouts keep overlay feedback below the canvas so every object stays visible and selectable. Storage failure must leave the theme control usable for the current page. The scene remains dark in both themes for consistent object contrast.
 
 The original hero was generated with the built-in image tool, then given a transparent background for both themes. The optimized [WebP](../apps/www/public/brand/art/runtime-world.webp) and exact [prompt set](../apps/www/public/brand/art/runtime-world.prompt.txt) are kept with the brand assets. SVG marks and icons remain code-native.

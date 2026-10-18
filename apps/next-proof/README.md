@@ -1,6 +1,6 @@
 # @urk/next-proof
 
-Standalone Next 14 App Router proof for validating `@urk/next-urk`.
+Standalone Next 14 App Router proof for validating `@urk/next`.
 
 This proof keeps scope narrow:
 

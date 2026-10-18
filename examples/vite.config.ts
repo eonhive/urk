@@ -4,7 +4,7 @@
  * Purpose: Ensure example HTML entrypoints are included in the production build.
  * Author: Stan Nesi
  * Created: 2026-04-22
- * Updated: 2026-05-18
+ * Updated: 2026-10-12
  * Notes: Vibe coded with Codex.
  */
 
@@ -19,8 +19,14 @@ export default defineConfig({
     chunkSizeWarningLimit: 650,
     rollupOptions: {
       input: [
+        resolve(__dirname, 'motion-playground/index.html'),
+        resolve(__dirname, 'selection-details/index.html'),
         resolve(__dirname, 'index.html'),
         resolve(__dirname, 'audio-proof/index.html'),
+        resolve(__dirname, 'audio-proof/analysis.html'),
+        resolve(__dirname, 'video-proof/index.html'),
+        resolve(__dirname, 'interactive-media/index.html'),
+        resolve(__dirname, 'experience-showcase/index.html'),
         resolve(__dirname, 'v02/index.html'),
         resolve(__dirname, 'v02/react.html'),
         resolve(__dirname, 'app-shell/index.html'),
@@ -45,11 +51,8 @@ export default defineConfig({
             return 'vendor-react';
           }
 
-          if (
-            normalizedId.includes('/packages/core/') ||
-            normalizedId.includes('/packages/adapters/') ||
-            normalizedId.includes('/packages/react-urk/')
-          ) {
+          // Keep optional adapters out of the core chunk so media-only pages stay lightweight.
+          if (normalizedId.includes('/packages/core/')) {
             return 'vendor-urk';
           }
 

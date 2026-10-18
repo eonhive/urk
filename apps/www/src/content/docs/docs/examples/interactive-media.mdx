@@ -1,0 +1,34 @@
+---
+title: Interactive Media
+description: Coordinate native video, timed cues, chapters, branching choices, and saved playback.
+---
+
+The [Interactive Media example](/examples/interactive-media/) combines native video with three chapters, timed overlays, two choices, captions, and a saved bookmark. It also runs standalone at `/interactive-media/`.
+
+The controller in `packages/examples/src/interactive-media/mount.ts` composes the video and storage adapters plus an optional audio mixer. Its private helpers in `packages/examples/src/media/` observe a selected time source and run cancellable cue actions. No kernel state or public API is added.
+
+Seeking updates the visible chapter without firing skipped actions. Repeating cues re-arm on backward seeks; once-only cues reset explicitly on Replay. Async actions receive an abort signal; cleanup waits for their cooperative completion.
+
+Playback begins only through a user control. Video loading waits until the experience is visible or Play is pressed. Pause, document hiding, and leaving the viewport stop this experience’s video; returning never autoplays. The visibility target includes the controls and gallery, so hiding the native film for its 3D texture does not pause it. A fresh kernel restores position, direction, captions, and volume preferences from `urk:media:bookmark` once metadata loads, starting paused. Unavailable storage falls back to page memory.
+
+If the film fails to load or decode, **Retry video** restores the last valid position, direction, captions, and volume levels. Recovery starts paused with sound disabled. An active gallery releases its graphics and recreates them after the film loads. **Cancel retry**, experience pause, document hiding, returning from the gallery, and disposal prevent a late retry from restoring the view. Cancellation releases the recovery subscription; it does not promise to abort a browser network request already in flight. Browser autoplay rejection remains a normal Play error rather than triggering a reload.
+
+Native media events drive this example without a frame loop. Optional video-frame callbacks are available in the helper for frame-sensitive consumers, with an animation-frame fallback; neither path promises frame-perfect synchronization. The film is an original silent sample, shared with the optional 3D gallery below.
+
+**Show diagnostics** opens a read-only view of the existing runtime inspector and video snapshots. It shows lifecycle, kernel frames, players, media time, captions, errors, scene, direction, last cue, and recovery status. Recent history displays up to eight event labels from the inspector's bounded history, without retaining payloads. Observation runs only while the panel is open; closing, disposal, and fresh starts release it. The panel uses native media events and the inspector's existing sampling, without adding a render loop or a separate media clock.
+
+
+**Enable sound** starts an original soundtrack; choosing Explore or Create crossfades to that branch’s music. **Hear the guide** plays a synthesized spoken line, with its transcript always visible. The two-second film cue can also trigger narration after sound is enabled. Narration ducks music through a separate group multiplier, preserving both volume sliders.
+
+Pause, seek, replay, disable, hiding the document, and shutdown silence audio and cancel pending work. Returning starts silent with saved levels. Media failures stay local to the sound controls. Audio acquires resources only after the opt-in interaction; fades request frames only until they complete. This native-volume integration is not sample-accurate synchronization, and volume control varies by browser.
+
+
+Chapter titles use finite native animation. After the film, a closing panel reflects the selected direction. **Watch again** replays; **Return to film** returns paused. Replay, seeking, and chapter selection interrupt unfinished transitions. Keyboard focus follows a panel only when that panel is hidden.
+
+Reduced-motion preferences skip animation, including changes made while the experience is open. Experience pause freezes title motion and cancels unfinished panel handoffs; resume restores visual flow without restarting media. Animation effects are released on completion and disposal, and browsers without the animation API retain immediate navigation. The private `stage.ts` controller composition reuses URK events, cancellation, and resource scopes; it does not add another runtime.
+
+## Beyond the frame
+
+Choose **Enter 3D gallery** after the ending to put the same film on a Three.js screen. Pick Explore/Create with the pointer, buttons, or **1 / 2** while the scene has focus. Captions remain readable above the scene. Replay stays in 3D; returning pauses and releases graphics without losing your position. Sound still requires explicit opt-in.
+
+[Experience Showcase](/examples/experience-showcase/) runs the same composition with an automatic film-to-gallery handoff. Graphics load on entry, render only for video frames or changes, and clean up on exit. If WebGL is unavailable, return to the native film.

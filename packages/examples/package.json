@@ -8,6 +8,10 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./selection-details": {
+      "types": "./dist/selection-details/mount.d.ts",
+      "import": "./dist/selection-details/mount.js"
+    },
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
@@ -15,6 +19,26 @@
     "./v02": {
       "types": "./dist/v02/runtime.d.ts",
       "import": "./dist/v02/runtime.js"
+    },
+    "./video-proof": {
+      "types": "./dist/video-proof/mount.d.ts",
+      "import": "./dist/video-proof/mount.js"
+    },
+    "./interactive-media": {
+      "types": "./dist/interactive-media/mount.d.ts",
+      "import": "./dist/interactive-media/mount.js"
+    },
+    "./media": {
+      "types": "./dist/media/index.d.ts",
+      "import": "./dist/media/index.js"
+    },
+    "./experience-showcase": {
+      "types": "./dist/experience-showcase/mount.d.ts",
+      "import": "./dist/experience-showcase/mount.js"
+    },
+    "./audio-proof": {
+      "types": "./dist/audio-proof/mount.d.ts",
+      "import": "./dist/audio-proof/mount.js"
     }
   },
   "files": [

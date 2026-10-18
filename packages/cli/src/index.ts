@@ -14,7 +14,11 @@ import { runAddCommand } from './commands/add.js';
 import { runCheckCommand } from './commands/check.js';
 import { runCreateCommand } from './commands/create.js';
 import { runCreateProofCommand } from './commands/create-proof.js';
+import { runExportCommand } from './commands/export.js';
+import { runEmbedCommand } from './commands/embed.js';
 import { runInspectCommand } from './commands/inspect.js';
+import { runPackCommand } from './commands/pack.js';
+import { runUnpackCommand } from './commands/unpack.js';
 import { error, warn } from './utils/logger.js';
 
 type CommandHandler = (args: string[]) => Promise<number>;
@@ -27,12 +31,18 @@ Usage:
 Commands:
   create         Scaffold a standalone URK browser runtime app
   create-proof   Scaffold a repo-only URK proof route
+  export         Build a portable static web experience
+  embed          Generate a static Player host for an already-hosted export
+  pack           Package exported web files into one .urkpkg archive
+  unpack         Validate and extract a .urkpkg archive for HTTP hosting
   add            Add a supported DOM adapter to a URK project
   check          Run static URK project checks
-  inspect        Print a static URK project summary (no live browser inspection)
+  inspect        Inspect a project or .urkpkg archive (no live browser inspection)
 
 Examples:
   urk create my-runtime
+  urk export my-runtime
+  urk embed https://experiences.example.com/demo/ --out-dir embed
   urk create controller loading-flow
   urk create-proof loading-flow
   urk add adapter pointer
@@ -46,6 +56,10 @@ Options:
 const COMMANDS: Record<string, CommandHandler> = {
   create: runCreateCommand,
   'create-proof': runCreateProofCommand,
+  export: runExportCommand,
+  embed: runEmbedCommand,
+  pack: runPackCommand,
+  unpack: runUnpackCommand,
   add: runAddCommand,
   check: runCheckCommand,
   inspect: runInspectCommand,

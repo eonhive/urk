@@ -15,8 +15,8 @@ import { createLoadingAdapter, LoadingCapability } from '@urk/adapters/loading';
 import { createPointerAdapter, PointerCapability, type PointerTargetEventPayload, type PointerSurfaceEventPayload } from '@urk/adapters/pointer';
 import { createStorageAdapter, StorageCapability } from '@urk/adapters/storage';
 import { createThreeAdapter } from '@urk/adapters/three';
-import { createUiWidgetsAdapter, UiWidgetsCapability } from '@urk/adapters/ui-widgets';
-import { choices, createPlaygroundScene, isChoice, type Choice } from './scene.js';
+import { createUiOverlayAdapter, UiOverlayCapability } from '@urk/adapters/ui-overlay';
+import { choices, createPlaygroundScene, isChoice, type Choice, type SceneLayout } from './scene.js';
 import { styles } from './styles.js';
 
 export interface DemoPreferences { selected: string | null; volume?: number }
@@ -28,6 +28,15 @@ const DemoViewCapability = token<{
   sound: HTMLButtonElement;
   volume: HTMLInputElement;
   soundStatus: HTMLElement;
+  layout: HTMLSelectElement;
+  rotation: HTMLInputElement;
+  angle: HTMLOutputElement;
+  selected: HTMLOutputElement;
+  details: HTMLDetailsElement;
+  detailsSummary: HTMLElement;
+  detailsTitle: HTMLElement;
+  detailsDescription: HTMLElement;
+  wireframe: HTMLInputElement;
 }>('demo:view');
 
 // Borrowed storage survives a fresh kernel; the adapter never owns its contents.
@@ -68,14 +77,13 @@ export function createV02Experience(
   options: { failSetup?: boolean; preferences?: DemoPreferences } = {},
 ): Kernel {
   const preferences = options.preferences ?? { selected: null };
-  const widgets = createUiWidgetsAdapter();
+  const widgets = createUiOverlayAdapter();
   const three = createThreeAdapter();
   const input = createInputAdapter();
   const storage = createStorageAdapter({ namespace: 'urk:v02' });
   for (const adapter of [widgets, three, input, storage]) adapter.dependsOn = [DemoViewCapability];
-  let updatePaused = (_paused: boolean): void => {};
 
-  return createKernel({
+  const kernel = createKernel({
     frameMode: 'auto',
     adapterStartup: 'parallel',
     serviceBindings: [{ token: DemoPreferencesCapability, value: preferences }],
@@ -93,15 +101,23 @@ export function createV02Experience(
           root.innerHTML = `<div class="scene-shell"><div class="scene-topline" aria-hidden="true"><span>SCENE / INTERACTIVE OBJECTS</span><span>3D</span></div>
             <div class="viewport" tabindex="0" role="group" aria-label="Interactive objects" aria-describedby="${ctx.id}-help"></div>
             <div class="scene-overlay" data-overlay></div></div>
-          <div class="scene-caption" id="${ctx.id}-help"><span>Pick an object. Find your next move.</span>
-            <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> select · arrow keys rotate</span></div>
+          <div class="scene-caption" id="${ctx.id}-help"><span>Selected <output data-selected-name></output></span></div>
           <div class="cards">
             <button data-card="Explore" aria-pressed="false"><span class="choice-number" aria-hidden="true">01</span><strong>Explore</strong><small>Choose a direction.</small></button>
             <button data-card="Create" aria-pressed="false"><span class="choice-number" aria-hidden="true">02</span><strong>Create</strong><small>Make the next move.</small></button>
             <button data-card="Connect" aria-pressed="false"><span class="choice-number" aria-hidden="true">03</span><strong>Connect</strong><small>Bring it together.</small></button>
+          </div><details class="selection-details">
+            <summary>Selection details</summary>
+            <section aria-labelledby="${ctx.id}-details-title">
+              <div><h2 id="${ctx.id}-details-title" data-details-title></h2><p data-details-description></p></div>
+              <label><input data-wireframe type="checkbox">Wireframe</label>
+            </section>
+          </details><div class="scene-controls" role="group" aria-label="Scene controls">
+            <label>Layout <select aria-label="Scene layout"><option value="row">Row</option><option value="arc">Arc</option></select></label>
+            <label class="rotation-control">Rotation <input data-rotation type="range" min="-180" max="180" step="1" aria-label="Selected object rotation"><output data-angle></output></label>
           </div><div class="interaction-bar">
             <button data-sound aria-pressed="false">Enable sound</button>
-            <label class="volume">Volume <input type="range" min="0" max="1" step="0.05" aria-label="Volume"></label>
+            <label class="volume">Volume <input data-volume type="range" min="0" max="1" step="0.05" aria-label="Volume"></label>
             <span class="storage-label" data-storage></span>
             <output class="local-status" data-sound-status aria-live="polite">Sound is off. Enable it to hear selections.</output>
           </div>`;
@@ -120,15 +136,23 @@ export function createV02Experience(
           return {
             root, viewport, cards: [...root.querySelectorAll<HTMLButtonElement>('[data-card]')],
             sound: root.querySelector<HTMLButtonElement>('[data-sound]')!,
-            volume: root.querySelector<HTMLInputElement>('input')!,
+            volume: root.querySelector<HTMLInputElement>('[data-volume]')!,
             soundStatus: root.querySelector<HTMLElement>('[data-sound-status]')!,
+            layout: root.querySelector<HTMLSelectElement>('select')!,
+            rotation: root.querySelector<HTMLInputElement>('[data-rotation]')!,
+            angle: root.querySelector<HTMLOutputElement>('[data-angle]')!,
+            selected: root.querySelector<HTMLOutputElement>('[data-selected-name]')!,
+            details: root.querySelector<HTMLDetailsElement>('.selection-details')!,
+            detailsSummary: root.querySelector<HTMLElement>('.selection-details summary')!,
+            detailsTitle: root.querySelector<HTMLElement>('[data-details-title]')!,
+            detailsDescription: root.querySelector<HTMLElement>('[data-details-description]')!,
+            wireframe: root.querySelector<HTMLInputElement>('[data-wireframe]')!,
           };
         },
       },
     ],
     controllers: [{
       id: 'demo-experience',
-      onStateChange(next) { updatePaused(next.phase === 'paused'); },
       async start(ctx) {
         const view = ctx.require(DemoViewCapability);
         const loading = ctx.require(LoadingCapability);
@@ -136,7 +160,7 @@ export function createV02Experience(
         const input = ctx.require(InputCapability);
         const storage = ctx.require(StorageCapability);
         const audio = ctx.require(AudioCapability);
-        const overlay = ctx.require(UiWidgetsCapability);
+        const overlay = ctx.require(UiOverlayCapability);
         const saved = ctx.require(DemoPreferencesCapability);
         loading.begin([{ id: 'preferences', label: 'Restore preferences' }, { id: 'scene', label: 'Build scene' }, { id: 'interaction', label: 'Connect controls' }]);
         ctx.scope.defer(loading.subscribe(snapshot => overlay.setStatus(`${snapshot.message ?? 'Preparing experience'} · ${Math.round(snapshot.progress * 100)}%`)));
@@ -156,12 +180,51 @@ export function createV02Experience(
           }
         };
         loading.setStage('preferences', 1);
-        const scene = createPlaygroundScene(ctx);
+        let layoutPending = false;
+        let layoutRevision = 0;
+        const scene = createPlaygroundScene(ctx, () => {
+          layoutPending = false;
+          refreshOverlay();
+          void ctx.state.transition('ready', 'demo:layout-settled').catch(() => {
+            // Shutdown closes phase commands before owned scene work is released.
+          });
+        }, lost => {
+          contextLost = lost;
+          refreshSceneControls();
+          resetPointerFeedback();
+        });
         loading.setStage('scene', 1);
         let paused = false;
+        let contextLost = scene.isContextLost();
         let soundEnabled = false;
         let soundGeneration = 0;
         let pendingSound: Promise<void> | undefined;
+        const descriptions: Record<Choice, string> = {
+          Explore: 'A faceted solid with triangular faces.',
+          Create: 'A cube with six square faces.',
+          Connect: 'A continuous knot with an open center.',
+        };
+        const refreshOverlay = (hovered?: Choice): void => {
+          if (contextLost) {
+            overlay.setStatus('Graphics unavailable. Waiting for recovery.');
+            overlay.hideCallout();
+            return;
+          }
+          overlay.setStatus(paused ? 'Paused' : layoutPending ? `Arranging: ${view.layout.selectedOptions[0].text}` : `Selected: ${saved.selected}`);
+          if (paused) { overlay.hideCallout(); return; }
+          const choice = hovered ?? saved.selected as Choice;
+          overlay.showCallout({ title: choice, body: descriptions[choice], tone: hovered ? 'active' : 'selected' });
+        };
+        const resetPointerFeedback = (): void => {
+          if (ctx.signal.aborted) return;
+          view.viewport.style.cursor = 'default';
+          refreshOverlay();
+        };
+        const syncRotation = (): void => {
+          view.rotation.value = String(scene.getRotation());
+          view.angle.value = `${view.rotation.value}°`;
+          view.rotation.setAttribute('aria-valuetext', view.angle.value);
+        };
         audio.registerTrack({ id: 'confirm', label: 'Selection', src: '/audio/confirm.wav' });
         audio.setVolume(saved.volume);
         audio.setMuted(true);
@@ -202,23 +265,37 @@ export function createV02Experience(
           await pendingSound;
           stopSound();
         });
-        updatePaused = value => {
+        const refreshSceneControls = (): void => {
+          const disabled = paused || contextLost;
+          for (const control of [...view.cards, view.layout, view.rotation]) control.disabled = disabled;
+          view.wireframe.disabled = disabled || ctx.signal.aborted;
+          view.viewport.setAttribute('aria-disabled', String(disabled));
+        };
+        const updatePaused = (value: boolean): void => {
           paused = value;
           scene.setPaused(value);
           view.root.dataset.paused = String(value);
-          for (const control of [...view.cards, view.sound, view.volume]) control.disabled = value;
-          view.viewport.setAttribute('aria-disabled', String(value));
+          view.sound.disabled = value;
+          view.volume.disabled = value;
+          refreshSceneControls();
           if (value) stopSound();
           view.soundStatus.textContent = value ? 'Paused. Interaction and sound are resting.'
             : soundEnabled ? 'Sound enabled. Select an object to hear it.' : 'Sound is off. Enable it to hear selections.';
+          resetPointerFeedback();
         };
-        ctx.scope.defer(() => { updatePaused = () => {}; });
+        ctx.scope.defer(kernel.subscribeLifecycle(() => updatePaused(kernel.getLifecycleSnapshot().state === 'paused')));
         const select = (choice: Choice, fromInteraction = false): void => {
-          if (paused || ctx.signal.aborted) return;
+          if (paused || ctx.signal.aborted || (contextLost && fromInteraction)) return;
           saved.selected = choice;
           for (const card of view.cards) card.setAttribute('aria-pressed', String(card.dataset.card === choice));
           scene.select(choice);
-          overlay.setStatus(`Selected: ${choice}`);
+          view.selected.value = choice;
+          view.detailsTitle.textContent = choice;
+          view.detailsDescription.textContent = descriptions[choice];
+          view.wireframe.checked = scene.getWireframe();
+          if (fromInteraction) view.details.open = true;
+          syncRotation();
+          refreshOverlay();
           persist();
           if (fromInteraction) playSound();
           ctx.events.emit({ type: 'demo:selected', source: 'demo-experience', timestamp: Date.now(), payload: { label: choice } });
@@ -229,21 +306,43 @@ export function createV02Experience(
         }));
         for (const card of view.cards) ctx.scope.defer(pointer.bindTarget({ id: card.dataset.card!, element: card, meta: { label: card.dataset.card } }));
         ctx.scope.defer(pointer.bindSurface({ id: 'playground', element: view.viewport }));
+        const onPointerDown = (event: PointerEvent): void => {
+          if (event.pointerType === 'touch') resetPointerFeedback();
+        };
+        ctx.scope.defer(() => view.viewport.removeEventListener('pointerdown', onPointerDown));
+        view.viewport.addEventListener('pointerdown', onPointerDown, { passive: true });
         ctx.scope.defer(ctx.events.on('pointer:surface-select', event => {
           const payload = event.payload as PointerSurfaceEventPayload;
-          if (payload.element !== view.viewport || paused || ctx.signal.aborted) return;
+          if (payload.element !== view.viewport || paused || contextLost || ctx.signal.aborted) return;
           view.viewport.focus({ preventScroll: true });
           const choice = scene.pick(payload.clientX, payload.clientY);
           if (choice) select(choice, true);
         }));
+        ctx.scope.defer(ctx.events.on('pointer:surface-move', event => {
+          const payload = event.payload as PointerSurfaceEventPayload;
+          if (payload.element !== view.viewport || paused || contextLost || ctx.signal.aborted) return;
+          if ('pointerType' in payload.nativeEvent && payload.nativeEvent.pointerType === 'touch') {
+            resetPointerFeedback();
+            return;
+          }
+          const hovered = scene.pick(payload.clientX, payload.clientY);
+          view.viewport.style.cursor = hovered ? 'pointer' : 'default';
+          refreshOverlay(hovered);
+        }));
+        ctx.scope.defer(ctx.events.on('pointer:surface-leave', event => {
+          if ((event.payload as PointerSurfaceEventPayload).element === view.viewport) resetPointerFeedback();
+        }));
         for (const code of ['Digit1', 'Digit2', 'Digit3', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']) {
           ctx.scope.defer(input.bindKey({ code, allowRepeat: code.startsWith('Arrow'), handler(event) {
             const target = event.nativeEvent.target;
-            if (paused || ctx.signal.aborted || event.altKey || event.ctrlKey || event.metaKey) return;
-            if (target instanceof HTMLElement && target.closest('input,textarea,select,[contenteditable]')) return;
+            if (paused || contextLost || ctx.signal.aborted || event.altKey || event.ctrlKey || event.metaKey) return;
+            if (target !== view.viewport) return;
             event.nativeEvent.preventDefault();
             if (code.startsWith('Digit')) select(choices[Number(code.slice(-1)) - 1], true);
-            else scene.rotate(code === 'ArrowUp' ? -0.15 : code === 'ArrowDown' ? 0.15 : 0, code === 'ArrowLeft' ? -0.15 : code === 'ArrowRight' ? 0.15 : 0);
+            else {
+              scene.rotate(code === 'ArrowUp' ? -0.15 : code === 'ArrowDown' ? 0.15 : 0, code === 'ArrowLeft' ? -0.15 : code === 'ArrowRight' ? 0.15 : 0);
+              syncRotation();
+            }
           } }));
         }
         const toggleSound = (): void => {
@@ -264,13 +363,55 @@ export function createV02Experience(
         ctx.scope.defer(() => view.sound.removeEventListener('click', toggleSound));
         view.volume.addEventListener('input', changeVolume);
         ctx.scope.defer(() => view.volume.removeEventListener('input', changeVolume));
+        const changeRotation = (): void => {
+          if (paused || contextLost || ctx.signal.aborted) return;
+          scene.setRotation(Number(view.rotation.value));
+          syncRotation();
+        };
+        const changeLayout = (): void => {
+          if (paused || contextLost || ctx.signal.aborted) return;
+          const layout = view.layout.value as SceneLayout;
+          const revision = ++layoutRevision;
+          layoutPending = true;
+          refreshOverlay();
+          void ctx.state.transition('transition', 'demo:layout').then(() => {
+            if (!ctx.signal.aborted && revision === layoutRevision) scene.setLayout(layout);
+          }).catch(() => {
+            // A terminal kernel rejects queued work; its host reports lifecycle failures.
+          });
+        };
+        view.rotation.addEventListener('input', changeRotation);
+        ctx.scope.defer(() => view.rotation.removeEventListener('input', changeRotation));
+        view.layout.addEventListener('change', changeLayout);
+        ctx.scope.defer(() => view.layout.removeEventListener('change', changeLayout));
+        const changeWireframe = (): void => {
+          if (ctx.signal.aborted) return;
+          scene.setWireframe(view.wireframe.checked);
+          // A late change during pause or graphics loss must still show the actual material state.
+          view.wireframe.checked = scene.getWireframe();
+        };
+        const dismissDetails = (event: KeyboardEvent): void => {
+          if (ctx.signal.aborted || !view.details.open || event.key !== 'Escape' || event.defaultPrevented ||
+              event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+          event.preventDefault();
+          view.details.open = false;
+          if (view.details.isConnected && view.details.contains(document.activeElement)) {
+            view.detailsSummary.focus({ preventScroll: true });
+          }
+        };
+        view.wireframe.addEventListener('change', changeWireframe);
+        ctx.scope.defer(() => view.wireframe.removeEventListener('change', changeWireframe));
+        view.details.addEventListener('keydown', dismissDetails);
+        ctx.scope.defer(() => view.details.removeEventListener('keydown', dismissDetails));
         loading.setStage('interaction', 1);
         loading.complete('Ready');
         select(saved.selected as Choice);
+        refreshSceneControls();
         await ctx.state.transition('ready', 'demo:loaded');
       },
     }],
   });
+  return kernel;
 }
 
 /** Host-owned controls survive disposal so recovery creates a fresh kernel. */
@@ -282,7 +423,9 @@ export function attachV02Controls(
   const scope = new ResourceScope();
   const root = document.createElement('div');
   host.classList.add('v02-controls-host');
-  scope.defer(() => host.classList.remove('v02-controls-host'));
+  scope.defer(() => {
+    if (!host.querySelector('.workbench-controls')) host.classList.remove('v02-controls-host');
+  });
   root.className = 'workbench-controls';
   root.innerHTML = `<style>${styles}</style>
     <header class="workbench-heading"><div><div class="eyebrow">CREATE · COMBINE · EXPLORE</div>
@@ -303,7 +446,14 @@ export function attachV02Controls(
       <output data-testid="v02-message" role="status"></output><pre data-testid="v02-diagnostics">Diagnostics off</pre>
     </aside>`;
   host.append(root);
-  scope.defer(() => root.remove());
+  scope.defer(() => {
+    const focused = document.activeElement;
+    const action = focused instanceof HTMLButtonElement && root.contains(focused) ? focused.dataset.action : undefined;
+    root.remove();
+    // Hosts attach replacement controls before cleanup; transfer only focus we just removed.
+    if (!action || !host.isConnected || document.activeElement !== document.body) return;
+    host.querySelector<HTMLButtonElement>(`[data-action="${CSS.escape(action)}"]`)?.focus({ preventScroll: true });
+  });
   const output = (name: string): HTMLElement => root.querySelector(`[data-testid="v02-${name}"]`)!;
   const refresh = (): void => {
     const state = kernel.getLifecycleSnapshot().state;
@@ -323,12 +473,24 @@ export function attachV02Controls(
   let restarting = false;
   scope.defer(() => detachDiagnostics?.());
   const onClick = (event: Event): void => {
-    const action = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]')?.dataset.action;
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
+    const action = button?.dataset.action;
     if (!action) return;
     const perform = async (): Promise<void> => {
       switch (action) {
-        case 'pause': kernel.pause(); break;
-        case 'resume': kernel.resume(); break;
+        case 'pause':
+        case 'resume': {
+          const hadFocus = document.activeElement === button;
+          if (action === 'pause') kernel.pause();
+          else kernel.resume();
+          const next = root.querySelector<HTMLButtonElement>(`[data-action="${action === 'pause' ? 'resume' : 'pause'}"]`)!;
+          // Only a local action may transfer focus; lifecycle observers may have moved it elsewhere.
+          if (hadFocus && root.isConnected && !next.disabled &&
+              (document.activeElement === button || document.activeElement === document.body)) {
+            next.focus({ preventScroll: true });
+          }
+          break;
+        }
         case 'restart':
         case 'failure':
           if (restarting) return;

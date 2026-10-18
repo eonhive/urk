@@ -1,11 +1,19 @@
 {
   "name": "@urk/cli",
   "version": "0.2.0",
-  "description": "URK CLI - lightweight developer tooling for scaffolding and inspecting URK projects",
+  "description": "URK CLI - developer tooling for scaffolding, exporting, and inspecting URK projects",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./portable-package": {
+      "types": "./dist/utils/portable-package.d.ts",
+      "import": "./dist/utils/portable-package.js"
+    },
+    "./*": "./*"
+  },
   "bin": {
     "urk": "./dist/index.js"
   },
@@ -19,8 +27,14 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "dev": "tsc --watch",
+    "test": "yarn workspace @urk/player build && yarn build && node --test tests/*.test.mjs",
     "lint": "yarn typecheck",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@urk/player": "^0.2.0",
+    "@zip.js/zip.js": "2.24.0",
+    "vite": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.17.57",

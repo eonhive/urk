@@ -15,6 +15,10 @@
       "import": "./dist/dom.js",
       "types": "./dist/dom.d.ts"
     },
+    "./motion": {
+      "types": "./dist/motion/index.d.ts",
+      "import": "./dist/motion/index.js"
+    },
     "./audio": {
       "types": "./dist/audio/index.d.ts",
       "import": "./dist/audio/index.js"
@@ -39,9 +43,25 @@
       "types": "./dist/three/index.d.ts",
       "import": "./dist/three/index.js"
     },
+    "./ui-overlay": {
+      "types": "./dist/ui-overlay/index.d.ts",
+      "import": "./dist/ui-overlay/index.js"
+    },
     "./ui-widgets": {
       "types": "./dist/ui-widgets/index.d.ts",
       "import": "./dist/ui-widgets/index.js"
+    },
+    "./video": {
+      "types": "./dist/video/index.d.ts",
+      "import": "./dist/video/index.js"
+    },
+    "./audio/mixer": {
+      "types": "./dist/audio/mixer.d.ts",
+      "import": "./dist/audio/mixer.js"
+    },
+    "./three/video": {
+      "types": "./dist/three/video.d.ts",
+      "import": "./dist/three/video.js"
     }
   },
   "files": [

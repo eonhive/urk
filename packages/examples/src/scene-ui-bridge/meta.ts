@@ -11,85 +11,29 @@
 import type { ExampleMeta } from '../types.js';
 
 export const sceneUiBridgeMeta: ExampleMeta = {
-  id: 'scene-ui-bridge',
-  slug: 'scene-ui-bridge',
-  title: 'Scene/UI Bridge',
-  purpose: 'Shows scene state connected to User Interface state.',
-  summary:
-    'A coordination proof for synchronizing a scene-like browser surface with User Interface overlay state through services, adapters, controllers, and events.',
-  difficulty: 'advanced',
-  boundary:
-    'Scene surface coordination, overlay synchronization, pointer target selection, and the line between runtime orchestration and renderer ownership.',
-  status: 'current',
+  id: 'scene-ui-bridge', slug: 'scene-ui-bridge', title: 'Scene/UI Bridge',
+  purpose: 'Select a scene node, load its details, and change its appearance.',
+  summary: 'A scene-like DOM surface coordinates selection, cancellable details, and an owned nonmodal panel through URK.',
+  difficulty: 'intermediate', status: 'current',
+  boundary: 'Selection and actions stay in the controller; the overlay owns its shell and content cleanup.',
   teaches: [
-    'How scene-like state can live outside the kernel while staying visible to controllers.',
-    'How the pointer adapter exposes scene target selection as runtime events.',
-    'How a UI bridge controller synchronizes overlay state without owning renderer internals.',
-    'How URK coordinates surfaces without becoming a renderer or game engine.',
+    'Selection remains when details close or the host changes size.',
+    'A stale details request cannot replace a newer selection.',
+    'Panel controls change the actual node without activating the scene underneath.',
+    'Themes and compact layouts adapt without remounting active content.',
   ],
-  adapters: ['loading', 'ui-widgets', 'pointer'],
-  controllers: ['ui-bridge-controller', 'scene-controller'],
-  panels: ['source', 'schema', 'state', 'events', 'adapters', 'preview'],
-  schemaSource: `{
-  "surface": "scene-ui-bridge",
-  "kernel": {
-    "services": ["ui:host", "scene:bridge"],
-    "adapters": ["loading", "ui-widgets", "pointer"],
-    "controllers": ["ui-bridge-controller", "scene-controller"]
+  adapters: ['ui-overlay', 'loading', 'pointer'], controllers: ['selection-details'],
+  panels: ['source', 'preview'],
+  schemaSource: JSON.stringify({ adapters: ['ui-overlay', 'loading', 'pointer'], controller: 'selection-details', frameMode: 'auto' }, null, 2),
+  sourceFiles: [{ path: 'packages/examples/src/selection-details/controller.ts', label: 'Shared selection pattern', language: 'ts',
+    excerpt: `const panel = overlay.open({
+  id: 'selection-details', kind: 'panel', title: item.title,
+  mount(container) {
+    // The application owns content and cancels pending requests on close.
+    return () => { request.abort(); container.replaceChildren(); };
   },
-  "bridge": {
-    "sceneState": "example-local object",
-    "uiOverlay": "ui-widgets adapter",
-    "selectionEvent": "scene-ui:node-selected"
-  }
-}`,
-  sourceFiles: [
-    {
-      path: 'packages/examples/src/scene-ui-bridge/mount.ts',
-      label: 'Runtime mount',
-      language: 'ts',
-      excerpt: `const kernel = createKernel({
-  id: 'urk-www-scene-ui-bridge',
-  services: {
-    'ui:host': uiHost,
-    'scene:bridge': sceneBridge,
-  },
-  adapters: [createLoadingAdapter(), createUiWidgetsAdapter(), createPointerAdapter()],
-  controllers: [createUiBridgeController(), createSceneController()],
-});`,
-    },
-    {
-      path: 'packages/examples/src/scene-ui-bridge/mount.ts',
-      label: 'Pointer target binding',
-      language: 'ts',
-      excerpt: `for (const node of scene.nodes) {
-  cleanups.push(
-    pointer.bindTarget({
-      id: node.dataset.sceneNode ?? 'scene-node',
-      element: node,
-      meta: { label: node.dataset.sceneLabel },
-    }),
-  );
-}`,
-    },
-    {
-      path: 'packages/examples/src/scene-ui-bridge/mount.ts',
-      label: 'Overlay sync',
-      language: 'ts',
-      excerpt: `unsubscribe.push(
-  ctx.events.on('scene-ui:node-selected', (event) => {
-    syncOverlay(ctx, widgets, scene.state, event.type);
-  }),
-);`,
-    },
-  ],
-  explanation:
-    'The Scene/UI Bridge example mounts a small scene-like surface inside the existing preview panel. The scene controller owns scene selection state and pointer target binding, while the UI bridge controller observes scene events and updates the UI widgets overlay. The kernel coordinates services, adapters, state, and events without taking ownership of rendering.',
-  relatedDocs: [
-    { title: 'Scene/User Interface bridge', href: '/docs/concepts/scene-ui-bridge/' },
-    { title: 'Bridge scene and User Interface', href: '/docs/guides/scene-ui-bridge/' },
-    { title: 'Event routing', href: '/docs/concepts/event-routing/' },
-    { title: 'Adapter contracts', href: '/docs/concepts/adapters/' },
-  ],
-  nextExampleId: 'pointer-input-overlay',
+});` }],
+  explanation: 'Native scene-node buttons emit pointer selection events. The controller owns selection and loads a separate content module into an overlay panel. Highlight node changes the selected node. The same pattern powers Project Selection without a scene renderer. Closing details cancels pending work and retains selection.',
+  relatedDocs: [{ title: 'Scene/UI bridge', href: '/docs/concepts/scene-ui-bridge/' }, { title: 'UI Overlay adapter', href: '/docs/reference/adapters/' }],
+  nextExampleId: 'project-selection',
 };

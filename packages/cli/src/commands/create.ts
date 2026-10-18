@@ -19,6 +19,7 @@ import { validateProjectName } from '../utils/names.js';
 import { detectUrkPackages, readNearestPackageJson } from '../utils/project.js';
 
 type DependencyVersions = {
+  cli: string;
   core: string;
   adapters: string;
   typescript: string;
@@ -34,12 +35,15 @@ async function isDirectoryEmpty(path: string): Promise<boolean> {
 async function resolveDependencyVersions(): Promise<DependencyVersions> {
   // This path works in both the source tree and an installed CLI package.
   const manifestPath = fileURLToPath(new URL('../../package.json', import.meta.url));
-  const manifest = await readJsonFile<{ urkTemplateVersions?: DependencyVersions }>(manifestPath);
+  const manifest = await readJsonFile<{
+    version?: string;
+    urkTemplateVersions?: Omit<DependencyVersions, 'cli'>;
+  }>(manifestPath);
   const versions = manifest.urkTemplateVersions;
-  if (!versions?.core || !versions.adapters || !versions.typescript || !versions.vite) {
+  if (!manifest.version || !versions?.core || !versions.adapters || !versions.typescript || !versions.vite) {
     throw new Error('The CLI package is missing its scaffold dependency versions.');
   }
-  return versions;
+  return { ...versions, cli: `^${manifest.version}` };
 }
 
 async function runCreateControllerCommand(args: string[]): Promise<number> {

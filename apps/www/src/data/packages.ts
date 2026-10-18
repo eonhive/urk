@@ -151,10 +151,10 @@ await kernel.shutdown('surface:teardown');`,
     warning:
       'Install `@urk/core` alongside this package. The root export includes the optional Three adapter surface; DOM-only hosts should import from `@urk/adapters/dom`.',
     whatBelongs: [
-      'Capability adapters for loading, input, pointer, storage, audio, UI widgets, and Three scene surfaces.',
+      'Capability adapters for loading, input, pointer, storage, audio, UI overlays, and Three scene surfaces.',
       'The DOM-only `@urk/adapters/dom` subpath for dependency-light browser hosts.',
       'Adapter setup, support checks, disposal, capability names, and small typed APIs.',
-      'Runtime-visible adapter events such as loading, input, pointer, storage, audio, and UI widget events.',
+      'Runtime-visible adapter events such as loading, input, pointer, storage, audio, and observable overlay state.',
     ],
     whatDoesNotBelong: [
       'Kernel lifecycle, runtime state ownership, scheduler orchestration, or controller lifecycle.',
@@ -187,7 +187,7 @@ const kernel = createKernel({
       },
       {
         name: '@urk/adapters/dom',
-        description: 'DOM-first export for loading, input, pointer, storage, UI widgets, and contracts.',
+        description: 'DOM-first export for loading, input, pointer, storage, UI overlays, and contracts.',
       },
       {
         name: 'createLoadingAdapter()',
@@ -198,7 +198,7 @@ const kernel = createKernel({
         description: 'Normalize keyboard and pointer interaction into runtime capabilities.',
       },
       {
-        name: 'createStorageAdapter() and createUiWidgetsAdapter()',
+        name: 'createStorageAdapter() and createUiOverlayAdapter()',
         description: 'Expose small browser persistence and overlay UI capabilities.',
       },
       {
@@ -294,16 +294,16 @@ pnpm exec urk inspect`,
   },
   {
     slug: 'react-urk',
-    name: '@urk/react-urk',
+    name: '@urk/react',
     purpose:
       'Thin React provider and hooks for consuming an existing URK kernel inside a React host.',
-    install: 'pnpm add @urk/core @urk/react-urk react react-dom',
-    cardInstall: 'pnpm add @urk/core @urk/react-urk react react-dom',
+    install: 'pnpm add @urk/core @urk/react react react-dom',
+    cardInstall: 'pnpm add @urk/core @urk/react react react-dom',
     statusLabel: 'Experimental wrapper',
     statusTone: 'experimental',
     section: 'wrapper',
     detail:
-      '`@urk/react-urk` is publishable and downstream. Use it when a React host needs to consume an existing kernel boundary.',
+      '`@urk/react` is publishable and downstream. Use it when a React host needs to consume an existing kernel boundary.',
     boundaryNote:
       'React stays a host boundary. The provider and hooks consume the kernel; they do not replace `@urk/core`.',
     stabilityNote:
@@ -325,7 +325,7 @@ pnpm exec urk inspect`,
       title: 'Wrap an existing kernel',
       code: `import { createKernel } from '@urk/core';
 import { createLoadingAdapter } from '@urk/adapters/dom';
-import { UrkProvider, useRuntimePhase } from '@urk/react-urk';
+import { UrkProvider, useRuntimePhase } from '@urk/react';
 
 function PhaseView() {
   const phase = useRuntimePhase();
@@ -367,7 +367,7 @@ export function App() {
       },
     ],
     relatedDocs: [
-      { title: '@urk/react-urk reference', href: '/docs/reference/react-urk/' },
+      { title: '@urk/react reference', href: '/docs/reference/react-urk/' },
       { title: 'Integration wrappers', href: '/docs/concepts/integration-wrappers/' },
       { title: 'Use URK with React', href: '/docs/guides/react-later/' },
     ],
@@ -383,16 +383,16 @@ export function App() {
   },
   {
     slug: 'next-urk',
-    name: '@urk/next-urk',
+    name: '@urk/next',
     purpose:
-      'Thin Next App Router client-boundary helpers built on top of `@urk/react-urk`.',
-    install: 'pnpm add @urk/core @urk/react-urk @urk/next-urk next react react-dom',
-    cardInstall: 'pnpm add @urk/core @urk/react-urk @urk/next-urk next react react-dom',
+      'Thin Next App Router client-boundary helpers built on top of `@urk/react`.',
+    install: 'pnpm add @urk/core @urk/react @urk/next next react react-dom',
+    cardInstall: 'pnpm add @urk/core @urk/react @urk/next next react react-dom',
     statusLabel: 'Experimental wrapper',
     statusTone: 'experimental',
     section: 'wrapper',
     detail:
-      '`@urk/next-urk` is publishable and downstream. It composes the React wrapper for Next client boundaries.',
+      '`@urk/next` is publishable and downstream. It composes the React wrapper for Next client boundaries.',
     boundaryNote:
       'Next integration should create or consume a client-side kernel and delegate runtime lifecycle to the React wrapper.',
     stabilityNote:
@@ -400,13 +400,13 @@ export function App() {
     warning:
       'Do not treat Next as the primary URK mental model. Runtime execution belongs on the client, not in server rendering.',
     whatBelongs: [
-      'A client-boundary provider that composes `@urk/react-urk`.',
+      'A client-boundary provider that composes `@urk/react`.',
       'A stable client kernel factory hook for one kernel instance per mount.',
       'React wrapper re-exports through the Next entrypoint.',
     ],
     whatDoesNotBelong: [
       'Server-side runtime execution or routing policy.',
-      'A replacement for `@urk/core` or `@urk/react-urk`.',
+      'A replacement for `@urk/core` or `@urk/react`.',
       'Adapter implementations, controller orchestration, or app-specific product logic.',
     ],
     basicUsage: {
@@ -416,7 +416,7 @@ export function App() {
 
 import { createKernel } from '@urk/core';
 import { createLoadingAdapter } from '@urk/adapters/dom';
-import { UrkNextProvider, useRuntimePhase } from '@urk/next-urk';
+import { UrkNextProvider, useRuntimePhase } from '@urk/next';
 
 function createAppKernel() {
   return createKernel({
@@ -452,7 +452,7 @@ export function App() {
       },
     ],
     relatedDocs: [
-      { title: '@urk/next-urk reference', href: '/docs/reference/next-urk/' },
+      { title: '@urk/next reference', href: '/docs/reference/next-urk/' },
       { title: 'Integration wrappers', href: '/docs/concepts/integration-wrappers/' },
       { title: 'Use URK with Next.js', href: '/docs/guides/next-later/' },
     ],

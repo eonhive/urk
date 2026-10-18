@@ -24,8 +24,8 @@ const fixtures = [
   { name: 'core', exports: ["export { createKernel } from '@urk/core';"] },
   { name: 'dom', exports: ["export { createKernel } from '@urk/core';", "export * from '@urk/adapters/dom';"] },
   { name: 'three', exports: ["export { createKernel } from '@urk/core';", "export * from '@urk/adapters/three';"], three: true },
-  { name: 'react', exports: ["export { createKernel } from '@urk/core';", "export * from '@urk/react-urk';"], external: ['react', 'react-dom'] },
-  { name: 'next', exports: ["export { createKernel } from '@urk/core';", "export * from '@urk/next-urk';"], external: ['react', 'react-dom', 'next'] },
+  { name: 'react', exports: ["export { createKernel } from '@urk/core';", "export * from '@urk/react';"], external: ['react', 'react-dom'] },
+  { name: 'next', exports: ["export { createKernel } from '@urk/core';", "export * from '@urk/next';"], external: ['react', 'react-dom', 'next'] },
 ];
 
 await mkdir(output, { recursive: true });

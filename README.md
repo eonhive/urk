@@ -24,15 +24,16 @@ Open `http://127.0.0.1:5173/v02/` or `/v02/react.html`. The Next host is `/v02`,
 ## URK v0.2
 
 - `@urk/core` provides `Kernel`, `createKernel`, explicit runtime phases, registries, service lookup, the event bus, the scheduler abstraction, and the runtime inspector.
-- `@urk/adapters` provides the reference `audio`, `pointer`, `input`, `storage`, `loading`, `three`, and `ui-widgets` adapters.
+- `@urk/adapters` provides the reference `audio`, `motion`, `pointer`, `input`, `storage`, `loading`, `three`, and `ui-overlay` adapters (`ui-widgets` remains compatible).
 - `@urk/adapters/dom` provides the dependency-light DOM-only adapter surface.
-- `@urk/react-urk` provides the thin React provider and hooks for consuming an existing kernel instance.
-- `@urk/next-urk` provides the thin Next App Router client-boundary wrapper on top of `@urk/react-urk`.
+- `@urk/react` provides the thin React provider and hooks for consuming an existing kernel instance.
+- `@urk/next` provides the thin Next App Router client-boundary wrapper on top of `@urk/react`.
+- `@urk/react-urk` and `@urk/next-urk` remain forwarding packages for legacy imports in v0.2; see [migration notes](docs/MIGRATION_V02.md).
 - `@urk/examples` provides internal, unstable runtime examples consumed by the public website.
 - `@urk/cli` provides early developer tooling for URK projects and proofs.
 - `apps/www` provides the public Astro/Starlight website, docs, package pages, example pages, and runtime demo shells.
 - `examples/` provides the repo-only proof workspace with one folder per proof.
-- `apps/next-proof` provides the standalone Next proof app for validating `@urk/next-urk` in a real App Router runtime.
+- `apps/next-proof` provides the standalone Next proof app for validating `@urk/next` in a real App Router runtime.
 
 ## Quick start
 
@@ -98,7 +99,7 @@ import {
   createInputAdapter,
   createLoadingAdapter,
   createPointerAdapter,
-  createUiWidgetsAdapter,
+  createUiOverlayAdapter,
 } from '@urk/adapters/dom';
 
 const kernel = createKernel({
@@ -109,7 +110,7 @@ const kernel = createKernel({
     createPointerAdapter(),
     createInputAdapter(),
     createLoadingAdapter(),
-    createUiWidgetsAdapter(),
+    createUiOverlayAdapter(),
   ],
 });
 
@@ -139,8 +140,11 @@ urk/
     adapters/
     examples/
     cli/
-    react-urk/
-    next-urk/
+    react/
+    next/
+    compat/
+      react-urk/
+      next-urk/
 ```
 
 `apps/www` is the public website shell. Content-first pages use Astro/Starlight; runtime-first surfaces use URK examples imported from `packages/examples`.
@@ -171,6 +175,7 @@ See [packages/cli/README.md](./packages/cli/README.md) for the full command refe
 - `docs/PUBLIC_SITE_PLAN.md`
 - `docs/DOCUMENTATION_IA.md`
 - `docs/UI_UX_SYSTEM.md`
+- `docs/RUNTIME_UI_UX_SYSTEM.md`
 - `docs/DEPLOYMENT.md`
 
 `docs/07_URK/` remains draft and reference material. The top-level docs above are the canonical entry points.

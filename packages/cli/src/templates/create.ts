@@ -14,6 +14,7 @@ export type CreateProjectTemplateOptions = {
   name: string;
   packageManager?: string;
   dependencyVersions: {
+    cli: string;
     core: string;
     adapters: string;
     typescript: string;
@@ -48,12 +49,14 @@ export function createProjectTemplate(
       dev: 'vite',
       build: 'tsc --noEmit && vite build',
       preview: 'vite preview',
+      export: 'urk export',
     },
     dependencies: {
       '@urk/core': options.dependencyVersions.core,
       '@urk/adapters': options.dependencyVersions.adapters,
     },
     devDependencies: {
+      '@urk/cli': options.dependencyVersions.cli,
       typescript: options.dependencyVersions.typescript,
       vite: options.dependencyVersions.vite,
     },
@@ -83,6 +86,48 @@ corepack enable
 yarn install
 yarn dev
 \`\`\`
+
+## Build, embed, and package
+
+Run \`yarn build\` to typecheck and create \`dist/index.html\`, bundled code/styles,
+and public assets. Vite uses a relative base, so this directory works at a static
+host's root or under a subdirectory. Upload the whole directory; visitors need
+only a browser. You do not need an extra export step.
+
+\`\`\`bash
+yarn build
+python3 -m http.server 8080 --directory dist
+\`\`\`
+
+Embed its hosted URL in any HTML page:
+
+\`\`\`html
+<iframe title="${title}" src="https://your-host.example/experiences/my-app/"
+  sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
+  style="display:block;width:100%;height:85vh;border:0"></iframe>
+\`\`\`
+
+Keep the embedding page on a different origin (hostname or port), and use trusted
+experiences only. To generate a host with optional Player controls, or distribute
+the compiled application as a single ZIP-compatible file:
+
+\`\`\`bash
+yarn urk embed http://127.0.0.1:8080/ --out-dir ../embed --title "${title}" --fullscreen
+yarn urk pack dist --out ../experience.urkpkg --name "${title}" --type app
+yarn urk inspect ../experience.urkpkg
+yarn urk unpack ../experience.urkpkg --out-dir ../site
+\`\`\`
+
+Serve \`../embed\` on another port, such as 8081. To play the package, serve the
+extracted \`../site\` on port 8080 instead of \`dist\`; the same embed continues to
+work. The browser loads extracted HTML, not the ZIP archive. Select absent/empty
+embed and unpack destinations, or a new path when repeating these commands.
+
+Import images and CSS assets through Vite, or put files in \`public/\` and load them
+relative to the document as this starter does. Arbitrary root-relative runtime
+URLs, remote resources, and backend services remain application concerns.
+The existing \`yarn export\` command remains optional for staged output replacement;
+it is not required for the create → build → embed → package → play workflow.
 
 ## Files
 
@@ -123,7 +168,7 @@ yarn dev
 
 import { defineConfig } from 'vite';
 
-export default defineConfig({});
+export default defineConfig({ base: './' });
 `,
     'index.html': `<!--
   Company: EonHive Inc.

@@ -85,8 +85,8 @@ Reference
   @urk/core
   @urk/adapters
   @urk/examples
-  @urk/react-urk
-  @urk/next-urk
+  @urk/react
+  @urk/next
   CLI commands
   Runtime types
   Adapter contract types
@@ -172,8 +172,8 @@ Project
 | @urk/core | Package reference for the kernel. | Find current kernel exports and boundaries. | Runtime kernel. | Responsibilities; exports; lifecycle; state; events; unstable notes. | Bootstrap snippets. | None. | Starting with reference before concepts. | Runtime types; Boundary. |
 | @urk/adapters | Package reference for adapters. | Find current adapter capabilities. | Adapter contracts. | Current adapters; contracts; browser assumptions; status. | Adapter import/registration snippets. | None. | Assuming every adapter is stable. | Adapter contract types; Create an adapter. |
 | @urk/examples | Reference for website-consumed examples. | Understand the internal example catalog. | Build a minimal runtime example. | Catalog; metadata; mount contract; private/internal warning. | `mount(host) => teardown` snippet. | Current examples index. | Treating `@urk/examples` as a stable public API too early. | Examples index. |
-| @urk/react-urk | Package reference for the React wrapper. | Understand the publishable experimental React boundary. | Integration wrappers. | Provider; hooks; auto-boot; event subscription; no React-owned runtime. | Current provider and hook snippet. | None. | Starting URK architecture from React. | @urk/core; Use URK with React. |
-| @urk/next-urk | Package reference for the Next.js wrapper. | Understand the publishable experimental Next.js client boundary. | @urk/react-urk. | Client boundary; `UrkNextProvider`; `useClientKernel`; React re-exports. | Current client-boundary snippet. | None. | Running browser runtime on the server. | @urk/react-urk; Use URK with Next.js. |
+| @urk/react | Package reference for the React wrapper. | Understand the publishable experimental React boundary. | Integration wrappers. | Provider; hooks; auto-boot; event subscription; no React-owned runtime. | Current provider and hook snippet. | None. | Starting URK architecture from React. | @urk/core; Use URK with React. |
+| @urk/next | Package reference for the Next.js wrapper. | Understand the publishable experimental Next.js client boundary. | @urk/react. | Client boundary; `UrkNextProvider`; `useClientKernel`; React re-exports. | Current client-boundary snippet. | None. | Running browser runtime on the server. | @urk/react; Use URK with Next.js. |
 | CLI commands | Command-Line Interface reference. | Find current commands and status. | Installation. | Current commands; flags; outputs; planned commands. | `urk create`, `urk check`, `urk inspect` snippets only if shipped. | None. | Documenting planned commands as shipped. | Contributing; @urk/core. |
 | Runtime types | Type reference for runtime objects. | Understand runtime type vocabulary. | Runtime context; Explicit runtime state. | Context; snapshot; lifecycle; scheduler; inspector. | Type usage snippets. | None. | Depending on unstable internal shapes without notes. | @urk/core; Error types. |
 | Adapter contract types | Type reference for adapters. | Author adapters against correct contracts. | Adapter contracts. | Capability contracts; lifecycle; optional/required lookup; errors. | Typed adapter sketch. | None. | Leaking implementation-specific types into contracts. | @urk/adapters; Create an adapter. |

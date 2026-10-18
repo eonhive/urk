@@ -30,6 +30,8 @@ type InspectedSourceFile = {
 type UrkPackageName =
   | '@urk/core'
   | '@urk/adapters'
+  | '@urk/react'
+  | '@urk/next'
   | '@urk/react-urk'
   | '@urk/next-urk';
 
@@ -40,9 +42,10 @@ type AdapterDetection = {
 
 const HELP_TEXT = `Usage:
   urk inspect
+  urk inspect <package.urkpkg>
 
 Notes:
-  Static project inspection only.
+  With no argument, inspect the current project. With a package, validate and report its metadata.
   This command does not connect to a browser runtime.
   Live runtime state requires browser runtime integration.
 `;
@@ -62,6 +65,8 @@ const SKIPPED_DIRECTORIES = new Set([
 const URK_PACKAGES: readonly UrkPackageName[] = [
   '@urk/core',
   '@urk/adapters',
+  '@urk/react',
+  '@urk/next',
   '@urk/react-urk',
   '@urk/next-urk',
 ];
@@ -71,6 +76,7 @@ const ADAPTER_DETECTIONS: readonly AdapterDetection[] = [
   { label: 'loading', pattern: /\bcreateLoadingAdapter\b/ },
   { label: 'storage', pattern: /\bcreateStorageAdapter\b/ },
   { label: 'ui-widgets', pattern: /\bcreateUiWidgetsAdapter\b/ },
+  { label: 'ui-overlay', pattern: /\bcreateUiOverlayAdapter\b/ },
 ];
 
 function printHelp(): void {
@@ -240,7 +246,19 @@ export async function runInspectCommand(args: string[]): Promise<number> {
       return 0;
     }
 
-    error('Usage: urk inspect.');
+    if (args.length === 1 && !args[0].startsWith('-') && args[0].endsWith('.urkpkg')) {
+      const { inspectPackage } = await import('../utils/portable-package.js');
+      const report = await inspectPackage(args[0]);
+      process.stdout.write('URK Package Inspection\n\n');
+      for (const [key, value] of Object.entries(report.manifest)) printKeyValue(key, String(value));
+      printKeyValue('files', String(report.files));
+      printKeyValue('archive bytes', String(report.compressed));
+      printKeyValue('expanded bytes', String(report.expanded));
+      process.stdout.write('\nValidated ZIP contents and checksums; no files extracted or code executed.\n');
+      return 0;
+    }
+
+    error('Usage: urk inspect [package.urkpkg].');
     printHelp();
     return 1;
   }

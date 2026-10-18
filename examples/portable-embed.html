@@ -1,0 +1,28 @@
+<!--
+  Company: EonHive Inc. | Title: Portable Experience Embed
+  Purpose: Embed the exported Picking proof in an ordinary, independently hosted HTML page.
+  Author: Stan Nesi | Created: 2026-10-16 | Updated: 2026-10-16
+  Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>A website with a uRK experience</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: clamp(12px, 3vw, 32px); background: #f4f7fb; color: #0f172a; font-family: system-ui, sans-serif; }
+      main { max-width: 1200px; margin: auto; }
+      iframe { display: block; width: 100%; height: 85vh; border: 1px solid #cbd5e1; border-radius: 12px; background: white; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>An interactive experience on an ordinary website</h1>
+      <p>Click inside the experience to interact. Scroll within it to reach its scene and controls.</p>
+      <!-- Replace src with your exported experience's hosted URL. This page needs no JavaScript. -->
+      <iframe title="uRK Picking experience" src="http://127.0.0.1:8080/"></iframe>
+    </main>
+  </body>
+</html>

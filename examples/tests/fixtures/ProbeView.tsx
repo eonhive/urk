@@ -9,7 +9,7 @@
  */
 
 import { useLayoutEffect } from 'react';
-import { useKernel, useRuntimeInspectorSnapshot, useRuntimeSnapshot } from '@urk/react-urk';
+import { useKernel, useRuntimeInspectorSnapshot, useRuntimeSnapshot } from '@urk/react';
 import { commitProbe, getProbe } from './runtime';
 
 export function ProbeView() {

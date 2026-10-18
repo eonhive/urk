@@ -1,0 +1,8 @@
+<!-- Company: EonHive Inc. | Title: Desktop Experience Host
+     Purpose: Reuse the Web Player in web contents with no preload or native bridge.
+     Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-17
+     Notes: Vibe coded with Codex. -->
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>uRK Experience</title>
+<style>html,body { margin:0; height:100%; } urk-player { height:100%; min-height:0; border:0; border-radius:0; } urk-player::part(controls),urk-player::part(status) { display:none; }</style>
+</head><body><urk-player fullscreen></urk-player><script type="module" src="./host.js"></script></body></html>

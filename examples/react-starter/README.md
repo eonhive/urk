@@ -8,7 +8,7 @@ This proof shows the intended React integration shape: create a kernel once, han
 
 - `@urk/core`
 - `@urk/adapters/dom`
-- `@urk/react-urk`
+- `@urk/react`
 
 ## Files
 

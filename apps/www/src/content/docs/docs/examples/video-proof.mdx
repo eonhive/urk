@@ -1,0 +1,57 @@
+---
+title: Video Proof
+description: Independent native video playback, captions, local files, and cleanup through URK.
+---
+
+[Open Video Proof](/examples/video-proof/) to try two independent players. Each
+starts silently with the original Orbit sample. Press Play, seek, change speed,
+enable captions, or select a local video and WebVTT file. Selected files remain
+on your device. Players load when visible or when you press Play, pause offscreen,
+and remain paused when you return.
+
+```ts
+import { createKernel } from '@urk/core';
+import { createVideoAdapter, VideoCapability } from '@urk/adapters/video';
+
+const kernel = createKernel({
+  frameMode: 'auto',
+  adapters: [createVideoAdapter()],
+  controllers: [{
+    id: 'intro',
+    start(ctx) {
+      const video = document.querySelector('video')!;
+      const player = ctx.require(VideoCapability).register({ id: 'intro', element: video });
+      ctx.scope.defer(() => ctx.require(VideoCapability).unregister(player.id));
+      document.querySelector('button')!.addEventListener('click', () => {
+        void player.play().catch(error => console.warn('Playback unavailable', error));
+      }, { signal: ctx.signal });
+    },
+  }],
+});
+await kernel.boot();
+// When the host leaves: await kernel.shutdown();
+```
+
+The application owns the video node, source, and captions. Borrowed registration
+preserves them after unregister. Omit `element` to create an owned element, or
+explicitly transfer ownership with `ownership: 'owned'`.
+
+The proof's Pause experience action pauses both players explicitly. Resume only
+restores controls; playback requires another click. The registration opts into
+`visibility: { loadWhenVisible: true, pauseWhenOffscreen: true, pauseWhenHidden: true }`
+with the player card as its target. Hiding the document also pauses media. These
+are optional media policies, not new kernel semantics. Nothing
+automatically moves or plays, including for users who prefer reduced motion.
+
+Dispose cancels pending playback, releases subscriptions and local object URLs,
+and removes the player surfaces. Start fresh creates a new kernel. Diagnostics
+uses the existing inspector and is off by default. **Show diagnostics** displays
+each player's status, media time, captions, and errors alongside lifecycle,
+kernel frames, and up to eight recent event labels. Closing releases observation;
+events during closed intervals are not collected. The same private panel serves
+Interactive Media and Experience Showcase. The kernel's frame loop stays idle
+because native media events drive the controls.
+
+Media time is sampled from native events, not a frame-accurate clock. Codec,
+autoplay, caption, and volume support depends on the browser. Video errors stay
+local to the player; the rest of the experience remains usable.

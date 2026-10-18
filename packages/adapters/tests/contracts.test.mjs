@@ -4,7 +4,7 @@
  * Purpose: Verify shared entrypoint identities, inert factories, typed lookup, and custom aliases.
  * Author: Stan Nesi
  * Created: 2026-10-07
- * Updated: 2026-10-07
+ * Updated: 2026-10-12
  * Notes: Vibe coded with Codex.
  */
 
@@ -15,9 +15,44 @@ import * as root from '@urk/adapters';
 import * as dom from '@urk/adapters/dom';
 
 const adapters = [
-  ['audio', 'Audio'], ['input', 'Input'], ['loading', 'Loading'], ['pointer', 'Pointer'],
+  ['motion', 'Motion'],
+  ['video', 'Video'], ['audio', 'Audio'], ['input', 'Input'], ['loading', 'Loading'], ['pointer', 'Pointer'],
   ['storage', 'Storage'], ['three', 'Three'], ['ui-widgets', 'UiWidgets'],
 ];
+
+test('UI overlay aliases retain the legacy factory, token, and registration identity', async () => {
+  const overlay = await import('@urk/adapters/ui-overlay');
+  const widgets = await import('@urk/adapters/ui-widgets');
+  for (const exports of [overlay, root, dom]) {
+    assert.equal(exports.createUiOverlayAdapter, widgets.createUiWidgetsAdapter);
+    assert.equal(exports.UiOverlayCapability, widgets.UiWidgetsCapability);
+    assert.equal(exports.createUiWidgetsAdapter, widgets.createUiWidgetsAdapter);
+    assert.equal(exports.UiWidgetsCapability, widgets.UiWidgetsCapability);
+  }
+  const registration = overlay.createUiOverlayAdapter();
+  assert.equal(registration.id, 'ui-widgets-adapter');
+  assert.equal(registration.capability, 'ui-widgets');
+  assert.equal(registration.token, widgets.UiWidgetsCapability);
+  assert.equal(overlay.createUiOverlayAdapter('custom-overlay').id, 'custom-overlay');
+
+  const registry = new AdapterRegistry();
+  const ctx = { id: 'overlay-alias', adapters: registry, signal: new AbortController().signal };
+  const api = {};
+  await registry.register({ ...registration, setup: () => api }, ctx);
+  try {
+    assert.equal(registry.require(overlay.UiOverlayCapability), api);
+    assert.equal(registry.require(widgets.UiWidgetsCapability), api);
+    assert.equal(registry.require('ui-widgets'), api);
+    assert.equal(registry.require('ui-widgets-adapter'), api);
+    await assert.rejects(registry.register({
+      ...widgets.createUiWidgetsAdapter('second'), capability: 'second-overlay',
+      setup() { throw new Error('Duplicate setup must not run'); },
+    }, ctx), /Adapter token already registered: ui-widgets/);
+  } finally {
+    await registry.disposeAll(ctx);
+  }
+  assert.equal(registry.get(overlay.UiOverlayCapability), undefined);
+});
 
 function storageBackend() {
   const values = new Map();
@@ -40,7 +75,7 @@ test('root, DOM, and independent imports share the same canonical contracts and 
     assert.equal(Object.isFrozen(leaf[capability]), true);
     assert.equal(leaf[capability].name, path);
     assert.equal(leaf[factory]().token, leaf[capability]);
-    if (path !== 'three' && path !== 'audio') {
+    if (path !== 'three' && path !== 'audio' && path !== 'video') {
       assert.equal(dom[capability], leaf[capability]);
       assert.equal(dom[factory], leaf[factory]);
     }

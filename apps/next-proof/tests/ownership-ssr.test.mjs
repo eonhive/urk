@@ -13,7 +13,7 @@ import test from 'node:test';
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { createKernel, ManualFrameScheduler } from '@urk/core';
-import { UrkNextProvider, useRuntimePhase, useRuntimeInspectorSnapshot } from '@urk/next-urk';
+import { UrkNextProvider, useRuntimePhase, useRuntimeInspectorSnapshot } from '@urk/next';
 
 test('Next provider server renders with no startup, scheduling, or diagnostics subscriptions', async () => {
   const kernels = [];

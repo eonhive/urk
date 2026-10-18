@@ -1,42 +1,59 @@
 ---
 title: Audio Lab
-description: Play real audio and explore how URK coordinates browser media and runtime lifecycle.
+description: One audio source drives real waveform, spectrum, frequency meters, and a reactive Three scene.
 ---
 
 {/*
   Company: EonHive Inc.
   Title: Public Audio Lab Guide
-  Purpose: Explain the audio proof migration, controls, and lifecycle boundaries.
+  Purpose: Explain shared audio analysis, reactive visuals, and lifecycle ownership.
   Author: Stan Nesi
   Created: 2026-09-21
-  Updated: 2026-09-21
+  Updated: 2026-10-17
   Notes: Vibe coded with Codex.
 */}
 
-Status: current.
-
-[Open Audio Lab](/examples/audio-proof/). This is the public adaptation of the original `examples/audio-proof/` integration proof.
+[Open Audio Lab](/examples/audio-proof/). The website and standalone analysis proof
+mount the same implementation from the private `@urk/examples/audio-proof` entrypoint.
 
 ## Try it
 
-1. Choose Ambient bed, Pulse cue, or Confirmation to play a real WAV track. Sound never starts automatically.
-2. Adjust Volume or Mute. Pause track holds its position; Stop rewinds it.
-3. Pause the runtime using the controls below the deck. Audio pauses too. Resume the runtime, then press Play to continue listening.
-4. Shutdown releases the audio adapter. Reset / restart creates a fresh kernel and deck state.
-5. Inspect the runtime panels below for `audio:changed` and `audio-demo:*` events.
+1. Press **Play** for the original three-band study. Watch waveform, spectrum,
+   RMS level, and bass/mids/treble meters respond to the same sound.
+2. Bass scales the Three sculpture, mids change its color, and treble changes
+   satellite size. Choose **Orbit** or **Row** for a finite layout transition.
+3. Change the source, volume, FFT size, or smoothing. Pause holds the audio
+   position; Stop rewinds it; Restart plays from the beginning.
+4. Disable analysis to keep playback with zeroed measurements. Re-enable it to
+   resume the visual response. Reduced motion holds reactive geometry still.
+5. Pause the runtime, then resume and press Play. Hidden tabs also pause audio.
+   Returning never starts sound automatically.
+6. **Shut down** releases the experience. **Start fresh** creates another kernel.
+   Open diagnostics to inspect the existing runtime, audio state, and recent events.
 
-All controls are native buttons or a labeled slider and support keyboard interaction. The record animation indicates playback state; it is not a waveform or spectrum analyzer. Reduced-motion preferences disable the rotation.
+If WebGL is unavailable, audio, plots, and meters remain usable. If Web Audio
+analysis is unavailable, disable analysis to use ordinary playback.
 
 ## How URK is used
 
-`packages/examples/src/audio-proof/mount.ts` creates a kernel with `createAudioAdapter()` from `@urk/adapters` and `createLoadingAdapter()` from `@urk/adapters/dom`. The controller registers three tracks, resolves the audio capability, and coordinates media state with runtime pause and disposal. Tracks load on demand when played; loading status and playback errors appear on the deck.
+`AudioCapability` owns transport and optional analysis. The controller reads one
+borrowed snapshot per temporary runtime frame and passes it to Canvas and Three.
+Sample arrays stay out of the event bus. Continuous audio reactions assign visual
+properties directly; discrete layout transitions use `MotionCapability` tweens.
+The existing Three adapter owns its renderer, and the scene scope owns geometry,
+materials, and subscriptions. The host owns navigation and the mount lifetime.
 
-The Astro component owns the static HTML, styling, and track asset URLs. `view.ts` updates those elements from adapter snapshots. The existing runtime panel helper handles diagnostics and reset/teardown wiring.
+Defaults are FFT 2048, smoothing 0.8, bass 20–250 Hz, mids 250–2000 Hz, and treble
+2000–20000 Hz (clipped at Nyquist). Level is normalized RMS amplitude; frequency
+values are normalized spectrum magnitudes. These are not beat detection or
+perceptual loudness measurements.
 
 ## Source and scope
 
-- [Public runtime source](https://github.com/eonhive/urk/tree/main/packages/examples/src/audio-proof)
-- [Original local proof](https://github.com/eonhive/urk/tree/main/examples/audio-proof)
-- [Adapter reference](/docs/reference/adapters/)
+- [Shared implementation](https://github.com/eonhive/urk/tree/main/packages/examples/src/audio-proof)
+- [Standalone host](https://github.com/eonhive/urk/tree/main/examples/audio-proof)
+- [Audio adapter](https://github.com/eonhive/urk/tree/main/packages/adapters/src/audio)
 
-The original proof still runs with `corepack yarn dev:examples` at `/audio-proof/`; it covers the broader pointer/input/widget integration. The website adaptation reuses its three WAV assets, served locally from `/audio/`, and focuses on audio transport and lifecycle. It adds no mixer or Web Audio analysis API. Private `@urk/examples` remains an internal website workspace.
+The original `/audio-proof/` remains the broader pointer/input/loading proof.
+The shared analysis route is `/audio-proof/analysis.html` in the local examples
+server. No new public package, media editor, BPM estimator, or DSP framework is added.

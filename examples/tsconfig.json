@@ -8,8 +8,14 @@
     ]
   },
   "include": [
+    "motion-playground/**/*.ts",
+    "audio-proof/analysis.ts",
+    "selection-details/**/*.ts",
     "v02/**/*.ts",
-    "v02/**/*.tsx"
+    "v02/**/*.tsx",
+    "video-proof/**/*.ts",
+    "interactive-media/**/*.ts",
+    "experience-showcase/**/*.ts"
   ],
   "exclude": [
     "dist",

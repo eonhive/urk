@@ -303,5 +303,5 @@ test('controller event subscriptions are released by shutdown', async ({ page })
       return { running, disposed: subscriptions, surfaces: host.children.length };
     } finally { await kernel.shutdown(); host.remove(); }
   }, moduleUrl);
-  expect(counts).toEqual({ running: 2, disposed: 0, surfaces: 0 });
+  expect(counts).toEqual({ running: 7, disposed: 0, surfaces: 0 });
 });
