@@ -1,0 +1,39 @@
+/*
+ * Company: EonHive Inc. | Title: Motion Playground Styles
+ * Purpose: Present the motion proof with readable controls and a responsive scene.
+ * Author: Stan Nesi | Created: 2026-10-16 | Updated: 2026-10-16
+ * Notes: Vibe coded with Codex.
+ */
+:root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; background: #08111e; color: #e5eefb; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1100px; margin: auto; padding: 40px 24px; }
+a { color: #75e2ee; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.7rem); letter-spacing: -.05em; line-height: 1.1; margin: 12px 0; }
+h2 { font-size: 1.05rem; margin: 0 0 16px; }
+.eyebrow { margin-top: 40px; color: #75e2ee; font: .75rem/1.5 monospace; letter-spacing: .15em; }
+.intro { color: #b2c2d9; max-width: 620px; margin-bottom: 32px; }
+.workspace { display: grid; grid-template-columns: 1.5fr 1fr; border: 1px solid #30415a; border-radius: 20px; overflow: hidden; }
+.scene-wrap { min-width: 0; position: relative; background: radial-gradient(ellipse at 50% 45%, #243550, #0b1626 70%); }
+#scene { width: 100%; height: 100%; min-height: 440px; }
+#scene canvas { display: block; }
+#caption { position: absolute; top: 20px; left: 24px; right: 24px; color: #c5d4e9; pointer-events: none; }
+.axis { position: absolute; bottom: 24px; inset-inline: 28px; display: flex; justify-content: space-between; border-top: 1px solid #40516b; padding-top: 10px; font: .8rem monospace; color: #a7bbd7; }
+.controls { background: #101e30; padding: 24px; }
+.row { display: flex; gap: 10px; margin-block: 12px; }
+button, select { font: inherit; padding: 10px 12px; min-height: 44px; border: 1px solid #47607f; border-radius: 8px; background: #172b43; color: inherit; }
+button { cursor: pointer; flex: 1; }
+button:hover:not(:disabled) { background: #24405f; }
+button:disabled { opacity: .45; cursor: default; }
+#left, #right { background: #76dfeb; color: #071724; border-color: #76dfeb; font-weight: 650; }
+label { display: flex; justify-content: space-between; margin-top: 16px; }
+input[type="range"], select { width: 100%; accent-color: #76dfeb; }
+input[type="range"] { min-height: 32px; }
+.check { justify-content: flex-start; align-items: center; gap: 8px; }
+.check input { width: 18px; height: 18px; accent-color: #76dfeb; }
+:focus-visible { outline: 3px solid #b3a4ff; outline-offset: 3px; }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 28px; }
+dt, .hint { color: #a7bbd7; font-size: .85rem; }
+dd { margin: 6px 0 0; font: 1.1rem monospace; }
+#result { min-height: 24px; color: #87e5d1; }
+@media (max-width: 720px) { main { padding: 24px 16px; } .workspace { grid-template-columns: 1fr; } #scene { min-height: 280px; height: 280px; } .metrics { grid-template-columns: 1fr 1fr; } }

@@ -149,6 +149,14 @@ function upsertAdapter(
   content: string,
   adapter: SupportedAdapterDefinition,
 ): UpdateResult {
+  // Both overlay names register the same token, so adding its alias would conflict.
+  if (
+    (adapter.name === 'ui-overlay' || adapter.name === 'ui-widgets') &&
+    /\bcreateUi(?:Overlay|Widgets)Adapter\s*\(/.test(content)
+  ) {
+    return { status: 'unchanged', content };
+  }
+
   const importUpdate = updateDomImport(content, adapter);
 
   if (importUpdate.status === 'unsupported') {

@@ -1,8 +1,8 @@
 # @urk/adapters
 
-Contract-first capability adapters that prove URK's v0 kernel surface.
+Contract-first capability adapters for URK's runtime kernel.
 
-The root `@urk/adapters` entrypoint exports every reference adapter, including
+The root `@urk/adapters` entrypoint exports the base reference adapters, including
 the Three scene adapter. Import individual adapters to avoid loading unrelated
 implementations, or retain `@urk/adapters/dom` for the existing DOM composite.
 
@@ -21,23 +21,38 @@ supported, but migrated built-ins no longer duplicate scoped cleanup in a dispos
 
 | Import | Factory | Canonical token |
 | --- | --- | --- |
+| `@urk/adapters/motion` | `createMotionAdapter` | `MotionCapability` |
+| `@urk/adapters/video` | `createVideoAdapter` | `VideoCapability` |
 | `@urk/adapters/audio` | `createAudioAdapter` | `AudioCapability` |
+| `@urk/adapters/audio/mixer` | `createAudioMixerAdapter` | `AudioMixerCapability` |
 | `@urk/adapters/input` | `createInputAdapter` | `InputCapability` |
 | `@urk/adapters/loading` | `createLoadingAdapter` | `LoadingCapability` |
 | `@urk/adapters/pointer` | `createPointerAdapter` | `PointerCapability` |
 | `@urk/adapters/storage` | `createStorageAdapter` | `StorageCapability` |
 | `@urk/adapters/three` | `createThreeAdapter` | `ThreeCapability` |
+| `@urk/adapters/ui-overlay` | `createUiOverlayAdapter` | `UiOverlayCapability` |
 | `@urk/adapters/ui-widgets` | `createUiWidgetsAdapter` | `UiWidgetsCapability` |
+
+Prefer `ui-overlay` for status, callouts, and owned nonmodal panels. `ui-widgets` remains a
+compatibility path: both factories and tokens are identical objects, also shared
+by root/DOM exports. `UiOverlayAdapterApi` and `UiOverlayCallout` alias the existing
+types. Default ID `ui-widgets-adapter`, string capability `ui-widgets`, and token
+label remain stable; the new name does not add a string lookup alias. Register
+only one of the two factories. This is a small DOM overlay, independent of the
+Three.js adapter, with no generic UI or rendering framework.
+
+The optional audio mixer is available only through `@urk/adapters/audio/mixer`, keeping
+its grouping/fade layer out of base imports. See [audio usage](src/audio/README.md).
 
 Each entrypoint exports its existing API types and one canonical token. Factories
 bind that token alongside their existing ID and string capability. Root, DOM,
 and individual re-exports of the same adapter share its token identity.
 
-The six non-Three entrypoints and the DOM composite work without `three` or
+The non-Three entrypoints and the DOM composite work without `three` or
 `@types/three` installed. The root and `three` entrypoints still require the
 optional Three.js peer; TypeScript consumers of those entrypoints also need
 `@types/three`. The DOM composite retains loading, input, pointer, storage,
-and UI widgets; audio is available through its own entrypoint or the root.
+UI overlays, and motion; audio and video are available through their own entrypoints or the root.
 
 Module imports and factory calls acquire no browser resources. Factories retain
 their signatures and return inert registrations; setup/API calls acquire resources
@@ -77,13 +92,18 @@ Token-free custom registrations and generic string lookups remain supported.
 
 ## Reference adapters
 
-- `createAudioAdapter()` - manage browser-native audio transport across a small set of registered tracks
+- `createMotionAdapter()` - scoped finite DOM animations and numeric tweens with playback handles, cancellation, and reduced motion; see [motion usage](src/motion/README.md)
+- `createVideoAdapter()` - independent native video handles, borrowed ownership, captions, and cancellable playback; see [video usage](src/video/README.md)
+
+- `createAudioAdapter()` - manage browser-native audio transport with optional waveform, spectrum, RMS, and band analysis
 - `createPointerAdapter()` - bind DOM targets or pointer surfaces and emit normalized pointer events
 - `createInputAdapter()` - normalize keyboard input, track pressed keys, and bind simple key handlers
 - `createStorageAdapter()` - provide namespaced local/session key-value persistence with swappable backends
 - `createLoadingAdapter()` - track staged progress with an observable loading snapshot
 - `createThreeAdapter()` - mount a small Three scene surface onto a host element and expose render primitives
-- `createUiWidgetsAdapter()` - mount a small overlay shell with status and callout surfaces
+- `createUiOverlayAdapter()` - mount status, callouts, and managed nonmodal panels (`createUiWidgetsAdapter` remains compatible).
+
+See the [UI Overlay usage and cleanup contract](src/ui-widgets/README.md).
 
 Each adapter now lives in its own source folder under `src/<adapter>/` with a local `README.md`
 that documents:
@@ -103,7 +123,7 @@ import {
   createPointerAdapter,
   createStorageAdapter,
   createThreeAdapter,
-  createUiWidgetsAdapter,
+  createUiOverlayAdapter,
 } from '@urk/adapters';
 
 const kernel = createKernel({
@@ -117,7 +137,7 @@ const kernel = createKernel({
     createInputAdapter(),
     createStorageAdapter({ namespace: 'demo' }),
     createThreeAdapter(),
-    createUiWidgetsAdapter(),
+    createUiOverlayAdapter(),
   ],
 });
 
@@ -134,7 +154,7 @@ import { createKernel } from '@urk/core';
 import {
   createLoadingAdapter,
   createPointerAdapter,
-  createUiWidgetsAdapter,
+  createUiOverlayAdapter,
 } from '@urk/adapters/dom';
 
 const kernel = createKernel({
@@ -144,7 +164,7 @@ const kernel = createKernel({
   adapters: [
     createLoadingAdapter(),
     createPointerAdapter(),
-    createUiWidgetsAdapter(),
+    createUiOverlayAdapter(),
   ],
 });
 

@@ -35,8 +35,9 @@ corepack yarn report:size
 - `packages/adapters` - publishable reference adapters
 - `packages/examples` - private, internal, unstable runtime examples consumed by `apps/www`
 - `packages/cli` - publishable developer tooling with the `urk` bin
-- `packages/react-urk` - publishable React wrapper
-- `packages/next-urk` - publishable Next wrapper
+- `packages/react` - publishable React wrapper
+- `packages/next` - publishable Next wrapper
+- `packages/compat/{react-urk,next-urk}` - forwarding packages for published legacy names
 - `apps/www` - public Astro/Starlight website, docs shell, package pages, playground shell, and runtime island presentation
 - `examples` - private proof workspace with one folder per proof
 - `apps/next-proof` - private Next App Router proof app
@@ -89,7 +90,7 @@ corepack yarn build:runtime
 corepack yarn report:size
 ```
 
-The report is written as JSON and Markdown under `.codex/validation/bundle-report/`. CI adds the Markdown to its run summary. It measures all five publishable npm archives and five representative browser fixtures: core, DOM, Three, React, and Next. Each fixture imports built public exports. Core is included in each browser case; Three is bundled only in the Three case; framework peers are external in the wrapper cases. These are library measurements, not complete application download sizes.
+The report is written as JSON and Markdown under `.codex/validation/bundle-report/`. CI adds the Markdown to its run summary. It measures all publishable npm archives, including the two compatibility packages, and five representative browser fixtures: core, DOM, Three, React, and Next. Each fixture imports built public exports. Core is included in each browser case; Three is bundled only in the Three case; framework peers are external in the wrapper cases. These are library measurements, not complete application download sizes.
 
 The report records compressed/uncompressed package bytes, minified/gzip/Brotli bundle bytes, hashes, external imports, tool versions, lockfile hash, and repository state. It rejects unintended Three inclusion in the other fixtures, unexpected external imports, source aliases, and empty export fixtures. Temporary tarballs and fixture files are removed. It reports a baseline without inventing a size budget; see [Performance](docs/PERFORMANCE.md).
 

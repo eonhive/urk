@@ -4,7 +4,7 @@
  * Purpose: Describe the public examples index while reusing real metadata from the URK examples workspace.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-06-06
+ * Updated: 2026-10-12
  * Notes: Vibe coded with Codex.
  */
 
@@ -58,6 +58,10 @@ function formatDifficulty(difficulty: 'intro' | 'intermediate' | 'advanced'): Ex
 }
 
 const visualByExampleId: Record<ExampleId, Pick<ExampleIndexEntry, 'visualLabel' | 'visualTone' | 'visualNodes'>> = {
+  'project-selection': { visualLabel: 'Selection Details', visualTone: 'bridge', visualNodes: ['Select', 'Inspect', 'Feature'] },
+  'experience-showcase': { visualLabel: 'Experience Showcase', visualTone: 'bridge', visualNodes: ['Film', 'Choose', '3D'] },
+  'interactive-media': { visualLabel: 'Interactive Media', visualTone: 'bridge', visualNodes: ['Cue', 'Choose', 'Resume'] },
+  'video-proof': { visualLabel: 'Video Proof', visualTone: 'bridge', visualNodes: ['Play', 'Caption', 'Release'] },
   'audio-proof': {
     visualLabel: 'Audio Lab',
     visualTone: 'audio',

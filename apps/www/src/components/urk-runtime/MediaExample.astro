@@ -1,0 +1,50 @@
+---
+/**
+ * Company: EonHive Inc. | Title: Website Media Example Host
+ * Purpose: Own the shared media experience across connection and page history changes.
+ * Author: Stan Nesi | Created: 2026-10-12 | Updated: 2026-10-12
+ * Notes: Vibe coded with Codex.
+ */
+interface Props { exampleId: 'video-proof' | 'interactive-media' | 'experience-showcase' | 'audio-proof' }
+const { exampleId } = Astro.props;
+---
+<urk-media-example data-example={exampleId}><p>Loading media controls…</p><noscript>Enable JavaScript to use this example.</noscript></urk-media-example>
+<style>urk-media-example { display: block; min-width: 0; }</style>
+<script>
+  import { mountAudioProof } from '@urk/examples/audio-proof';
+  import { mountExperienceShowcase } from '@urk/examples/experience-showcase';
+  import { mountVideoProof } from '@urk/examples/video-proof';
+  import { mountInteractiveMedia } from '@urk/examples/interactive-media';
+
+  class MediaExampleHost extends HTMLElement {
+    private proof?: ReturnType<typeof mountVideoProof>;
+    private cleanup = Promise.resolve();
+    private generation = 0;
+    connectedCallback(): void {
+      window.addEventListener('pagehide', this.stop);
+      window.addEventListener('pageshow', this.start);
+      this.start();
+    }
+    disconnectedCallback(): void {
+      window.removeEventListener('pagehide', this.stop);
+      window.removeEventListener('pageshow', this.start);
+      this.stop();
+    }
+    private start = (): void => {
+      if (this.proof) return;
+      const next = ++this.generation;
+      void this.cleanup.then(() => {
+        if (!this.isConnected || next !== this.generation) return;
+        this.replaceChildren();
+        this.proof = this.dataset.example === 'audio-proof' ? mountAudioProof(this) : this.dataset.example === 'experience-showcase' ? mountExperienceShowcase(this) : this.dataset.example === 'interactive-media' ? mountInteractiveMedia(this) : mountVideoProof(this);
+      }).catch(() => { this.textContent = 'Media example could not start. Reload to try again.'; });
+    };
+    private stop = (): void => {
+      this.generation++;
+      const current = this.proof;
+      this.proof = undefined;
+      if (current) this.cleanup = current.teardown();
+    };
+  }
+  if (!customElements.get('urk-media-example')) customElements.define('urk-media-example', MediaExampleHost);
+</script>

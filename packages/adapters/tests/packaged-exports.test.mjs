@@ -4,7 +4,7 @@
  * Purpose: Verify isolated DOM imports without Three.js and preserve the root/Three peer boundary.
  * Author: Stan Nesi
  * Created: 2026-10-07
- * Updated: 2026-10-07
+ * Updated: 2026-10-12
  * Notes: Vibe coded with Codex.
  */
 
@@ -62,14 +62,21 @@ try {
   }
   const dom = await import('@urk/adapters/dom');
   for (const [path, name] of [
-    ['audio', 'Audio'], ['input', 'Input'], ['loading', 'Loading'], ['pointer', 'Pointer'],
-    ['storage', 'Storage'], ['ui-widgets', 'UiWidgets'],
+    ['motion', 'Motion'],
+    ['video', 'Video'], ['audio', 'Audio'], ['input', 'Input'], ['loading', 'Loading'], ['pointer', 'Pointer'],
+    ['storage', 'Storage'], ['ui-widgets', 'UiWidgets'], ['ui-overlay', 'UiOverlay'],
   ]) {
     const leaf = await import('@urk/adapters/' + path);
     const capability = leaf[name + 'Capability'];
     assert.equal(leaf['create' + name + 'Adapter']().token, capability);
-    if (path !== 'audio') assert.equal(dom[name + 'Capability'], capability);
+    if (path !== 'audio' && path !== 'video') assert.equal(dom[name + 'Capability'], capability);
   }
+  const mixer = await import('@urk/adapters/audio/mixer');
+  assert.equal(mixer.createAudioMixerAdapter({ channels: [{ id: 'bed', group: 'music' }] }).token, mixer.AudioMixerCapability);
+  const overlay = await import('@urk/adapters/ui-overlay');
+  const widgets = await import('@urk/adapters/ui-widgets');
+  assert.equal(overlay.createUiOverlayAdapter, widgets.createUiWidgetsAdapter);
+  assert.equal(overlay.UiOverlayCapability, widgets.UiWidgetsCapability);
 } finally {
   for (const [name, descriptor] of original) {
     if (descriptor) Object.defineProperty(globalThis, name, descriptor);
@@ -77,7 +84,7 @@ try {
   }
 }
 // The legacy root and Three entrypoints intentionally retain their Three peer requirement.
-for (const path of ['@urk/adapters', '@urk/adapters/three']) {
+for (const path of ['@urk/adapters', '@urk/adapters/three', '@urk/adapters/three/video']) {
   await assert.rejects(import(path), error => error.code === 'ERR_MODULE_NOT_FOUND' && /package 'three'/.test(error.message));
 }
 `);
@@ -97,6 +104,8 @@ for (const path of ['@urk/adapters', '@urk/adapters/three']) {
 import assert from 'node:assert/strict';
 import * as root from '@urk/adapters';
 import * as three from '@urk/adapters/three';
+import { createVideoTexture } from '@urk/adapters/three/video';
+assert.equal(typeof createVideoTexture, 'function');
 import * as dom from '@urk/adapters/dom';
 assert.equal(root.ThreeCapability, three.ThreeCapability);
 assert.equal(root.createThreeAdapter, three.createThreeAdapter);

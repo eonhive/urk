@@ -4,10 +4,13 @@
  * Purpose: Expose public metadata and module loading helpers for website-consumed URK examples.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-05-09
+ * Updated: 2026-10-12
  * Notes: Vibe coded with Codex.
  */
 
+import { experienceShowcaseMeta } from './experience-showcase/meta.js';
+import { interactiveMediaMeta } from './interactive-media/meta.js';
+import { videoProofMeta } from './video-proof/meta.js';
 import { minimalRuntimeMeta } from './minimal-runtime/meta.js';
 import { audioProofMeta } from './audio-proof/meta.js';
 import { adapterRegistrationMeta } from './adapter-registration/meta.js';
@@ -15,12 +18,16 @@ import { controllerOrchestrationMeta } from './controller-orchestration/meta.js'
 import { runtimeStateMeta } from './runtime-state/meta.js';
 import { eventRoutingMeta } from './event-routing/meta.js';
 import { sceneUiBridgeMeta } from './scene-ui-bridge/meta.js';
+import { projectSelectionMeta } from './selection-details/meta.js';
 import { pointerInputOverlayMeta } from './pointer-input-overlay/meta.js';
 import { embeddedDocsDemoMeta } from './embedded-docs-demo/meta.js';
 import { plannedExampleMetas } from './planned.js';
 import type { ExampleId, ExampleMeta, ExampleModule } from './types.js';
 
 export const exampleCatalog: ExampleMeta[] = [
+  experienceShowcaseMeta,
+  interactiveMediaMeta,
+  videoProofMeta,
   audioProofMeta,
   minimalRuntimeMeta,
   adapterRegistrationMeta,
@@ -28,6 +35,7 @@ export const exampleCatalog: ExampleMeta[] = [
   runtimeStateMeta,
   eventRoutingMeta,
   sceneUiBridgeMeta,
+  projectSelectionMeta,
   pointerInputOverlayMeta,
   embeddedDocsDemoMeta,
   ...plannedExampleMetas,
@@ -45,6 +53,22 @@ export function getExampleMeta(id: ExampleId): ExampleMeta {
 
 export async function loadExampleModule(id: ExampleId): Promise<ExampleModule> {
   switch (id) {
+    case 'project-selection': {
+      const module = await import('./selection-details/mount.js');
+      return { meta: projectSelectionMeta, mount: module.mountProjectSelectionExample };
+    }
+    case 'experience-showcase': {
+      const module = await import('./experience-showcase/mount.js');
+      return { meta: experienceShowcaseMeta, mount: module.mountExperienceShowcase };
+    }
+    case 'interactive-media': {
+      const module = await import('./interactive-media/mount.js');
+      return { meta: interactiveMediaMeta, mount: module.mountInteractiveMedia };
+    }
+    case 'video-proof': {
+      const module = await import('./video-proof/mount.js');
+      return { meta: videoProofMeta, mount: module.mountVideoProof };
+    }
     case 'audio-proof': {
       const module = await import('./audio-proof/mount.js');
       return { meta: audioProofMeta, mount: module.mountAudioProofExample };

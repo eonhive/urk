@@ -44,6 +44,7 @@ export default defineConfig({
   }, {
     command: `corepack yarn workspace @urk/www dev --host 127.0.0.1 --port ${websitePort}`,
     cwd: repoRoot,
+    env: { URK_INTEGRATION_TEST: '1' },
     url: `http://127.0.0.1:${websitePort}/playground/`,
     reuseExistingServer: false,
     timeout: 120000,

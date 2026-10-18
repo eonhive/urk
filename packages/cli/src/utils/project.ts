@@ -103,7 +103,7 @@ export async function detectUrkPackages(cwd: string): Promise<DetectedUrkPackage
   return {
     core: hasDependency(manifest, '@urk/core'),
     adapters: hasDependency(manifest, '@urk/adapters'),
-    reactUrk: hasDependency(manifest, '@urk/react-urk'),
-    nextUrk: hasDependency(manifest, '@urk/next-urk'),
+    reactUrk: hasDependency(manifest, '@urk/react') || hasDependency(manifest, '@urk/react-urk'),
+    nextUrk: hasDependency(manifest, '@urk/next') || hasDependency(manifest, '@urk/next-urk'),
   };
 }

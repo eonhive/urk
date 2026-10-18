@@ -1,0 +1,23 @@
+<!doctype html>
+<!--
+Company: EonHive Inc.
+Title: Selection Details Proof Page
+Purpose: Show independent scene and webpage selection experiences.
+Author: Stan Nesi
+Created: 2026-10-15
+Updated: 2026-10-15
+Notes: Vibe coded with Codex.
+-->
+<html lang="en">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>URK Selection Details</title>
+    <style>body { margin: 0; background: #111827; color: #e2e8f0; font: 16px/1.6 system-ui; } main, nav { max-width: 1100px; padding: 24px; margin: auto; } a { color: #67e8f9; } .proof-section { border-top: 1px solid #475569; margin-block: 36px; } .proof-section > button { padding: 10px 16px; margin-bottom: 12px; font: inherit; } .selection-proof[data-theme="light"] { background: #f1f5f9; }</style>
+  </head>
+  <body>
+    <nav aria-label="Page navigation"><a href="/">All examples</a> · <a href="#projects">Project selection</a> · <a href="#about">About this page</a></nav>
+    <main><h1>Selection details</h1><p>One interaction pattern, two independent experiences.</p>
+      <section class="proof-section" id="scene"><h2>Scene/UI Bridge</h2><button type="button" data-unmount="scene">Unmount scene</button><div data-proof="scene"></div></section>
+      <section class="proof-section" id="projects"><h2>Project Selection</h2><button type="button" data-unmount="projects">Unmount projects</button><div data-proof="projects"></div></section>
+      <section id="about"><h2>Ordinary page content</h2><p>This navigation and article remain usable even after both experiences unmount.</p></section>
+    </main><script type="module" src="./main.ts"></script>
+  </body>
+</html>

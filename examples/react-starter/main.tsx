@@ -26,7 +26,7 @@ import {
   useRuntimeInspectorSnapshot,
   useRuntimePhase,
   useRuntimeSnapshot,
-} from '@urk/react-urk';
+} from '@urk/react';
 
 type ProofActionPayload = {
   message: string;

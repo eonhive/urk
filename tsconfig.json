@@ -24,12 +24,12 @@
       "@urk/adapters/*": ["packages/adapters/src/*"],
       "@urk/examples": ["packages/examples/src"],
       "@urk/examples/*": ["packages/examples/src/*"],
-      "@urk/react-urk": ["packages/react-urk/src"],
-      "@urk/react-urk/*": ["packages/react-urk/src/*"],
-      "@urk/next-urk": ["packages/next-urk/src"],
-      "@urk/next-urk/*": ["packages/next-urk/src/*"]
+      "@urk/react": ["packages/react/src"],
+      "@urk/react/*": ["packages/react/src/*"],
+      "@urk/next": ["packages/next/src"],
+      "@urk/next/*": ["packages/next/src/*"]
     }
   },
-  "include": ["packages/*/src"],
+  "include": ["packages/*/src", "packages/compat/*/src"],
   "exclude": ["node_modules", "dist"]
 }

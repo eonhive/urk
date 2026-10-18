@@ -79,6 +79,7 @@ export function createPointerAdapter(
       ctx.scope.defer(() => cleanups.clear());
 
       const emit = <TPayload>(type: string, payload: TPayload): void => {
+        if (ctx.signal.aborted) return;
         ctx.events.emit({
           type,
           source: id,

@@ -14,7 +14,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'URK Next Proof',
-  description: 'Minimal App Router proof for the thin next-urk client-boundary wrapper.',
+  description: 'Minimal App Router proof for the thin @urk/next client-boundary wrapper.',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

@@ -1,30 +1,34 @@
 ---
-title: "@urk/react-urk"
+title: "@urk/react"
 description: Reference the publishable React wrapper package and its downstream boundary.
 ---
 
 {/*
   Company: EonHive Inc.
   Title: React URK Package Reference
-  Purpose: Document the current @urk/react-urk wrapper package without making React the runtime source of truth.
+  Purpose: Document the current @urk/react wrapper package without making React the runtime source of truth.
   Author: Stan Nesi
   Created: 2026-05-06
   Updated: 2026-05-06
   Notes: Vibe coded with Codex.
 */}
 
-# @urk/react-urk
+# @urk/react
 
-`@urk/react-urk` is a thin React wrapper around an existing URK kernel.
+`@urk/react` is a thin React wrapper around an existing URK kernel.
 
 Status: experimental, publishable, downstream wrapper.
 
-Package page: [@urk/react-urk](/packages/react-urk/)
+Package page: [@urk/react](/packages/react-urk/)
+
+The v0.2 `@urk/react-urk` package forwards to `@urk/react` with the same provider,
+hooks, context, and lifecycle ownership. Previously published `0.1.x` installs
+need an explicit upgrade; the new names are not published by this source change.
 
 ## Install
 
 ```bash
-pnpm add @urk/core @urk/react-urk react react-dom
+pnpm add @urk/core @urk/react react react-dom
 ```
 
 ## Public API
@@ -44,7 +48,7 @@ pnpm add @urk/core @urk/react-urk react react-dom
 ```tsx
 import { createKernel } from '@urk/core';
 import { createLoadingAdapter } from '@urk/adapters/dom';
-import { UrkProvider, useRuntimePhase } from '@urk/react-urk';
+import { UrkProvider, useRuntimePhase } from '@urk/react';
 
 const kernel = createKernel({
   adapters: [createLoadingAdapter()],

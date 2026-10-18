@@ -68,3 +68,18 @@ Remaining release risks: this is a readiness verification, not a long-term monit
 - The repo uses Yarn `nodeLinker: node-modules` on Node 22 and tracks Yarn cache archives.
 - `corepack yarn test` now runs core regressions and public token type/packed-package checks, adapter contract/type/packed-export tests, React inspector SSR tests in `urk-examples`, Next ownership SSR tests in `@urk/next-proof`, and Astro diagnostics. The root command no longer calls echo-only scripts.
 - `corepack yarn test:integration` separately runs the private React and real Next browser ownership gate; placeholder scripts are not counted as tests.
+
+
+## Local motion and audio additions — 2026-10-17
+
+The working tree adds optional numeric motion using temporary Core frame demand,
+and optional analysis on the existing audio adapter. `/motion-playground/` and
+`/audio-proof/analysis.html` exercise the APIs. See D-027/D-028 and the dated
+validation entry in `docs/VALIDATION.md`. Package publication remains separate.
+
+
+The Audio Lab integration now shares one implementation between the standalone
+analysis route and `/examples/audio-proof/` on the website, including the reactive
+Three scene and finite layout transitions. Shared/proof/site builds and targeted
+type checks pass. This follow-up intentionally ran no test suites at the user's
+request; the earlier 191/27 results describe the preceding adapter/motion slice.

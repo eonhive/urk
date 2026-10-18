@@ -11,7 +11,7 @@
 import { Component, StrictMode, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
-import { UrkProvider, type UrkProviderProps } from '@urk/react-urk';
+import { UrkProvider, type UrkProviderProps } from '@urk/react';
 import { createProbeKernel, commitProbe, getProbe, reports, type ProbeOptions } from './runtime';
 import { ProbeView } from './ProbeView';
 

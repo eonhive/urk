@@ -7,7 +7,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "test": "corepack yarn workspace @urk/react-urk build && node --test tests/*.test.mjs",
+    "test": "corepack yarn workspace @urk/react build && corepack yarn workspace @urk/examples build && node --test tests/*.test.mjs",
     "lint": "tsc --noEmit",
     "test:browser": "playwright test"
   },
@@ -15,7 +15,7 @@
     "@urk/adapters": "workspace:*",
     "@urk/core": "workspace:*",
     "@urk/examples": "workspace:*",
-    "@urk/react-urk": "workspace:*",
+    "@urk/react": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "three": "^0.184.0"

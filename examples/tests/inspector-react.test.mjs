@@ -13,7 +13,7 @@ import test from 'node:test';
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { createKernel, ManualFrameScheduler } from '@urk/core';
-import { UrkProvider, useRuntimeInspector, useRuntimeInspectorSnapshot } from '@urk/react-urk';
+import { UrkProvider, useRuntimeInspector, useRuntimeInspectorSnapshot } from '@urk/react';
 
 function renderInspector(kernel, snapshots) {
   function Inspector() {

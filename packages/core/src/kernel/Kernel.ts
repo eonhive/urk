@@ -23,6 +23,7 @@ import type {
   AdapterRegistration,
   AdapterStartup,
   ControllerRegistration,
+  FrameCallback,
   FrameInfo,
   FrameMode,
   KernelConfig,
@@ -62,6 +63,8 @@ export class Kernel {
   private readonly shutdownErrors: unknown[] = [];
   private cleanupErrors: readonly unknown[] = Object.freeze([]);
   private frameCount = 0;
+  private readonly frameWork = new Map<number, FrameCallback>();
+  private nextFrameWorkId = 0;
   private resumePhase: RuntimePhase = 'ready';
   private readonly frameMode: FrameMode;
   private readonly adapterStartup: AdapterStartup;
@@ -121,6 +124,9 @@ export class Kernel {
       },
       signal: this.cancellation.signal,
       scope: new ResourceScope(),
+      getLifecycleSnapshot: () => this.getLifecycleSnapshot(),
+      subscribeLifecycle: listener => this.subscribeLifecycle(listener),
+      registerFrameWork: callback => this.registerFrameWork(callback),
     };
     this.inspector = createRuntimeInspector(this.ctx, () => ({
       booted: this.booted,
@@ -160,6 +166,22 @@ export class Kernel {
 
   subscribeLifecycle(listener: LifecycleListener): () => void {
     return this.lifecycle.subscribe(listener);
+  }
+
+  private registerFrameWork(callback: FrameCallback): () => void {
+    this.assertActive();
+    if (typeof callback !== 'function') throw new TypeError('Frame work must be a callback.');
+    const id = this.nextFrameWorkId++;
+    this.frameWork.set(id, callback);
+    try {
+      this.syncFrames();
+    } catch (error) {
+      this.frameWork.delete(id);
+      throw error;
+    }
+    return () => {
+      if (this.frameWork.delete(id)) this.syncFrames();
+    };
   }
 
   getEventBus(): EventBus<KernelEvent> {
@@ -296,6 +318,7 @@ export class Kernel {
     // Install completion before abort/stop callbacks can request shutdown again.
     this.shutdownPromise = Promise.resolve().then(() => this.doShutdown(reason));
     this.lifecycle.commit('disposing', reason);
+    this.frameWork.clear();
     this.ctx.controllers.beginShutdown();
     this.ctx.adapters.beginShutdown();
     this.ctx.services.beginShutdown();
@@ -396,6 +419,12 @@ export class Kernel {
 
     try {
       this.frameCount += 1;
+      // Capture admission once: work added inside a callback starts on a later frame.
+      for (const [id, callback] of [...this.frameWork]) {
+        if (this.lifecycle.getSnapshot().state !== 'running') return;
+        if (this.frameWork.has(id)) callback(frame);
+      }
+      if (this.lifecycle.getSnapshot().state !== 'running') return;
       this.ctx.controllers.updateAll(frame, this.ctx);
     } catch (error) {
       this.fail(error, 'runtime:update');
@@ -404,7 +433,7 @@ export class Kernel {
 
   private syncFrames(): void {
     if (this.lifecycle.getSnapshot().state !== 'running') return;
-    if (this.frameMode === 'auto' && this.ctx.controllers.getActiveUpdateCount() === 0) {
+    if (this.frameMode === 'auto' && this.frameWork.size === 0 && this.ctx.controllers.getActiveUpdateCount() === 0) {
       this.ctx.scheduler.stop();
     } else if (!this.ctx.scheduler.isRunning()) {
       this.ctx.scheduler.start(this.handleFrame);
@@ -440,6 +469,7 @@ export class Kernel {
     }
 
     this.lifecycle.commit('failed', source);
+    this.frameWork.clear();
     const runtimeError = normalizeError(error, `Runtime failure in ${source}`);
     void this.ctx.state.cancelTransitions(error);
 

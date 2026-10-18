@@ -1,7 +1,7 @@
 /**
  * Company: EonHive Inc.
  * Title: URK Next Proof Page
- * Purpose: Render the single App Router proof surface for validating next-urk.
+ * Purpose: Render the single App Router proof surface for validating @urk/next.
  * Author: Stan Nesi
  * Created: 2026-04-30
  * Updated: 2026-04-30

@@ -69,6 +69,10 @@ export interface RuntimeContext {
   scheduler: FrameScheduler;
   signal: AbortSignal;
   scope: ResourceScope;
+  getLifecycleSnapshot(): LifecycleSnapshot;
+  subscribeLifecycle(listener: LifecycleListener): () => void;
+  /** Request frames until released. Runs before controller updates, in registration order. */
+  registerFrameWork(callback: FrameCallback): () => void;
   get<TValue = unknown>(key: string | CapabilityToken<TValue>): TValue | undefined;
   require<TValue = unknown>(key: string | CapabilityToken<TValue>): TValue;
 }

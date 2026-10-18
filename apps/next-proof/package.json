@@ -2,19 +2,19 @@
   "name": "@urk/next-proof",
   "version": "0.1.0",
   "private": true,
-  "description": "URK Next proof - minimal App Router proof for the next-urk wrapper",
+  "description": "URK Next proof - minimal App Router proof for the @urk/next wrapper",
   "scripts": {
     "build": "next build",
     "dev": "next dev --hostname 127.0.0.1 --port 3002",
     "start": "next start --hostname 127.0.0.1 --port 3002",
-    "test": "corepack yarn workspace @urk/next-urk build && node --test tests/*.test.mjs",
+    "test": "node ../../scripts/build.mjs @urk/react-urk @urk/next-urk && node --test tests/*.test.mjs",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
     "@urk/adapters": "workspace:*",
     "@urk/core": "workspace:*",
     "@urk/examples": "workspace:*",
-    "@urk/next-urk": "workspace:*",
+    "@urk/next": "workspace:*",
     "next": "^14.2.30",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -23,6 +23,9 @@
     "@types/node": "^18.19.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@urk/next-urk": "workspace:*",
+    "@urk/react": "workspace:*",
+    "@urk/react-urk": "workspace:*",
     "typescript": "^5.3.0"
   }
 }

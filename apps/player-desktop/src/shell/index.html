@@ -1,0 +1,24 @@
+<!-- Company: EonHive Inc. | Title: Desktop Player Shell
+     Purpose: Native package controls around an isolated experience viewport.
+     Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-17
+     Notes: Vibe coded with Codex. -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>uRK Player</title><link rel="stylesheet" href="./style.css"></head>
+<body>
+  <header>
+    <div class="title"><strong>uRK Player</strong><span id="metadata">Portable experiences · offline playback</span></div>
+    <nav aria-label="Player controls">
+      <button id="open">Open Package…</button>
+      <button data-action="pause" disabled title="Suspend scripts and mute audio. Media time may advance; use the experience's controls for its own pause behavior.">Pause</button>
+      <button data-action="restart" disabled>Restart</button>
+      <button data-action="unload" disabled>Close package</button>
+      <button data-action="fullscreen">Fullscreen</button>
+    </nav>
+    <div class="status"><p id="status" role="status">Drop a .urkpkg here, or choose Open Package.</p><progress id="progress" max="100" hidden></progress></div>
+  </header>
+  <main id="drop-zone"><div><h1>Bring your experience.</h1><p>Drop a <strong>.urkpkg</strong> file into this window.</p><p class="muted">Open packages from creators you trust.<br>Network access is disabled. Your saves stay on this Mac.</p></div></main>
+  <script type="module" src="./shell.js"></script>
+</body>
+</html>

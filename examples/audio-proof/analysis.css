@@ -1,0 +1,12 @@
+/*
+ * Company: EonHive Inc. | Title: Audio Analysis Host Styles
+ * Purpose: Frame the shared Audio Lab without duplicating its presentation.
+ * Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-17
+ * Notes: Vibe coded with Codex.
+ */
+:root { color-scheme:dark; font:16px/1.5 system-ui,sans-serif; background:#080d18; color:#e7edf9; }
+body { margin:0; }
+main { max-width:1160px; margin:auto; padding:24px; }
+nav { display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:24px; font-size:13px; }
+a { color:#7be3cd; }
+@media(max-width:600px) { main { padding:12px; } }

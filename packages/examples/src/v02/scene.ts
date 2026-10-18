@@ -10,15 +10,20 @@
 
 import * as THREE from 'three';
 import type { RuntimeContext } from '@urk/core';
-import { ThreeCapability } from '@urk/adapters/three';
+import { ThreeCapability, type ThreeContextEventPayload, type ThreeResizeEventPayload } from '@urk/adapters/three';
 
 export const choices = ['Explore', 'Create', 'Connect'] as const;
 export type Choice = typeof choices[number];
+export type SceneLayout = 'row' | 'arc';
 export function isChoice(value: unknown): value is Choice {
   return choices.some(choice => choice === value);
 }
 
-export function createPlaygroundScene(ctx: RuntimeContext) {
+export function createPlaygroundScene(
+  ctx: RuntimeContext,
+  onLayoutSettled: () => void,
+  onContextChange: (lost: boolean) => void,
+) {
   ctx.signal.throwIfAborted();
   const three = ctx.require(ThreeCapability);
   const host = three.getHost();
@@ -53,43 +58,91 @@ export function createPlaygroundScene(ctx: RuntimeContext) {
   let paused = false;
   let pendingFrame: number | undefined;
   let renders = 0;
+  let repaintPaused = false;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let contextLost = three.getRenderer().getContext().isContextLost();
+  const isContextLost = (): boolean => contextLost || three.getRenderer().getContext().isContextLost();
+  let transition: {
+    starts: THREE.Vector3[];
+    ends: THREE.Vector3[];
+    elapsed: number;
+    lastTime?: number;
+  } | undefined;
+  host.dataset.layout = 'row';
+  host.dataset.transitionProgress = '1';
+  host.dataset.contextState = contextLost ? 'lost' : 'ready';
+
   const cancelRender = (): void => {
     if (pendingFrame !== undefined) cancelAnimationFrame(pendingFrame);
     pendingFrame = undefined;
+    repaintPaused = false;
     host.dataset.renderPending = 'false';
   };
-  const requestRender = (): void => {
-    if (paused || ctx.signal.aborted || pendingFrame !== undefined) return;
+  const requestRender = (force = false): void => {
+    if (ctx.signal.aborted || isContextLost()) return;
+    repaintPaused ||= force;
+    if ((paused && !repaintPaused) || pendingFrame !== undefined) return;
     host.dataset.renderPending = 'true';
-    pendingFrame = requestAnimationFrame(() => {
+    pendingFrame = requestAnimationFrame(time => {
       pendingFrame = undefined;
       host.dataset.renderPending = 'false';
-      if (paused || ctx.signal.aborted) return;
-      // Resize before drawing, after the adapter's resize observer has settled.
-      three.resize();
+      if ((paused && !repaintPaused) || ctx.signal.aborted || isContextLost()) return;
+      repaintPaused = false;
+      let settled = false;
+      if (transition && !paused) {
+        if (transition.lastTime !== undefined) transition.elapsed += time - transition.lastTime;
+        transition.lastTime = time;
+        // Read the live preference on existing frames; paused scenes remain frozen.
+        const progress = reducedMotion.matches ? 1 : Math.min(transition.elapsed / 650, 1);
+        const eased = THREE.MathUtils.smoothstep(progress, 0, 1);
+        objects.forEach((mesh, index) => mesh.position.lerpVectors(transition!.starts[index], transition!.ends[index], eased));
+        host.dataset.transitionProgress = progress.toFixed(3);
+        if (progress === 1) { transition = undefined; settled = true; }
+      }
       const camera = three.getCamera();
       camera.position.z = Math.max(5.75, 3 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect));
       camera.updateMatrixWorld();
       three.render();
       host.dataset.renderCount = String(++renders);
+      if (settled) onLayoutSettled();
+      if (transition && !paused) requestRender();
     });
   };
   ctx.signal.addEventListener('abort', cancelRender, { once: true });
   ctx.scope.defer(() => { cancelRender(); ctx.signal.removeEventListener('abort', cancelRender); });
   // Theme changes can invalidate a composited canvas without resizing its host.
-  const themeObserver = new MutationObserver(requestRender);
+  const themeObserver = new MutationObserver(() => requestRender(true));
   ctx.scope.defer(() => themeObserver.disconnect());
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  if (typeof ResizeObserver !== 'undefined') {
-    const observer = new ResizeObserver(requestRender);
-    ctx.scope.defer(() => observer.disconnect());
-    observer.observe(host);
-  } else {
-    window.addEventListener('resize', requestRender);
-    ctx.scope.defer(() => window.removeEventListener('resize', requestRender));
-  }
+  // The adapter owns sizing; repaint a paused scene without advancing its transition.
+  ctx.scope.defer(ctx.events.on('three:resize', event => {
+    if ((event.payload as ThreeResizeEventPayload).host === host) requestRender(true);
+  }));
+  ctx.scope.defer(ctx.events.on('three:context-lost', event => {
+    if ((event.payload as ThreeContextEventPayload).host !== host || ctx.signal.aborted) return;
+    contextLost = true;
+    host.dataset.contextState = 'lost';
+    cancelRender();
+    if (transition) transition.lastTime = undefined;
+    onContextChange(true);
+  }));
+  ctx.scope.defer(ctx.events.on('three:context-restored', event => {
+    if ((event.payload as ThreeContextEventPayload).host !== host || ctx.signal.aborted) return;
+    contextLost = false;
+    host.dataset.contextState = 'ready';
+    // Exclude the unavailable interval, and repaint even when operationally paused.
+    if (transition) transition.lastTime = undefined;
+    requestRender(true);
+    onContextChange(false);
+  }));
+
+  const reportRotation = (): void => {
+    const mesh = objects[choices.indexOf(selected)];
+    host.dataset.rotation = `${mesh.rotation.x.toFixed(2)},${mesh.rotation.y.toFixed(2)}`;
+  };
 
   return {
+    isContextLost,
     select(choice: Choice): void {
       selected = choice;
       for (const mesh of objects) {
@@ -99,10 +152,11 @@ export function createPlaygroundScene(ctx: RuntimeContext) {
         mesh.material.emissiveIntensity = active ? 0.22 : 0;
       }
       host.dataset.selected = choice;
+      host.dataset.wireframe = String(objects[choices.indexOf(selected)].material.wireframe);
+      reportRotation();
       requestRender();
     },
     pick(clientX: number, clientY: number): Choice | undefined {
-      group.updateMatrixWorld(true);
       const name = three.raycast(clientX, clientY, objects)[0]?.object.name;
       return isChoice(name) ? name : undefined;
     },
@@ -110,12 +164,52 @@ export function createPlaygroundScene(ctx: RuntimeContext) {
       if (paused || ctx.signal.aborted) return;
       const mesh = objects[choices.indexOf(selected)];
       mesh.rotation.x += x;
-      mesh.rotation.y += y;
-      host.dataset.rotation = `${mesh.rotation.x.toFixed(2)},${mesh.rotation.y.toFixed(2)}`;
+      mesh.rotation.y = THREE.MathUtils.euclideanModulo(mesh.rotation.y + y + Math.PI, Math.PI * 2) - Math.PI;
+      reportRotation();
+      requestRender();
+    },
+    getRotation(): number {
+      return Math.round(THREE.MathUtils.radToDeg(objects[choices.indexOf(selected)].rotation.y));
+    },
+    getWireframe(): boolean {
+      return objects[choices.indexOf(selected)].material.wireframe;
+    },
+    setWireframe(value: boolean): void {
+      if (paused || ctx.signal.aborted || isContextLost()) return;
+      const material = objects[choices.indexOf(selected)].material;
+      if (material.wireframe === value) return;
+      material.wireframe = value;
+      host.dataset.wireframe = String(value);
+      requestRender();
+    },
+    setRotation(degrees: number): void {
+      if (paused || ctx.signal.aborted || !Number.isFinite(degrees)) return;
+      objects[choices.indexOf(selected)].rotation.y = THREE.MathUtils.degToRad(THREE.MathUtils.clamp(degrees, -180, 180));
+      reportRotation();
+      requestRender();
+    },
+    setLayout(layout: SceneLayout): void {
+      if (ctx.signal.aborted) return;
+      const ends = objects.map((_, index) => new THREE.Vector3(
+        (index - 1) * 1.85, layout === 'arc' ? (index === 1 ? 0.6 : -0.5) : 0, 0,
+      ));
+      host.dataset.layout = layout;
+      if (reducedMotion.matches && !paused && !isContextLost()) {
+        objects.forEach((mesh, index) => mesh.position.copy(ends[index]));
+        transition = undefined;
+        host.dataset.transitionProgress = '1';
+        requestRender();
+        onLayoutSettled();
+        return;
+      }
+      transition = { starts: objects.map(mesh => mesh.position.clone()), ends, elapsed: 0 };
+      host.dataset.transitionProgress = '0';
       requestRender();
     },
     setPaused(value: boolean): void {
+      if (paused === value) return;
       paused = value;
+      if (transition) transition.lastTime = undefined;
       if (paused) cancelRender();
       else requestRender();
     },

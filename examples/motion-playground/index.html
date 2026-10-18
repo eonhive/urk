@@ -1,0 +1,37 @@
+<!--
+Company: EonHive Inc. | Title: Motion Playground
+Purpose: Demonstrate numeric and DOM motion with visible ownership and playback controls.
+Author: Stan Nesi | Created: 2026-10-16 | Updated: 2026-10-16
+Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>URK Motion Playground</title><link rel="stylesheet" href="./styles.css"></head>
+  <body>
+    <main>
+      <a href="/">← All examples</a>
+      <p class="eyebrow">URK / MOTION PLAYGROUND</p>
+      <h1>Motion in your control.</h1>
+      <p class="intro">Move a scene object, interrupt its journey, and watch the runtime return to idle.</p>
+      <section class="workspace" aria-label="Motion demonstration">
+        <div class="scene-wrap"><div id="scene" role="img" aria-label="A colored polyhedron moving between left and right"></div><p id="caption">Choose a direction.</p><div class="axis"><span>−1.4</span><span>0</span><span>+1.4</span></div></div>
+        <div class="controls">
+          <h2>Choose a destination</h2>
+          <div class="row"><button id="left">Move left</button><button id="right">Move right</button></div>
+          <label for="duration">Duration <output id="duration-label">1200 ms</output></label>
+          <input id="duration" type="range" min="200" max="4000" value="1200" step="100">
+          <label for="easing">Easing</label><select id="easing"><option value="ease-in-out">Ease in / out</option><option value="linear">Linear</option><option value="ease-in">Ease in</option><option value="ease-out">Ease out</option></select>
+          <label class="check"><input id="instant" type="checkbox"> Complete immediately</label>
+          <p class="hint" id="preference">System reduced motion: off</p>
+          <div class="row"><button id="pause-runtime">Pause runtime</button><button id="pause-tween">Pause tween</button></div>
+          <div class="row"><button id="finish">Finish tween</button><button id="cancel">Cancel tween</button></div>
+          <div class="row"><button id="dispose-owner">Dispose owner</button><button id="new-owner">Recreate owner</button></div>
+          <div class="row"><button id="destroy">Destroy runtime</button><button id="fresh">Start fresh</button></div>
+        </div>
+      </section>
+      <dl class="metrics"><div><dt>Runtime</dt><dd id="lifecycle">created</dd></div><div><dt>Position X</dt><dd id="position">0.000</dd></div><div><dt>Active motion</dt><dd id="active">0</dd></div><div><dt>Frame loop</dt><dd id="frames">idle</dd></div></dl>
+      <p id="result" role="status">Ready.</p>
+      <p class="hint">The renderer draws only when values or its size change. Disposing the motion owner leaves the scene intact. Your system’s reduced-motion setting completes movement immediately.</p>
+    </main><script type="module" src="./main.ts"></script>
+  </body>
+</html>

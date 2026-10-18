@@ -17,7 +17,7 @@ description: Reference the current adapter package and DOM adapter subpath.
 
 `@urk/adapters` provides contract-first runtime capabilities.
 
-The package currently exports loading, audio, input, pointer, storage, three, UI widgets, and adapter contract helpers.
+The package currently exports loading, audio, input, pointer, storage, three, UI overlays, and adapter contract helpers.
 
 Status: current, publishable, 0.x.
 
@@ -39,6 +39,14 @@ import { createLoadingAdapter } from '@urk/adapters/dom';
 
 ## Root import
 
+Independent subpaths remain available for each adapter. For the status/callout
+overlay, prefer `@urk/adapters/ui-overlay` with `createUiOverlayAdapter` and
+`UiOverlayCapability`. The `ui-widgets` path, `createUiWidgetsAdapter`, and
+`UiWidgetsCapability` remain compatibility aliases with the same factory and
+token identity. Existing `ui-widgets` string lookup is unchanged. The overlay
+does not require Three.js; the Three adapter remains independently available at
+`@urk/adapters/three`.
+
 ```ts
 import { createLoadingAdapter, createPointerAdapter } from '@urk/adapters';
 ```
@@ -49,9 +57,36 @@ import { createLoadingAdapter, createPointerAdapter } from '@urk/adapters';
 - `createInputAdapter()`
 - `createPointerAdapter()`
 - `createStorageAdapter()`
-- `createUiWidgetsAdapter()`
+- `createUiOverlayAdapter()` (`createUiWidgetsAdapter()` remains compatible)
 - `createAudioAdapter()`
+- Optional `createAudioMixerAdapter({ channels })` from `@urk/adapters/audio/mixer` for group levels and cancellable fades.
 - `createThreeAdapter()`
+
+## UI Overlay instances
+
+Use `UiOverlayCapability.open()` for independently owned `status`, `callout`, and
+nonmodal `panel` instances. Handles expose `update()`, idempotent `close()`, and
+`closed`. Duplicate active IDs reject; a closed handle never controls a later
+instance with the same ID. `getSnapshot()` and `subscribe()` observe these managed
+instances with cached immutable data, excluding DOM and callbacks. The legacy
+singleton methods remain supported separately.
+
+```ts
+const ui = ctx.require(UiOverlayCapability);
+const details = ui.open({
+  id: 'selection', kind: 'callout', title: 'Orbit', body: 'Selected project',
+  placement: 'bottom-end',
+});
+details.update({ body: 'Details loaded' });
+ctx.scope.defer(() => details.close());
+```
+
+Panels accept `mount(container)` and its synchronous cleanup function. Their
+content is application-owned. Closing a panel does not clear selection or pause
+media. Styles ship with the adapter; set `data-urk-ui-theme="light"` on its host
+or supply `--urk-ui-*` CSS variables. Narrow hosts stack content using container
+queries. Try [Scene/UI Bridge](/examples/scene-ui-bridge/) and
+[Project Selection](/examples/project-selection/).
 
 ## Boundary
 

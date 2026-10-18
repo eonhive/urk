@@ -4,7 +4,22 @@ Status: implemented v0.2 working tree; package publication and deployment are se
 
 ## Existing API compatibility
 
-Keep using `@urk/core`, `Kernel`/`Runtime`, `createKernel`, `boot`, `pause`, `resume`, and `shutdown`. Package names and the React/Next wrappers remain unchanged. Adapter and service string lookups through `ctx.adapters` and `ctx.services` remain supported; adapter lookups additionally accept typed tokens.
+Keep using `@urk/core`, `Kernel`/`Runtime`, `createKernel`, `boot`, `pause`, `resume`, and `shutdown`. React/Next provider and hook APIs remain unchanged; the preferred package names are now `@urk/react` and `@urk/next`. Adapter and service string lookups through `ctx.adapters` and `ctx.services` remain supported; adapter lookups additionally accept typed tokens.
+
+## Framework package names and UI overlay
+
+UI Overlay now also supports `open()` handles for status, callout, and nonmodal
+panel instances. Existing singleton methods stay supported; `getSnapshot()` and
+`subscribe()` describe only managed instances opened through `open()`. Styles
+remain bundled. See the [usage and cleanup contract](../packages/adapters/src/ui-widgets/README.md).
+
+Replace `@urk/react-urk` with `@urk/react` and `@urk/next-urk` with `@urk/next` in dependencies and imports. Their implementations moved to `packages/react` and `packages/next`; Next depends on React. The `0.2.0` legacy-name packages under `packages/compat` forward every export, sharing React context and cleanup ownership with the new names when they resolve the same canonical package instance. Provider props, hook signatures, SSR behavior, and existing `react-urk:*` events, sources, and default reasons are unchanged.
+
+Previously published `0.1.x` packages cannot be renamed or retroactively forwarded. Those installs continue to use their original implementation. Consumers retaining old imports must upgrade to the forwarding release; `^0.1.x` ranges will not select `0.2.0`. Mixing old `0.1.x` wrappers or independently installed canonical copies with the new packages does not guarantee shared React context. Website reference/package URLs retain their existing slugs for incoming links.
+
+Registry preflight on 2026-10-12 returned E404 for `@urk/react` and `@urk/next`, and `0.1.1` for both legacy packages. No public package was found under either new name; availability and scope publish permission must be rechecked before any release. No package was published. A future release must publish the canonical packages and their required runtime versions before the legacy forwarders; npm names are separate packages.
+
+Prefer `@urk/adapters/ui-overlay` with `createUiOverlayAdapter`, `UiOverlayCapability`, `UiOverlayAdapterApi`, and `UiOverlayCallout`. The existing `@urk/adapters/ui-widgets`, `createUiWidgetsAdapter`, `UiWidgetsCapability`, and API types remain supported. Factory and token aliases are identical objects; default ID `ui-widgets-adapter`, string capability `ui-widgets`, and token label stay unchanged. Use the shared token for lookup under the new naming. Register only one of the aliases. Root/DOM exports include both names, and the independent overlay import requires no Three.js.
 
 `RuntimePhase` still contains `boot`, `loading`, `ready`, `transition`, `paused`, and `error`. `RuntimeStore`, `getState()`, and legacy phase writes remain supported. Operational lifecycle observation and typed adapter lookup are additive. Await lifecycle promises for successful operation completion instead of interpreting a legacy phase as proof of startup or shutdown completion.
 
@@ -128,3 +143,24 @@ Run `corepack yarn dev:v02` for the shared standalone/React workbench, `/v02` in
 Existing factories, registrations, imports, callback receivers, ownership, and cleanup order remain supported. Operational decisions now read the lifecycle store directly. Injected schedulers see the committed `running`, `paused`, `failed`, or `disposing` state when their start/stop methods run; ordinary lifecycle observers still publish at the operation boundary. Dynamic controller activation no longer calls `start()` on an already-running scheduler. Explicit calls to `ctx.scheduler.start()` retain their behavior.
 
 Controller startup inserts compact update entries in registration order instead of repeatedly rebuilding the list. Adapter IDs, aliases, and tokens now index their acquisition records directly. No consumer migration is required for these internal changes. [Performance evidence](PERFORMANCE.md) compares the actual saved before/after builds.
+
+
+## Optional motion and audio analysis additions
+
+Use matching Core/adapter builds from this checkout. RuntimeContext now also
+provides `getLifecycleSnapshot`, `subscribeLifecycle`, and `registerFrameWork`;
+manual context implementations need these methods. Temporary frame work runs
+before controller updates; its release function is idempotent and belongs in the
+owner's cleanup scope. Auto mode now wakes for temporary demand as well as updaters.
+Continuous mode and raw scheduler timing are unchanged.
+
+The motion adapter adds `scoped(scope).tween(target, properties, options)` and
+suspends DOM/numeric motion during operational pause/startup. Explicit group and
+individual pauses remain independent. Legacy phase changes retain application
+policy. See [motion semantics](../packages/adapters/src/motion/README.md).
+
+Audio playback consumers need no change. `AudioAdapterApi` adds `analysis`, so
+handwritten API mocks must supply it. Real consumers opt in with
+`audio.analysis.enable()` from a gesture and read reusable snapshots in their
+controller. See [analysis API and ownership](../packages/adapters/src/audio/README.md).
+These are local additions, not a package publication or version bump.

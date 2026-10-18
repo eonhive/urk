@@ -1,0 +1,41 @@
+{
+  "name": "@urk/next-urk",
+  "version": "0.2.0",
+  "description": "Compatibility exports for @urk/next; migrate imports to @urk/next",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@urk/next": "^0.2.0"
+  },
+  "peerDependencies": {
+    "@urk/core": "^0.2.0",
+    "next": "^14.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@urk/core": "^0.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.3.0"
+  }
+}

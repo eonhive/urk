@@ -16,6 +16,16 @@ export interface ThreeAdapterSize {
   height: number;
 }
 
+export interface ThreeResizeEventPayload extends ThreeAdapterSize {
+  host: HTMLElement;
+  pixelRatio: number;
+}
+
+export interface ThreeContextEventPayload {
+  host: HTMLElement;
+  canvas: HTMLCanvasElement;
+}
+
 export interface ThreeAdapterApi {
   getHost(): HTMLElement;
   getCanvas(): HTMLCanvasElement;
@@ -92,17 +102,73 @@ export function createThreeAdapter(
 
       host.append(renderer.domElement);
 
-      let size = getHostSize(host);
+      let size: ThreeAdapterSize = { width: 0, height: 0 };
+      let pixelRatio = 0;
+      let contextLost = false;
+      const isContextLost = (): boolean => contextLost || renderer.getContext().isContextLost();
 
       const resize = (): void => {
-        size = getHostSize(host);
-        renderer.setPixelRatio(getPixelRatio());
+        if (ctx.signal.aborted || isContextLost()) return;
+        const nextSize = getHostSize(host);
+        const nextRatio = getPixelRatio();
+        if (size.width === nextSize.width && size.height === nextSize.height && pixelRatio === nextRatio) return;
+        size = nextSize;
+        if (pixelRatio !== nextRatio) renderer.setPixelRatio(nextRatio);
+        pixelRatio = nextRatio;
         renderer.setSize(size.width, size.height, false);
         camera.aspect = size.width / size.height;
         camera.updateProjectionMatrix();
+        ctx.events.emit({
+          type: 'three:resize', source: id, timestamp: Date.now(),
+          payload: { host, ...size, pixelRatio } satisfies ThreeResizeEventPayload,
+        });
       };
 
+      const publishContext = (type: string): void => {
+        ctx.events.emit({
+          type, source: id, timestamp: Date.now(),
+          payload: { host, canvas: renderer.domElement } satisfies ThreeContextEventPayload,
+        });
+      };
+      const onContextLost = (): void => {
+        if (ctx.signal.aborted || contextLost) return;
+        contextLost = true;
+        publishContext('three:context-lost');
+      };
+      const onContextRestored = (): void => {
+        if (ctx.signal.aborted || !contextLost) return;
+        contextLost = false;
+        resize();
+        if (!ctx.signal.aborted) publishContext('three:context-restored');
+      };
+      // Three's earlier listeners allow restoration and rebuild its GPU resources first.
+      ctx.scope.defer(() => renderer.domElement.removeEventListener('webglcontextlost', onContextLost));
+      renderer.domElement.addEventListener('webglcontextlost', onContextLost);
+      ctx.scope.defer(() => renderer.domElement.removeEventListener('webglcontextrestored', onContextRestored));
+      renderer.domElement.addEventListener('webglcontextrestored', onContextRestored);
+
       resize();
+
+      if (typeof window.matchMedia === 'function') {
+        let resolutionQuery: MediaQueryList | undefined;
+        const removeResolutionListener = (): void => {
+          resolutionQuery?.removeEventListener('change', onResolutionChange);
+        };
+        const watchResolution = (): void => {
+          removeResolutionListener();
+          // Watch the uncapped ratio so changes above 2x still rearm the query.
+          resolutionQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+          resolutionQuery.addEventListener('change', onResolutionChange);
+        };
+        const onResolutionChange = (): void => {
+          if (ctx.signal.aborted) return;
+          watchResolution();
+          resize();
+        };
+
+        ctx.scope.defer(removeResolutionListener);
+        watchResolution();
+      }
 
       if (typeof ResizeObserver !== 'undefined') {
         const observer = new ResizeObserver(() => {
@@ -141,16 +207,17 @@ export function createThreeAdapter(
         },
         resize,
         render() {
+          if (ctx.signal.aborted || isContextLost()) return;
           renderer.render(scene, camera);
         },
         raycast(clientX, clientY, objects) {
-          if (objects.length === 0) {
+          if (ctx.signal.aborted || isContextLost() || objects.length === 0 || !Number.isFinite(clientX) || !Number.isFinite(clientY)) {
             return [];
           }
 
           const bounds = renderer.domElement.getBoundingClientRect();
 
-          if (bounds.width <= 0 || bounds.height <= 0) {
+          if (bounds.width <= 0 || bounds.height <= 0 || clientX < bounds.left || clientX > bounds.right || clientY < bounds.top || clientY > bounds.bottom) {
             return [];
           }
 
@@ -159,6 +226,9 @@ export function createThreeAdapter(
             -((clientY - bounds.top) / bounds.height) * 2 + 1,
           );
 
+          // Demand-rendered scenes can be picked before the next render updates matrices.
+          camera.updateWorldMatrix(true, false);
+          for (const object of objects) object.updateWorldMatrix(true, true);
           raycaster.setFromCamera(raycastPointer, camera);
 
           return raycaster.intersectObjects(objects, true);

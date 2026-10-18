@@ -1,0 +1,24 @@
+/* Company: EonHive Inc. | Title: Desktop Player Styles
+ * Purpose: Keep native host controls legible above the experience viewport.
+ * Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-17
+ * Notes: Vibe coded with Codex. */
+:root { color-scheme: dark; font: 14px/1.5 system-ui, sans-serif; color: #e8edf4; background: #10151f; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+header { height: 156px; padding: 16px 24px; border-bottom: 1px solid #364153; }
+.title { display: flex; align-items: baseline; gap: 20px; }
+.title strong { font-size: 20px; white-space: nowrap; }
+#metadata { color: #b5c1d2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+nav { display: flex; gap: 8px; margin-top: 12px; }
+button { font: inherit; padding: 7px 14px; border-radius: 7px; border: 1px solid #526179; background: #202c40; color: inherit; cursor: pointer; }
+#open { background: #bfecdc; border-color: #bfecdc; color: #122b22; font-weight: 650; }
+button:disabled { opacity: .45; cursor: default; }
+button:focus-visible { outline: 2px solid #bfecdc; outline-offset: 3px; }
+.status { display: flex; align-items: center; gap: 12px; margin-top: 9px; }
+#status { margin: 0; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body[data-phase="error"] #status { color: #ffbcb1; white-space: normal; line-height: 1.25; }
+progress { width: 120px; height: 8px; flex-shrink: 0; accent-color: #bfecdc; }
+main { min-height: calc(100vh - 156px); display: grid; place-content: center; text-align: center; padding: 32px; }
+h1 { font-size: 34px; letter-spacing: -.03em; margin-bottom: 8px; }
+.muted { color: #9faec2; margin-top: 24px; }
+body.dragging { outline: 4px solid #bfecdc; outline-offset: -4px; }

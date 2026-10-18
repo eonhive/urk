@@ -1,7 +1,7 @@
 /**
  * Company: EonHive Inc.
  * Title: URK Next Proof Client
- * Purpose: Render the client-only proof that validates next-urk inside a real App Router app.
+ * Purpose: Render the client-only proof that validates @urk/next inside a real App Router app.
  * Author: Stan Nesi
  * Created: 2026-04-30
  * Updated: 2026-04-30
@@ -19,7 +19,7 @@ import {
   useRuntimeInspectorSnapshot,
   useRuntimePhase,
   useRuntimeSnapshot,
-} from '@urk/next-urk';
+} from '@urk/next';
 import {
   createEmptyLoadingSnapshot,
   createNextProofKernel,
@@ -246,7 +246,7 @@ function NextProofShell() {
           <p>
             The kernel is created on the client and handed into the base React wrapper. Next still
             does not redefine runtime state or scheduler ownership, but it can now consume the same
-            inspector surface through `@urk/next-urk`.
+            inspector surface through `@urk/next`.
           </p>
 
           <div className="next-proof__inspector-grid">
@@ -305,7 +305,7 @@ function NextProofShell() {
 
           <p>
             Reload the page to confirm that a fresh client mount creates a fresh kernel instance
-            through the same `next-urk` path with a fresh inspector snapshot.
+            through the same `@urk/next` path with a fresh inspector snapshot.
           </p>
         </section>
       </section>

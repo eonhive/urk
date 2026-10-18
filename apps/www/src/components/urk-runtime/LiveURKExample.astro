@@ -5,7 +5,7 @@
  * Purpose: Render the site-owned shell that mounts a real URK example while isolating failure from the rest of the page.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-05-14
+ * Updated: 2026-10-12
  * Notes: Vibe coded with Codex.
  */
 
@@ -14,7 +14,8 @@ import PreviewPanel from './PreviewPanel.astro';
 import RuntimeLogPanel from './RuntimeLogPanel.astro';
 import RuntimeStatePanel from './RuntimeStatePanel.astro';
 import SchemaPanel from './SchemaPanel.astro';
-import AudioProofSurface from './AudioProofSurface.astro';
+import MediaExample from './MediaExample.astro';
+import SelectionExample from './SelectionExample.astro';
 
 interface Props {
   exampleId?: ExampleId;
@@ -33,8 +34,8 @@ const exampleMeta = getExampleMeta(resolvedExampleId);
 const schemaSource = explicitSchemaSource ?? exampleMeta.schemaSource;
 ---
 
+{resolvedExampleId === 'scene-ui-bridge' || resolvedExampleId === 'project-selection' ? <SelectionExample mode={resolvedExampleId === 'scene-ui-bridge' ? 'scene' : 'projects'} /> : resolvedExampleId === 'audio-proof' || resolvedExampleId === 'experience-showcase' || resolvedExampleId === 'video-proof' || resolvedExampleId === 'interactive-media' ? <MediaExample exampleId={resolvedExampleId} /> : (
 <section class="site-grid gap-6" data-urk-example-root data-example-id={resolvedExampleId}>
-  {resolvedExampleId === 'audio-proof' && <AudioProofSurface />}
   <div class="site-card flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
     <div>
       <div class="font-[var(--urk-font-code)] text-xs uppercase tracking-[0.16em] text-[var(--urk-muted)]">
@@ -63,6 +64,7 @@ const schemaSource = explicitSchemaSource ?? exampleMeta.schemaSource;
   </div>
   <RuntimeLogPanel />
 </section>
+)}
 
 <script>
   import { mountExampleIslands } from '@/lib/runtime-islands/example-client';

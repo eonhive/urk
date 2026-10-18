@@ -101,3 +101,144 @@ Add `adapterStartup: 'parallel'` using stable dependency batches; retain sequent
 ## D-018 — Express URK through a creative, consistent public identity
 
 The user-requested v0.2 redesign uses uppercase URK, an editable faceted cyan–violet mark, midnight/cool-light surfaces, and original illustrative art. Keep Universal Runtime Kernel, package names, core APIs, and runtime boundaries unchanged. The website and shared playground use the same accents and fonts; the playground remains the real interactive proof. The visual references do not authorize fictional product features or paid plans. See [UI/UX System](UI_UX_SYSTEM.md).
+
+## D-019 - Shorten framework package names and clarify the existing overlay
+
+Use `@urk/react` and `@urk/next` from `packages/react` and `packages/next`; Next depends on React. Supersede earlier package-name preservation for this explicit rename while retaining provider/hook APIs, lifecycle event strings, ownership, and SSR. Keep the published old names as v0.2 forwarding packages under `packages/compat`, with one canonical React context and ownership implementation. Existing npm versions remain untouched; forwarding releases and new names require separate publication.
+
+Expose `@urk/adapters/ui-overlay` and matching factory/type/token aliases by re-exporting the existing UI widget implementation. Preserve `ui-widgets` imports, factory/token identity, and registration strings. Keep Three.js independent and all existing adapter subpaths available. No UI framework, rendering engine, renderer registry, or extra orchestration layer is required.
+
+## D-020 — Extract scoped DOM motion before extending scheduling
+
+Promote the private native motion helper into optional `@urk/adapters/motion`, using `createMotionAdapter`, `MotionCapability`, existing resource scopes, and terminal playback outcomes. Keep `durationMs`/`delayMs` explicit. Support opacity/transform keyframes, individual and group pause, finish, cancellation, reduced motion, and whole-element replacement. Supplied keyframes define replacement's start; continuous handoff and property blending are not promised.
+
+Stable appearance belongs to UI state/CSS. Playback releases native effects and never persists inline styles. Expected cancellation resolves as cancelled; genuine native failures resolve as failed; invalid inputs throw before replacing active work. Reuse one group/cleanup per scope and remove settled operations immediately.
+
+Migrate Interactive Media and its shared Showcase host to the adapter. Controllers retain explicit pause/visibility/media policy; shutdown cancels automatically. Preserve the kernel and scheduler. Numeric tweening and removable frame demand require a separate tested contract; presets, composition, and automatic operational pause are deferred. Package versions and publication remain unchanged.
+
+## D-021 — Extend the existing overlay through owned instances
+
+Use URK UI as the umbrella vocabulary and UI Overlay as the concrete capability.
+Add typed status/callout/panel handles, immutable managed-instance snapshots, and
+scoped light/dark presentation to the existing adapter. Preserve the legacy
+factory, token, strings, singleton methods, and bundled styling. Custom panel
+content mounts once and supplies synchronous cleanup; duplicate active IDs reject
+and stale handles cannot act on reused IDs. Nonmodal panels have local dismissal
+and no implicit kernel/media policy. Core and framework packages stay unchanged.
+
+Prove reuse through Scene/UI Bridge and Project Selection. Their shared private
+controller owns selection, real actions, cancellation, retry, and stale-result
+protection. Keep dialogs, notifications, anchoring, docking, new registries, and a
+public UI package deferred. See [Runtime UI & Interaction](RUNTIME_UI_UX_SYSTEM.md).
+
+## D-022 — Export browser experiences through the existing CLI and Vite
+
+Portable Experiences milestone 1 adds `urk export` to `@urk/cli`, using the existing
+Vite 5 toolchain to emit a static browser distribution with a relative base by
+default. Core, adapters, lifecycle ownership, and package names remain unchanged.
+The existing Picking proof and generated starter validate independent static
+hosting and ordinary iframe embedding. Nonempty output requires `--overwrite`;
+failed builds preserve previous output. Runtime URL policy, remote services, and
+browser permissions remain application/host concerns. Server conversion, embed
+messaging, new players, marketplace, and cloud hosting are outside this milestone.
+
+## D-023 — Distribute compiled web exports as ZIP-compatible packages
+
+Keep `.urkpkg` packaging in `@urk/cli`, using zip.js for standard ZIP reading,
+writing, and checksum validation. Format 1 places a small `urk.json` beside the
+unchanged exported `index.html` and assets. Name, experience version, and type
+come from CLI defaults/flags; type is metadata, not another runtime.
+
+`pack` packages compiled output without rebuilding. Package-aware `inspect`
+preserves the existing no-argument project report. `unpack` validates bounded,
+safe regular-file contents into temporary storage before publishing to an absent
+or empty directory. Packaging does not execute application code, grant ZIP file
+permissions, or change Core/adapters. Hosts serve extracted files over HTTP;
+direct archive execution, signing, launchers, marketplaces, and cloud services
+remain outside this MVP. See the CLI README for format and extraction limits.
+
+## D-024 — Optional Web Player hosts trusted exports on a separate origin
+
+`@urk/player` is a small browser-only Web Component with no runtime dependencies.
+It hosts the existing exported application in an iframe; the application retains
+all kernel, adapter, controller, and lifecycle ownership. Play focuses/loads,
+Reload replaces the document, and Unload/removal discards the browsing context.
+There is no application lifecycle or privileged host messaging bridge.
+
+Require a different HTTP(S) origin for the experience, as selected for this MVP.
+Sandbox scripts and the experience's own origin remain enabled for modules,
+storage, and current proofs; top navigation/popups/downloads are not granted.
+This supports trusted exports, not hostile marketplace code. Hosting must not
+redirect/navigate onto the parent's origin. Browser-side ZIP mounting and native
+filesystem access remain excluded.
+
+Iframe navigation cannot reliably report cross-origin HTTP/application failures.
+Use `loaded` for navigation, a bounded loading timeout, and optional `check-src`
+CORS HEAD validation for hosts that permit it. Fullscreen and audio remain subject
+to browser permissions and user activation. Two plain HTML Player instances and
+a plain iframe fallback prove the feature without changing existing experiences.
+
+## D-025 — Generate static embed hosts through the existing CLI
+
+`urk embed <experience-url>` generates ordinary HTML, a plain iframe fallback,
+hosting notes, and a byte-for-byte copy of the existing `@urk/player` browser
+module. The CLI declares the Player as a dependency and resolves its built file
+without importing browser code into Node. No repository path, CDN, project build,
+network fetch, deployment, or extra bundler is involved in generation.
+
+Support title, constrained CSS height, fullscreen, and optional CORS HEAD checking.
+Escape HTML values and publish staged files only to absent/empty safe directories.
+Preserve D-024's trusted-export, separate-origin hosting boundary. Generated
+files can move under a static hosting subpath; no application/Core/adapter changes
+or new runtime/lifecycle bridge are introduced.
+
+## D-026 — Use the scaffold's existing Vite build for the complete portable workflow
+
+Set `base: './'` in newly scaffolded Vite configurations. Keep the existing
+`tsc --noEmit && vite build` script as the normal production path; its compiled
+output feeds the already-implemented iframe, package, inspection, unpack, and
+Player flows unchanged. Preserve the prior optional `urk export` command and
+script for compatibility, without requiring it or adding another build system.
+
+The ordered acceptance proof creates a fresh project, installs packed local
+packages while changes are unpublished, then verifies static hosting and plain
+iframe interaction before packaging and playing its extracted manifest entrypoint.
+Core, adapters, and the Player implementation are unchanged by this completion.
+
+
+## D-027 — Add numeric motion with temporary demand on the existing scheduler
+
+Extend D-020 with finite numeric property tweens and automatic operational pause
+integration. Keep one generic removable frame callback API in Core, ordered before
+controller updates, with existing scheduler timing and failure handling. Expose
+existing lifecycle lookup/subscription on RuntimeContext. Each motion adapter shares
+one callback across runnable tweens; no second scheduler or permanent updater.
+
+Targets remain borrowed. Overlapping properties replace whole operations from
+current values; disjoint properties coexist. Reduced motion and explicit finish
+apply destinations synchronously with redraw notification. DOM styling ownership
+and authored replacement keyframes retain D-020 semantics. Presets, composition,
+springs, timelines, and DOM blending remain deferred; manifests/publication unchanged.
+
+## D-028 — Keep audio analysis optional inside the audio adapter
+
+Expose `audio.analysis` through the existing AudioCapability. Lazily create one
+owned context/analyser per opted-in transport, caching media source bindings and
+reusing snapshot buffers. Use AnalyserNode for waveform, spectrum, normalized RMS,
+and configurable coarse band magnitudes. Preserve native playback controls and
+user-gesture timing; CORS analysis is explicit. Disable bypasses analysis, while
+adapter disposal disconnects nodes and closes its context. Playback-only users
+create no Web Audio resources. No audio-specific Core change or new package.
+
+A focused Canvas proof beside the existing Audio Proof reads once per temporary
+URK frame while active. Rendering and media policy remain controller-owned; no sample
+arrays travel over the event bus. Beat/BPM estimation, recording, worklet DSP,
+history, editors, and preset systems remain deferred.
+
+
+D-028 integration follow-up: the Audio Lab now shares its controller, controls,
+plots, and optional Three scene between website and standalone hosts. Direct
+analysis values drive continuous reactions; existing numeric tweens handle finite
+Orbit/Row transitions. Graphics setup uses the existing isolated child-scope
+pattern. Host navigation and page-history cleanup reuse the website media host.
+No additional public runtime API or Core change is needed for this integration.

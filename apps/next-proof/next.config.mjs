@@ -22,8 +22,8 @@ const nextConfig = {
       '@urk/core$': path.resolve(__dirname, '../../packages/core/dist/index.js'),
       '@urk/adapters$': path.resolve(__dirname, '../../packages/adapters/dist/index.js'),
       '@urk/adapters/dom$': path.resolve(__dirname, '../../packages/adapters/dist/dom.js'),
-      '@urk/react-urk$': path.resolve(__dirname, '../../packages/react-urk/dist/index.js'),
-      '@urk/next-urk$': path.resolve(__dirname, '../../packages/next-urk/dist/index.js'),
+      '@urk/react$': path.resolve(__dirname, '../../packages/react/dist/index.js'),
+      '@urk/next$': path.resolve(__dirname, '../../packages/next/dist/index.js'),
     };
 
     return config;

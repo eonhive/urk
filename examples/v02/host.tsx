@@ -12,7 +12,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Kernel } from '@urk/core';
-import { UrkProvider } from '@urk/react-urk';
+import { UrkProvider } from '@urk/react';
 import { attachV02Controls, createV02Experience, type DemoPreferences } from '@urk/examples/v02';
 
 export function V02Host({ renderProvider }: {

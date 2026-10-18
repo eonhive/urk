@@ -12,7 +12,7 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { UrkNextProvider } from '@urk/next-urk';
+import { UrkNextProvider } from '@urk/next';
 import { ProbeView } from '../../../../examples/tests/fixtures/ProbeView';
 import { createProbeKernel, reports } from '../../../../examples/tests/fixtures/runtime';
 

@@ -44,7 +44,17 @@ const REQUIRED_PACKAGES = [
     packageName: '@urk/adapters',
     label: '@urk/adapters',
     importPattern:
-      /from ['"]@urk\/adapters(?:\/dom)?['"]|import\(['"]@urk\/adapters(?:\/dom)?['"]\)/,
+      /from ['"]@urk\/adapters(?:\/[^'"]+)?['"]|import\(['"]@urk\/adapters(?:\/[^'"]+)?['"]\)/,
+  },
+  {
+    packageName: '@urk/react',
+    label: '@urk/react',
+    importPattern: /from ['"]@urk\/react['"]|import\(['"]@urk\/react['"]\)/,
+  },
+  {
+    packageName: '@urk/next',
+    label: '@urk/next',
+    importPattern: /from ['"]@urk\/next['"]|import\(['"]@urk\/next['"]\)/,
   },
   {
     packageName: '@urk/react-urk',
@@ -155,9 +165,9 @@ function runRuntimeChecks(context: ProjectScanContext): CheckResult[] {
 
   const frameworkRuntimeFiles = files.filter((file) => {
     const importsWrapper =
-      /@urk\/react-urk|@urk\/next-urk/.test(file.content) ||
+      /@urk\/(?:react|next)(?:-urk)?['"]/.test(file.content) ||
       /from ['"]react['"]|from ['"]next\//.test(file.content);
-    const importsUrkWrapper = /@urk\/react-urk|@urk\/next-urk/.test(file.content);
+    const importsUrkWrapper = /@urk\/(?:react|next)(?:-urk)?['"]/.test(file.content);
     const createsKernel = /\bcreateKernel\s*\(/.test(file.content);
     const providerWithoutKernelFactory =
       /<UrkProvider\b/.test(file.content) && !/<UrkProvider[\s\S]*?kernel=/.test(file.content);

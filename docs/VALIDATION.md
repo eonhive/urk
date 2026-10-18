@@ -666,3 +666,951 @@ Validation on Node **22.22.2** / Yarn **3.8.7**:
 - Package size reporting and the existing runtime microbenchmark completed. Raw results are in `benchmarks/results/{bundles,runtime}-brand-v02.json`; methodology and limitations are in `docs/PERFORMANCE.md`. No overall speed improvement or physical-device Safari result is claimed.
 
 Updated design canon, decision D018, performance evidence, and roadmap status. Existing website bundle-size warnings remain. Logs: `/tmp/urk-brand-{browser,final-visual,host-builds,final-check}.log`. This branch does not publish packages or deploy the redesign.
+
+## Media milestones 1–2 — 2026-10-12
+
+Added the browser-native video adapter (`packages/adapters/src/video/`) and `@urk/adapters/video` exports, with borrowed/owned elements, independent transport, captions, stable event snapshots, immediate playback cancellation, and safe cross-kernel element handoff. Existing audio/core APIs remain unchanged. Added shared Video Proof and Interactive Media controllers under `packages/examples/src/{video-proof,interactive-media}/`, private cue/time-source helpers in `src/media/`, catalog/export wiring, standalone entries, and the shared website `MediaExample.astro` host. Original Orbit MP4, poster, and captions are shared across both hosts; an optional Swift generator reproduces the clip.
+
+Interactive Media demonstrates timestamp/ended/application-event cues, chapters, a timed hotspot, two application-owned branches, native captions, and validated bookmarks through storage. Fresh kernels restore paused. Unavailable storage falls back to borrowed page memory. Seeks skip missed actions and cancel pending work; replay re-arms repeating cues, including the zero-time boundary. Optional frame-sensitive observation uses native video callbacks or an animation-frame fallback; the demos use native events without an idle frame loop.
+
+Validation on Node **22.22.2** / Yarn **3.8.7**:
+
+- **17 adapter/package tests passed**, including public declarations, packed dependency-light exports, playback races, competing element ownership, rollback, and cleanup failures.
+- **6 cue/time-source checks and 3 existing React SSR checks passed**. Cue checks cover ordering, seek/replay, cooperative cancellation, reentrancy, optional frame cancellation/fallback, and malformed bookmarks.
+- **24 Chromium/Firefox/WebKit browser checks passed** across standalone and website hosts: real sample decoding, multiple players, local files, captions, controls, branch/seek/replay, bookmarks, blocked storage, deferred playback cancellation, silent recovery, and disposal. Completed disposal leaves zero tracked media listeners, sources, object URLs, playing videos, and frame requests.
+- Affected package, standalone, and website production builds passed (**86 website pages**), as did root/proof type checks and website diagnostics (**44 files; zero errors/warnings/hints**). Desktop and 390px layouts were visually checked, including native-caption contrast. `git diff --check` passed.
+
+Usage docs: `packages/adapters/src/video/README.md`, `examples/{video-proof,interactive-media}/README.md`, and the two website example guides. Logs: `/tmp/urk-video-adapters.log`, `/tmp/urk-media-{builds,check,typecheck,unit,cues,browser-clean}.log`. An intermediate browser run was invalidated by a concurrent dependency rebuild; the final 24-check run completed after builds finished. Existing website chunk-size warnings remain. Core/Next ownership suites were not repeated because those implementations did not change. Browser engines on macOS are not physical-device Safari evidence; optional frame sampling has focused controlled tests, not a frame-perfect synchronization claim.
+
+This local checkpoint stops after milestone 2. Cue helpers remain private; async actions must cooperate with cancellation. Audio mixing/ducking, motion/flow, Three.js video textures, and the larger showcase are subsequent milestones. No push, package publication, or deployment was performed.
+
+## Package naming and overlay compatibility - 2026-10-12
+
+Moved the framework implementations to `packages/react` (`@urk/react`) and `packages/next` (`@urk/next`), with Next depending on React. The old published names are v0.2 forwarding packages under `packages/compat`. Added `@urk/adapters/ui-overlay` and matching factory/type/token aliases, keeping the original UI widget implementation, registration strings, and token identity. Updated workspace manifests, paths, builds, CLI checks, proof imports, Yarn state, and directly affected docs. Existing media work remains preserved.
+
+Validation on Node **22.22.2** / Yarn **3.8.7**:
+
+- `corepack yarn install` and `corepack yarn install --immutable` passed. The existing Astro language-server/Volar TypeScript peer warning remains; no external dependency was added.
+- `corepack yarn build` passed for every workspace, including both forwarders, examples, Next, and the website. Final website and Next production builds were repeated after the last label/documentation edits.
+- `corepack yarn lint`, `corepack yarn workspace urk-examples lint`, and `corepack yarn workspace @urk/next-proof lint` passed. Website diagnostics covered **44 files with zero errors, warnings, or hints**.
+- `corepack yarn test` passed **159 tests**: 6 build-plan, 122 core, 18 adapter, 2 CLI, 9 React/media, and 2 Next/packed-wrapper checks, plus public type checks and website diagnostics.
+- Packed adapter tests verified old `ui-widgets` and new `ui-overlay` imports and strict declarations without Three.js. Both names share the exact factory/token; legacy string lookup, duplicate-token rejection, and cleanup remain intact. Root/Three imports still resolve with their existing peer.
+- Packed wrapper tests verified all old/new runtime exports are identical, hooks consume the same context through every provider name, SSR stays inert, Next retains its client directive, and strict declarations resolve outside monorepo path aliases.
+- `URK_WEBSITE_PORT=4325 corepack yarn workspace urk-examples test:browser ownership.spec.ts v02.spec.ts` passed **29 Chromium checks**, including Strict Mode replay, unmount during startup, competing owners, Next navigation, shared overlays, picking, idle rendering, and disposal. The initial launch was interrupted because an unrelated local server occupied the default website port; the isolated rerun passed. Firefox/WebKit and unrelated media/brand browser suites were not repeated for this naming change.
+- `corepack yarn report:size` packed all **seven** publishable packages and built all five representative fixtures. Its assertions confirm Three.js remains absent from DOM/React/Next fixtures. Reports are under `.codex/validation/bundle-report/`; no performance improvement is claimed.
+- A source comparison verified React/Next provider/hook implementations are unchanged except Next's package import/re-export specifier. `git diff --check` passed.
+
+Registry reads returned E404 for `@urk/react` and `@urk/next`, and latest `0.1.1` for both published legacy names. This verifies no public package was found under the new names at the check, not publication permission. No packages were published. Existing `0.1.x` consumers need an explicit upgrade to use the forwarders, and mixed independently installed React binding copies cannot be assumed to share context. Historical release records and prior measured package names remain unchanged. See [migration notes](MIGRATION_V02.md) and decision D-019.
+
+## v0.3 interactive rendering/UI integration slice - 2026-10-13
+
+Extended the existing shared v0.2 experience, retaining its routes, exports, and `0.2.0` manifests. Native layout/rotation controls, hover callouts, selection feedback, and finite Row/Arc transitions work across standalone, React, Next, and website hosts. Operational pause freezes progress; resize/theme changes may repaint the frozen view. Reduced motion skips animation. Scene-owned frames, observers, geometry/materials, subscriptions, and controls retain scoped cleanup. The kernel, independent Three adapter, and small overlay keep their existing architectural boundaries.
+
+Implementation files changed in this slice:
+
+- `packages/adapters/src/{three,input,pointer,ui-widgets}/index.ts`: changed-size events, unchanged-buffer preservation, pre-render picking, cancellation guards, input focus/visibility resets, and accessible overlay feedback.
+- `packages/examples/src/v02/{runtime,scene,styles}.ts`: native controls, application-owned transitions and pause policy, scoped hover feedback, and unobstructed narrow-screen scenes.
+- `apps/next-proof/app/v02/page.tsx`: stable factory identity across host rerenders; provider/hook implementations and SSR ownership remain unchanged.
+- `examples/tests/browser/rendering-ui.spec.ts` (new) and `v02.spec.ts`: focused integration coverage and updated owned-event subscription count.
+
+Validation on Node **22.22.2** / Yarn **3.8.7**:
+
+- `corepack yarn install --immutable` and the complete `corepack yarn build` passed, including forwarding packages, standalone/React, Next production, and all 86 website pages.
+- `corepack yarn lint`, examples lint, and Next-proof lint passed. Website diagnostics: **44 files, zero errors/warnings/hints**. `git diff --check` passed.
+- **18 adapter/package tests** plus public declarations passed. Both overlay subpaths still resolve without Three.js and share the original factory/token identity.
+- **4 React/Next SSR checks and 1 packed-wrapper compatibility check** passed, including inert acquisition, common context, runtime export identity, and strict declarations.
+- **34 Chromium checks** passed for `rendering-ui.spec.ts`, `v02.spec.ts`, and `ownership.spec.ts` before the final narrow-layout adjustment. This includes the 29 existing shared-experience/ownership checks.
+- The final rendering/UI and website suites passed across **24 browser cases** (eight each on Chromium, Firefox, and WebKit). One combined run encountered a concurrent rebuild that temporarily removed `packages/examples/dist/v02/runtime.js`, causing an HMR reset during a WebKit transition. After outputs settled, the complete eight-case WebKit rerun passed without implementation changes.
+- Browser checks cover native keyboard behavior, hover versus selection, rotation, latest-layout selection, pause/resume mid-transition, reduced motion, paused resize, pre-render raycasts, unchanged drawing buffers, focus loss, cancellation during pending cleanup, and website restoration. Completed disposal leaves zero tracked animation frames, resize observers, owned canvases, and overlays; borrowed hosts survive. Desktop/mobile screenshots and nonblank WebGL pixel assertions verify the scene; screenshots are under `.codex/validation/ownership-browser/`.
+
+Updated only affected adapter READMEs, the shared playground guide, architecture/UI notes, changelog, and this record. Prior naming migration and media work remain preserved. No dependencies, core subsystem, renderer registry, UI framework, package publication, deployment, or release-version bump was added. Existing Astro peer, website chunk-size, and docs-404 build warnings remain. Core, unrelated media/brand browser suites, hosted CI, and physical devices were not revalidated in this slice.
+
+Next smallest task: add context-loss feedback and a demand redraw after WebGL context restoration, with a focused lose/restore/dispose browser regression. This slice does not yet supply that application-level recovery behavior.
+
+## Interactive media: optional audio coordination — 2026-10-13
+
+Implemented Milestone 3 on `thehive/urk-media-video`: an optional `@urk/adapters/audio/mixer` subpath composes existing transports with music/narration/effects/ambience groups and finite cancellable fades. The shared film now has explicit sound opt-in, independent saved music/narration levels, branch crossfades, a synthesized spoken guide, cue-driven narration, ducking that preserves user volume, and visible transcript. Fresh kernels restore silent. Pause, seek, replay, visibility loss, disable, and disposal invalidate playback. Errors remain local to sound controls; no kernel or wrapper API changed.
+
+Files for this milestone:
+
+- `packages/adapters/src/audio/{index.ts,mixer.ts,README.md}`, `packages/adapters/{package.json,README.md}`: compatible native playback cancellation/loading fixes, optional mixer, exports, and usage.
+- `packages/examples/src/interactive-media/{mount.ts,sound.ts,view.ts,styles.ts,bookmarks.ts}`: shared sound orchestration, controls, and validated volume preferences.
+- `examples/interactive-media/{generate-audio.mjs,AUDIO_ASSETS.md,README.md}`; `orbit-{explore,create,guide}.wav` in both `examples/public/audio/` and `apps/www/public/audio/`: original music and synthesized original narration, shared assets and provenance. The speech generator is an optional external tool, not a runtime/build dependency.
+- `packages/adapters/tests/{audio.test.mjs,packaged-exports.test.mjs,types/dom.ts}`, `examples/tests/media.test.mjs`, `examples/tests/browser/{media-probe.ts,interactive-audio.spec.ts}`: focused playback, export, volume, cancellation, and cleanup checks.
+- Website interactive-media guide and adapter reference, plus `docs/ARCHITECTURE.md` and this record: current usage and the optional boundary.
+
+Node **22.22.2**, Yarn **3.8.7** validation:
+
+- **25 adapter/package tests** pass, including seven focused audio/mixer cases and packed strict types/inert imports without Three.js.
+- **9 cue/React SSR tests** pass; root and standalone proof type checks pass.
+- Affected adapter/shared-example/standalone/website builds pass; website builds **86 pages**. Website check: **44 files, zero errors, warnings, or hints**. Existing large-chunk and docs-404 build warnings remain.
+- Final **27 browser cases** pass across Chromium, Firefox, and WebKit: 12 new audio cases across both hosts, plus 15 existing playground/website audio cleanup cases. They cover native playback, automatic two-second narration, ducking/restoration, branch crossfade, saved levels, fresh silent recovery, source failure isolation, and cancellation during pending playback. The preceding combined media run passed **24 cases**, including 12 existing cue/chapter/bookmark cases.
+- Browser probes report zero pending animation frames after fades, and zero owned audio sources/listeners/playback after disposal. Deferred native playback keeps disposal pending until settlement. Original video behavior, blocked storage, and fresh recovery remain working.
+- Desktop (1440px) and narrow (390px) screenshots inspected; no horizontal overflow. Preview: `http://127.0.0.1:5176/interactive-media/`. Screenshots retained at `.codex/validation/urk-audio-{desktop,mobile}.png`. `git diff --check` passes.
+
+No performance gains claimed. Native media volume support varies; physical mobile devices, sample-accurate synchronization, playlists, and audio analysis are not validated or provided by this slice. Core/full ownership suites were not repeated because kernel and wrapper lifecycle code did not change. Existing working-tree changes were preserved; nothing was committed, pushed, published, or deployed.
+
+Next implementation checkpoint: native motion and cancellable experience transitions driven by the existing media controller, followed by optional Three.js video textures.
+
+## Three context-loss recovery - 2026-10-13
+
+Implemented capability-local recovery in the existing Three adapter and shared playground. `three:context-lost` and `three:context-restored` carry the borrowed host and owned canvas, with the adapter ID as source. Loss suppresses rendering, resizing, and picking. Three.js retains ownership of its native renderer restoration; the adapter applies the latest size before notifying consumers. No public method signatures, framework ownership, package versions, dependencies, or kernel lifecycle states changed.
+
+The shared scene freezes its finite transition, cancels pending drawing, and retains selection, rotation, scene objects, and renderer/canvas identity. Its controller disables only scene interaction and shows recovery feedback. Restoration redraws automatically; a paused scene redraws once without advancing or resuming. The lost canvas is hidden to avoid the browser's broken-canvas placeholder. Abort suppresses recovery during pending cleanup, and completed disposal removes both URK and Three native listeners. Existing fresh-kernel recovery remains available if restoration never arrives; there is no forced-restore or retry loop.
+
+Files changed in this pass:
+
+- `packages/adapters/src/three/index.ts` and `packages/adapters/tests/types/root.ts`: context events, cancellation/loss guards, and public payload declaration coverage.
+- `packages/examples/src/v02/{scene,runtime,styles}.ts`: scene suspension/restoration, controller feedback, disabled controls, and hidden lost canvas.
+- `examples/tests/browser/context-recovery.spec.ts` and `rendering-probe.ts` (new): native loss/restoration tests and the extracted shared frame/pixel/resource probe.
+- `examples/tests/browser/rendering-ui.spec.ts` and `v02.spec.ts`: reuse the probe and account for the two scoped recovery subscriptions.
+- `packages/adapters/src/three/README.md`, the website `guides/urk-v02.mdx`, `docs/ARCHITECTURE.md`, `CHANGELOG.md`, and this record: recovery contract, usage, boundaries, and evidence.
+
+Node **22.22.2** / Yarn **3.8.7** validation:
+
+- **36 rendering/recovery browser cases passed** across Chromium, Firefox, and WebKit. After the lost-canvas style correction, all **21 context-recovery cases passed again**. Real `WEBGL_lose_context` loss/restoration is exercised, including repeated cycles, resize while lost, running and paused transitions, restoration during pending shutdown, unmount during recovery, and fresh-kernel reuse. The initial low-level test driver attempted restoration before loss-event dispatch completed; waiting for that browser boundary corrected the test without a runtime workaround.
+- **29 existing Chromium ownership/shared-experience cases passed**, including Strict Mode replay, Next navigation, pending boot cancellation, selection/audio behavior, and release of all seven owned event subscriptions.
+- **25 adapter/package tests and public declaration checks passed**, including dependency-light packed exports and old/new overlay identity. **Four React/Next SSR checks passed** with inert startup and no browser acquisition.
+- Root lint/type checking, the examples type check, explicit strict checks of the changed browser test/probe files, and website diagnostics passed (**44 files; zero errors/warnings/hints**). Next's production build also checked its types. `git diff --check` passed.
+- `node scripts/build.mjs urk-examples @urk/next-proof @urk/www` passed with their runtime and forwarding-package dependencies. The website produced **86 pages**. Existing large-chunk and docs-404 warnings remain.
+- Pixel assertions verify nonblank restored rendering at desktop/mobile sizes. Screenshots were inspected before and after restoration; final copies are `.codex/validation/context-{lost,restored}-mobile.png`. Completed disposal has zero tracked frames, resize observers, or long-lived canvas context listeners; borrowed hosts remain connected.
+
+Preview remains `http://127.0.0.1:5175/v02/`. Prior migration and media work are preserved. Core, unrelated media/brand browser suites, hosted CI, physical devices, and real hardware GPU resets were not revalidated. No commit, push, publication, or deployment was performed. Browser restoration is not forced by URK.
+
+Next smallest rendering task: handle device-pixel-ratio changes that leave the host's CSS dimensions unchanged, with a focused resize/redraw regression.
+
+## Interactive media: native motion and experience handoffs — 2026-10-13
+
+Added the next working media milestone on `thehive/urk-media-video`. Chapter titles use finite native animations. The existing controller transitions from the film to a branch-specific closing panel, with Watch again and Return to film controls. Replay, seeking, and chapter selection interrupt pending handoffs. Focus transfers only when its panel is hidden. Experience pause/visibility loss freezes title motion and cancels the current panel handoff; visual resume never restarts media. Reduced-motion changes finish active effects and skip new ones. Missing Web Animations support preserves immediate navigation.
+
+Files changed in this slice:
+
+- Added `packages/examples/src/media/{motion,transitions}.ts`; exported them through the existing private `media/index.ts`. Native effects and media-query listeners have explicit cleanup; newer transitions abort older work, and disposal awaits cooperative completion.
+- Added `packages/examples/src/interactive-media/stage.ts`; updated `mount.ts`, `view.ts`, and `styles.ts` for application-owned film/ending state, native motion, accessible actions, and responsive presentation. No public adapter, package, dependency, kernel state, or separate Stage runtime was added.
+- Added `examples/tests/motion.test.mjs` and `examples/tests/browser/interactive-motion.spec.ts` for cancellation, reentrancy, pause/resume, reduced-motion changes, focus, fallback, and disposal.
+- Updated `examples/interactive-media/README.md`, the website interactive-media guide, `docs/ARCHITECTURE.md`, and this record.
+
+Validation on Node **22.22.2** / Yarn **3.8.7**:
+
+- **14 unit/SSR checks** pass: five new motion/transition cases, six existing cue/media cases, and three React SSR cases. Root and standalone proof type checks pass.
+- Affected shared-example, standalone, and website builds pass, including dependency builds and **86 website pages**. Website check: **44 files, zero errors/warnings/hints**. Existing large-chunk/docs-404 build warnings remain.
+- **26 browser cases** pass: 14 Chromium checks cover the new motion behavior plus existing media/audio flows across both hosts; 12 Firefox/WebKit checks cover the new motion flows across both hosts. No source changes were needed for browser differences.
+- Checks confirm rapid replacement rejects stale transitions, paused title progress stays fixed, interrupted ending handoffs can resume or be replaced, return transfers keyboard focus without autoplay, and disposal cancels active effects and removes owned media resources. Idle has no tracked animation-frame requests or active native effects. Unit checks verify preference-listener removal.
+- Desktop (1440px) and narrow (390px) screenshots inspected. An initial aspect-ratio/min-height interaction caused horizontal overflow; explicit screen width fixed it. Screenshots: `.codex/validation/urk-motion-{desktop,mobile}.png`. `git diff --check` passes.
+
+A concurrent local rebuild removed compiled package outputs during the first Firefox/WebKit run and reset one Firefox test via HMR. After outputs settled, the complete 12-case run passed. One immediate retry found the shared test port still occupied; it was restarted after the port was released. These runs did not require implementation changes.
+
+No physical-device validation or performance gain is claimed. Core, public adapter, and framework ownership suites were not repeated because their implementation did not change. Unrelated working-tree changes remain preserved; nothing was committed, pushed, published, or deployed. Running preview: `http://127.0.0.1:5176/interactive-media/`.
+
+Next concrete implementation step: optional Three.js video-texture ownership and a media-to-3D handoff in the shared showcase.
+
+## Three fixed-size pixel-ratio changes - 2026-10-13
+
+The Three adapter now watches the browser's resolution media query alongside host resizing. Each notification replaces the old listener using the uncapped device ratio; the existing renderer ratio remains capped at 2x. Effective changes emit the existing `three:resize` event, so the shared scene redraws once while paused without advancing its transition. Changes above the cap do not clear the buffer or redraw. Context restoration applies the latest ratio. Abort prevents further rearming/resizing, and scope cleanup removes the final listener. There is no polling, new API, dependency, or framework ownership change.
+
+Files changed in this pass:
+
+- `packages/adapters/src/three/index.ts`: scoped resolution watcher.
+- `examples/tests/browser/rendering-probe.ts`: resolution-listener tracking.
+- `examples/tests/browser/pixel-ratio.spec.ts` (new): fractional/capped ratios, frozen redraws across standalone/React/Next, context recovery, pending shutdown, and fresh mounts.
+- `packages/adapters/src/three/README.md`, `CHANGELOG.md`, and this record: sizing contract and evidence. Architecture and naming decisions remain unchanged.
+
+Validation on Node **22.22.2** / Yarn **3.8.7**:
+
+- `node scripts/build.mjs @urk/examples @urk/next` passed, including core, adapter, and React dependencies.
+- **25 adapter/package tests** and public declaration checks passed, retaining independent imports and identical old/new overlay aliases.
+- **42 browser cases passed** for `pixel-ratio.spec.ts`, `rendering-ui.spec.ts`, and `context-recovery.spec.ts` across Chromium, Firefox, and WebKit. Six live-DPR cases are explicitly skipped on Firefox/WebKit because CDP emulation is Chromium-only; controlled ratio changes through native media-query objects cover the adapter contract in all three engines.
+- Chromium's emulation updates DPR without notifying resolution queries until another media feature changes. The test driver toggles an unused contrast preference to trigger browser-generated query events without changing viewport/host dimensions. The initial run exposed this driver limitation; runtime code needed no workaround. After aligning Playwright's screenshot viewport with CDP, all **four DPR cases passed again**.
+- Desktop/mobile screenshots inspected, with nonblank WebGL pixel assertions and no narrow-page overflow. Copies: `.codex/validation/pixel-ratio-{desktop,mobile}.png`. Tests verify exactly one paused redraw per effective change, preserved selection/rotation/progress, one active resolution listener across repeated changes, and zero listeners after disposal.
+- Root TypeScript checking, strict checks of the changed browser files, **five React/Next SSR and packed compatibility checks**, and `git diff --check` passed.
+
+Physical monitor changes/browser zoom, live DPR changes in Firefox/WebKit, full workspace production builds, and unrelated media/core suites were not repeated in this pass. Dependencies and manifests did not change, so Yarn installation was not repeated. No publication, deployment, push, or commit was performed. Preview remains `http://127.0.0.1:5175/v02/`.
+
+Next smallest interaction task: add mobile touch-selection and pointer-cancellation coverage for scene picking and overlay feedback, fixing only demonstrated gaps.
+
+## Tap-only touch feedback and pointer cleanup - 2026-10-13
+
+Implemented the selected tap-only policy in the shared playground controller. A passive touch-down listener and the existing surface-move subscription restore selected feedback without picking on touch movement. Selection still uses native clicks; mouse/pen hover, keyboard controls, and vertical scrolling remain available. One private reset helper clears the inline cursor and transient callout on leave, pause, and graphics loss. Cancellation retains the browser's existing cancellation-to-leave sequence. Abort guards and scoped listener removal cover pending and completed shutdown. No pointer adapter API, event payload, Three implementation, ownership behavior, package name, or dependency changed.
+
+Files changed in this pass:
+
+- `packages/examples/src/v02/runtime.ts`: touch policy, shared feedback reset, and scoped passive listener.
+- `examples/tests/browser/rendering-probe.ts`: owned pointer-listener accounting.
+- `examples/tests/browser/touch-pointer.spec.ts` (new): host integration, native tap/scroll behavior, controlled pen/touch events, and pending-cleanup regressions.
+- The website `guides/urk-v02.mdx`, `CHANGELOG.md`, and this record: behavior and validation evidence.
+
+Validation on Node **22.22.2** / Yarn **3.8.7**:
+
+- **15 new browser cases passed** across standalone, React, and Next. Browser-emulated taps run in Chromium, Firefox, and WebKit. Controlled PointerEvents cover pen hover and touch movement in all engines. Chromium CDP touch swipes produce trusted `pointercancel`, `lostpointercapture`, and `pointerleave` events, scroll the page, and preserve selection/rotation without a click. Six CDP-only cases are explicitly skipped outside Chromium.
+- Tests confirm blank-space taps preserve selection; touch down/up do not select; one click selects once; pause and graphics loss reject scene interaction; native keyboard controls retain their behavior. Unmount during real emulated contact and late events during pending/completed cleanup cannot revive feedback. All 13 tracked target/surface listeners release on disposal and return without duplicates on fresh mounts.
+- **42 existing rendering/recovery/DPR cases passed** across the browser matrix, with their six Chromium-only live-DPR variants skipped on Firefox/WebKit. **29 existing Chromium ownership/shared-experience cases passed**, including Strict Mode replay, Next navigation, sound cancellation, and scoped event subscriptions. Total: **86 passed browser cases**, with **12 intentional CDP-only skips**.
+- **25 adapter/package tests**, public declarations, and **five React/Next SSR/package-compatibility checks** passed. Root TypeScript and strict checks of the changed browser test/probe files passed. Website diagnostics: **44 files, zero errors/warnings/hints**. `git diff --check` passed.
+- `node scripts/build.mjs @urk/examples @urk/next` and production builds for `urk-examples`, `@urk/next-proof`, and `@urk/www` passed with their runtime/forwarder dependencies. Website output remains **86 pages**; existing large-chunk and docs-404 warnings remain.
+- Desktop/mobile screenshots inspected with nonblank canvas and narrow-layout overflow assertions. Copies: `.codex/validation/touch-{desktop,mobile}.png`. Completed shutdown has no tracked pointer listeners, animation frames, resize observers, canvases, or overlays.
+
+Physical phones/tablets/styluses were not tested; native swipe/cancellation emulation is Chromium-only. Core/CLI and unrelated media browser suites were not repeated. Manifests/dependencies are unchanged, so installation was not repeated. Existing unrelated changes remain preserved. No commit, push, publication, or deployment was performed. Preview remains `http://127.0.0.1:5175/v02/`.
+
+Next smallest rendering task: respond to reduced-motion preference changes during an active layout transition, using the existing scene and scoped media-query pattern.
+
+## Live playground reduced motion - 2026-10-13
+
+The shared scene now keeps one reduced-motion media query and reads its live value on existing transition frames. Enabling reduction completes a running transition on its next eligible frame. Paused or graphics-unavailable scenes stay frozen; resume/restoration applies the latest preference, while a paused recovery redraw still preserves progress. Disabling reduction does not replay completed work. The immediate layout path also respects pause and graphics availability when a queued controller request arrives late. No preference listener, idle frame, dependency, rendering layer, public API, or ownership change was needed.
+
+Files changed in this pass:
+
+- `packages/examples/src/v02/scene.ts`: live preference reads and guarded immediate settlement.
+- `examples/tests/browser/reduced-motion.spec.ts` (new): cross-host live changes, idle behavior, pause/recovery, queued layouts, shutdown, and fresh mounts.
+- The website `guides/urk-v02.mdx`, `CHANGELOG.md`, and this record: behavior and evidence.
+
+Validation on Node **22.22.2** / Yarn **3.8.7**:
+
+- `node scripts/build.mjs @urk/examples @urk/next` passed, including core, adapters, and React dependencies.
+- **66 browser cases passed** across Chromium, Firefox, and WebKit: 30 new reduced-motion cases plus 36 existing rendering/recovery cases. The final run had no skips or retries. It covers standalone, React, and Next, retains selected-object feedback/rotation, and verifies one eligible settlement draw, static paused recovery, idle scheduling, and released frames/listeners/observers after shutdown.
+- Initial runs exposed test-driver timing assumptions: WebKit can acknowledge emulation before existing media queries update, and runner delays can outlast the 650 ms transition before injecting pause/loss. Tests now await the native query value and interrupt transitions inside a browser frame. Neither required an application workaround.
+- **Seven adapter contract/packed-export checks**, public declaration checks, and **five React/Next SSR/package-compatibility checks** passed. Both overlay subpaths retain identity. Root TypeScript and explicit strict checks of the new browser spec/probe passed. Website diagnostics: **44 files, zero errors/warnings/hints**. `git diff --check` passed.
+- Desktop/mobile screenshots inspected, with nonblank canvas and narrow-page overflow assertions. Copies: `.codex/validation/reduced-motion-{desktop,mobile}.png`.
+
+Preference changes use browser emulation; graphics loss uses native `WEBGL_lose_context`. Physical devices, operating-system preference toggles, hardware GPU resets, full workspace production builds, and unrelated core/CLI/media/touch/DPR suites were not repeated in this slice. Dependencies/manifests did not change, so installation was not repeated. Prior working-tree changes are preserved; no commit, push, publication, or deployment was performed. Preview remains `http://127.0.0.1:5175/v02/`.
+
+Next smallest implementation task: preserve keyboard focus when **Start fresh** replaces the host controls, without reclaiming focus after the user moves elsewhere. A focused Chromium check confirmed that Enter on the standalone restart button currently leaves `document.activeElement` on `BODY`. Add standalone/React/Next coverage and fix the shared host behavior; no focus framework is needed. This follow-up is not implemented in this pass.
+
+## Video-to-3D gallery and Experience Showcase — 2026-10-13
+
+Implemented the optional `@urk/adapters/three/video` binding, a shared lazy gallery, the Interactive Media entry button, and standalone/website Experience Showcase routes. The original video handle drives textures, chapters, captions, selection, and opt-in sound. Child scopes release graphics before the borrowed media; interrupted imports remain owned until settlement. WebGL failure stays local, context recovery preserves the film, and idle rendering stops. The standalone chunk split now keeps Three.js out of the initial media page; the website prepares optional dependencies before development navigation.
+
+Changed areas: `packages/adapters/src/three/video.ts` plus its export, public-type/ownership/package checks and Three README; `packages/examples/src/interactive-media/`, `experience-showcase/`, catalog/types/exports; standalone route/build wiring; website media host/catalog wiring; shared browser checks and usage documentation. Core APIs and dependency versions are unchanged.
+
+Verified on Node 22.22.2 / Yarn 3.8.7:
+
+- **30 adapter/package checks**, including five texture ownership cases; strict public declarations and independent native-video imports pass.
+- **14 media, motion, and React SSR checks** pass. Root types, shared examples compilation, standalone types, and the new browser test's strict types pass.
+- **21 gallery browser cases pass across Chromium, Firefox, and WebKit**, covering both production hosts, picking, keyboard selection, captions, sound, idle drawing, context loss/restoration, cancelled imports on return/shutdown, graphics failure, fresh recovery, and the animation-frame fallback. Final Chromium rerun also passes all **14 existing media/audio/motion browser cases** (35 distinct browser cases overall).
+- Affected adapter/shared-example builds and standalone/website production builds pass; website output has **87 pages**. Website diagnostics: **44 files, zero errors/warnings/hints**. `git diff --check` passes.
+- Desktop and narrow-screen screenshots inspected in both hosts. Corrected light-theme control contrast. Final screenshots are under `.codex/validation/gallery-regressions/`; the three-browser artifacts are under `.codex/validation/gallery-browser/`.
+
+Final browser runs use isolated copies of completed production builds with Vite preview's media range support. Earlier development runs were interrupted by port contention, first-use dependency optimization, and another task rebuilding shared dist folders. No runtime failures remain in the final gates. Physical devices and unrelated core/CLI/framework ownership suites were not repeated. A paused native VideoTexture can retain a dormant decoded-frame callback until disposal; completed return/disposal releases all observed media frame callbacks, rendering requests, canvases, and native video listeners. No commit, push, publish, or deployment was performed.
+
+Preview: `http://127.0.0.1:5176/experience-showcase/`; existing `/interactive-media/` remains available. Next slice: configurable element/document visibility and lazy media loading, preserving explicit user playback and application-owned resume policy.
+
+## Media visibility and deferred loading — 2026-10-14
+
+Completed the visibility/loading slice of Milestone 6. Optional registration policies defer the supplied video source until visible or explicitly played, pause offscreen/hidden media, and never resume automatically. Source replacement wins over deferred loading. Cancellation disconnects observers immediately. Unregister now delivers a terminal snapshot so real video-texture bindings dispose without waiting for their owner to shut down. The shared film/gallery observes its experience container; hiding the native video for a texture does not stop gallery playback.
+
+Files changed in this slice:
+
+- `packages/adapters/src/video/{types,player,visibility}.ts`, `src/video/README.md`, `tests/video.test.mjs`, and `tests/types/dom.ts`.
+- `packages/examples/src/{interactive-media,video-proof}/mount.ts`.
+- `examples/tests/browser/{video-visibility,video,interactive-media,interactive-audio,interactive-motion,gallery}.spec.ts`.
+- Website example docs `apps/www/src/content/docs/docs/examples/{video-proof,interactive-media}.mdx` and this record.
+
+Verified with Node 22.22.2 / Yarn 3.8.7:
+
+- **21 video/texture checks**, **11 media/motion checks**, and the independent packed-export check pass. Root types, public declarations, and strict types for all six affected browser specs pass.
+- **51 distinct browser cases pass**: 12 visibility and 21 gallery cases across Chromium/Firefox/WebKit, plus 18 existing Chromium video/media/audio/motion cases. Initial harness failures were corrected by scrolling before expecting lazy metadata and making the old Video Proof test honor the configured proof port. No runtime workaround was needed.
+- Adapter, shared examples, standalone, and website builds pass; website produces 87 pages. Website check: 44 files, zero errors/warnings/hints. Desktop/narrow-screen captures inspected. `git diff --check` passes.
+- Live preview at `http://127.0.0.1:5176/interactive-media/` plays and disposes without page errors. Browser artifacts: `.codex/validation/visibility-browser/` and `visibility-regressions/`.
+
+Browser checks use real viewport intersections; document hiding is delivered through a controlled visibility event. Physical devices and operating-system tab suspension were not tested. Unrelated core/CLI/framework suites were not rerun. No new dependency, core API, publication, deployment, commit, or push. Remaining Milestone 6 work includes experience-level media retry/recovery that preserves chapter, branch, and bookmark state.
+
+## Playground restart focus continuity - 2026-10-14
+
+Shared host-control cleanup now checks the currently focused owned button immediately before removing the old controls. When replacement controls already exist in the same host, focus moves to their matching button without scrolling. Focus moved outside remains untouched, and complete detach does not target another host or a later mount. There is no stored focus intent, timer, listener, focus manager, dependency, or wrapper/API change.
+
+Screenshot inspection also exposed an existing replacement-cleanup defect: old controls removed the host layout class while new controls still needed it, moving the inspector above the scene after restart. Cleanup now retains the class while replacement controls remain and removes it on final detach.
+
+Files changed:
+
+- `packages/examples/src/v02/runtime.ts`: focus transfer and replacement-aware host-class cleanup.
+- `examples/tests/browser/focus-continuity.spec.ts` (new): keyboard restart/failure recovery/unmount, pending-shutdown focus changes, host isolation, and responsive layout.
+- The website `guides/urk-v02.mdx`, `CHANGELOG.md`, and this record: current behavior and validation.
+
+Verified on Node **22.22.2** / Yarn **3.8.7**:
+
+- The first Chromium regression failed against the previous build at the expected missing-focus assertion. After the fixes, **30 focus cases passed across Chromium, Firefox, and WebKit**, covering standalone, React, and Next without skips or retries.
+- A held playback promise exercises genuine pending shutdown. Moving focus outside prevents restoration; moving to another owned button transfers that newer focus instead of the initiating action. Enter/Space, failed setup, repeated fresh mounts, final detach, and multiple hosts are covered.
+- Desktop/mobile screenshots inspected with nonblank WebGL assertions, retained selection, no narrow-page overflow, correct inspector placement, and visible focus. Copies: `.codex/validation/focus-{desktop,mobile}.png`. Completed shutdown retains no tracked frames or resize observers.
+- `node scripts/build.mjs @urk/examples @urk/next`, root TypeScript checking, and explicit strict checks of the new browser spec/probe passed. **Five existing React/Next SSR and packed-wrapper compatibility checks** passed. Public names, provider/hook APIs, and lifecycle ownership remain unchanged.
+- Website diagnostics passed: **44 files, zero errors/warnings/hints**. `git diff --check` passed.
+
+Tests use browser automation and emulated viewport sizes, not physical-device or assistive-technology validation. The broader ownership/rendering/media browser suites and full workspace production builds were not repeated in this focused pass. Dependencies/manifests are unchanged, so installation was not repeated. Unrelated migration/media changes are preserved; no commit, push, publication, or deployment was performed. Preview: `http://127.0.0.1:5175/v02/`.
+
+Next smallest implementation task: keep keyboard focus on the available Pause/Resume action when activating its counterpart disables the focused button, without changing focus on external lifecycle updates. A focused Chromium check confirmed Enter on Pause currently leaves focus on `BODY`. This follow-up is not implemented in this pass.
+
+## Public DOM motion extraction — 2026-10-14
+
+Extracted the private native animation helper into `@urk/adapters/motion` with
+`MotionCapability`, scoped groups, terminal playback handles, explicit millisecond
+options, and completed/cancelled/failed results. Interactive Media and its shared
+Showcase host now register the adapter; the private motion implementation/export
+was removed. UI state/CSS remains responsible for stable appearance. Whole-element
+replacement starts from authored keyframes; controllers explicitly coordinate
+pause/visibility. Core, scheduling, and dependency versions are unchanged.
+
+Files changed in this slice:
+
+- New `packages/adapters/src/motion/{index,keyframes,playback,types}.ts` and usage README.
+- `packages/adapters/package.json`, `src/{adapters,dom}.ts`, README, new motion tests,
+  existing contract/packed-export tests, and public DOM type checks.
+- `packages/examples/src/interactive-media/{mount,stage,meta}.ts`,
+  `experience-showcase/meta.ts`, `media/index.ts`, and removal of `media/motion.ts`.
+- Migrated `examples/tests/motion.test.mjs` to retain application-transition checks;
+  native-motion checks now live with the adapter. Added
+  `examples/tests/browser/motion-adapter.spec.ts` and updated the Interactive Media README.
+- Root README, architecture, decision D-020, and this validation record.
+
+Verified with Node **22.22.2** and Yarn **3.8.7**:
+
+- `node scripts/build.mjs @urk/examples`: core, adapters, and shared example builds pass.
+- `corepack yarn workspace @urk/adapters test:types`, `corepack yarn typecheck`, and
+  explicit strict TypeScript checks of the public-motion and Interactive Media
+  browser specs pass.
+- `node --test packages/adapters/tests/motion.test.mjs examples/tests/motion.test.mjs`:
+  **13 checks pass** (11 adapter contracts and two cooperative transition checks).
+- `node --test packages/adapters/tests/contracts.test.mjs packages/adapters/tests/packaged-exports.test.mjs`:
+  **seven checks pass**, including real packed strict declarations, browser-free
+  imports/factories, and independent motion imports without Three.js.
+- **21 browser cases pass across Chromium, Firefox, and WebKit**, exercising both
+  standalone and website Interactive Media plus the public adapter directly.
+  Coverage includes real native pause timing, individual/group pause, finish,
+  natural completion, replacement, cancellation, reduced-motion changes, absent
+  WAAPI, stable authored styling, focus handoffs, scope cleanup, and fresh kernels.
+  Motion active count, native effects, and its kernel frame demand return to zero.
+- `git diff --check` passes. Standalone mobile and website desktop ending captures
+  were inspected; artifacts are in `.codex/validation/motion/results/`.
+
+The default test ports were occupied, so the run used the existing browser config
+through `.codex/validation/motion/playwright.config.ts` on isolated ports:
+
+```sh
+URK_PROOF_PORT=5274 URK_WEBSITE_PORT=4422 URK_BROWSER_MATRIX=1 \
+  corepack yarn workspace urk-examples test:browser \
+  --config ../.codex/validation/motion/playwright.config.ts \
+  interactive-motion.spec.ts motion-adapter.spec.ts
+```
+
+No full workspace production build or unrelated media/rendering/framework suite was
+rerun. Browser preference emulation does not validate physical devices or OS
+settings. Numeric tweening, automatic lifecycle pause, continuous interruption
+handoffs, presets, and sequence composition remain deferred. No publication or
+deployment was performed; existing unrelated working-tree changes were preserved.
+
+## Shared film retry and recovery — 2026-10-15
+
+Interactive Media and Experience Showcase now recover native film failures through an explicit Retry action. Recovery retains the last valid position, branch, captions, and volume preferences, starts paused and silent, and recreates active gallery resources after replacing the video source. Cancellation, pause, document hiding, gallery return, and shutdown prevent stale restoration. Focus transfers from the removed recovery control to Play only when that control still has focus.
+
+Files: `packages/examples/src/interactive-media/{mount,reload,view,styles}.ts`, `examples/tests/media-reload.test.mjs`, `examples/tests/browser/media-recovery.spec.ts`, the Interactive Media usage page, and this record. No public adapter or kernel API changed.
+
+Verified on Node **22.22.2** / Yarn **3.8.7**:
+
+- **12 focused Node checks pass**: reload ordering/cancellation/cleanup plus existing cue, time-source, and transition contracts.
+- **43 distinct browser cases pass**: 18 recovery cases across Chromium, Firefox, and WebKit on standalone and website hosts; 25 existing Chromium media/audio/motion/gallery/visibility cases. Recovery covers initial and repeated failures, retained preferences, focus, cancelled pending loads, replacement graphics/captions, return, fresh kernels, and zero tracked media resources after disposal. The first run exposed and fixed recovery-panel `[hidden]` styling; its range-input fixture was corrected to respect the existing step.
+- Shared examples, standalone, and website builds pass (87 website pages). Root TypeScript and strict recovery-spec checking pass; website diagnostics report **44 files, zero errors/warnings/hints**. `git diff --check` passes.
+- Desktop and narrow-screen captures inspected. The live preview at `http://127.0.0.1:5176/interactive-media/` also passed decoder failure, controlled document-hiding cancellation, paused restoration, and disposal without page errors. Artifacts: `.codex/validation/recovery-browser/`, `recovery-regressions/`, and `recovery-{desktop,restored-desktop}.png`.
+
+Validation used isolated copies of production output on ports 5187/4347. Document hiding was simulated through a visibility event; physical devices and OS tab suspension were not tested. Cancelling a retry releases its observation and prevents activation, but does not guarantee cancellation of a browser network request already in flight. Unrelated core/CLI/framework suites were not rerun. No dependency, package version, publication, deployment, commit, or push changed. Next: compact media observation in the existing inspector.
+
+## On-demand media inspector — 2026-10-15
+
+Video Proof, Interactive Media, and Experience Showcase share a private read-only panel backed by the existing runtime inspector and video snapshots. It displays registered players, playback/buffering/error status, media time, captions, lifecycle, adapters/controllers, and eight recent event labels. The story views also show scene, direction, last cue, and recovery state. Current values are read on opening; event history covers observed intervals only. Closing clears the view and detaches inspector/lifecycle subscriptions. Cancellation detaches immediately; scope cleanup removes the panel and its button listener. No new clock, polling timer, render loop, core API, or adapter API was added. The existing inspector samples only while observed.
+
+Files changed:
+
+- `packages/examples/src/media/inspector.ts` and `inspector-styles.ts` (new): shared scoped presenter and bounded, keyboard-scrollable presentation.
+- `packages/examples/src/interactive-media/mount.ts` and `view.ts`: optional sidebar diagnostics and textual recovery-error detail.
+- `packages/examples/src/video-proof/mount.ts` and `styles.ts`: replace the previous text-only diagnostics with the shared panel and remove obsolete styles.
+- `examples/tests/browser/media-inspector.spec.ts` (new) and `video.spec.ts`: observation, history, player independence, failure/recovery, fresh-kernel and unmount checks.
+- Website Interactive Media and Video Proof usage pages, plus this record.
+
+Verified on Node **22.22.2** / Yarn **3.8.7**:
+
+- **35 distinct browser cases pass**: 18 new cases across Chromium/Firefox/WebKit on standalone and website hosts, plus 17 existing Chromium video/recovery/gallery cases. The six story cases were rerun after bounding and repositioning the panel; desktop/mobile captures and keyboard scrolling were inspected. Kernel frame count stays zero during native media inspection, and closing/disposal/fresh start leaves zero tracked inspector sampling timers. Completed disposal releases tracked video/audio sources, listeners, playback, and frame requests.
+- **Eight existing inspector ownership/error-isolation checks pass**. Root TypeScript, strict browser-spec types, shared examples build, standalone build, and website build pass (87 pages). Website diagnostics: **44 files, zero errors/warnings/hints**. The production build retains its existing missing `docs → 404` entry notice. `git diff --check` passes.
+- Browser artifacts: `.codex/validation/inspector-{browser,crossbrowser,regressions,layout}/`; validation used isolated production copies on ports 5187/4347.
+
+Buffering was exercised with a controlled native event; decoder failure used an invalid real media source. Physical devices and real network throttling were not tested. Media timing follows native events rather than promising frame accuracy. Core/adapter source, dependencies, package versions, publication, and deployment remain unchanged; unrelated working-tree work was preserved.
+
+## Playground Pause/Resume focus - 2026-10-15
+
+Activating a focused Pause or Resume button now transfers focus to its newly enabled counterpart without scrolling. The shared click handler owns this handoff; lifecycle observation remains passive. External pause/resume, phase-only writes, and actions on unfocused buttons do not claim focus. Synchronous observers can redirect focus elsewhere, and detached controls cannot move it. No listener, timer, dependency, public API, or React/Next ownership change was added.
+
+Files changed in this slice:
+
+- `packages/examples/src/v02/runtime.ts`: local focus handoff with connected/enabled target guards.
+- `examples/tests/browser/focus-continuity.spec.ts`: repeated native Enter/Space activation, forward/backward tab navigation, external/unfocused actions, observer-directed focus, and detached controls. An optional test base URL permits an isolated proof port.
+- Website `guides/urk-v02.mdx`, `CHANGELOG.md`, and this record: implemented behavior and evidence.
+
+Verified on Node **22.22.2** / Yarn **3.8.7**:
+
+- The new Chromium regression first failed against the previous build at the expected missing Resume focus. The final combined run passed **54 browser cases across Chromium, Firefox, and WebKit**, with no skips or retries: 42 focus cases across standalone/React/Next plus 12 existing Next rendering, interaction, and graphics-recovery cases.
+- Native keys are sent to the current focus, without locator refocusing between actions. Selection and rotation survive repeated pause/resume, no idle frame remains pending, and completed unmount releases tracked rendering resources. The macOS WebKit test uses its native Option-Tab button navigation; no runtime key interception was introduced.
+- `node scripts/build.mjs @urk/examples @urk/next`, root TypeScript, explicit strict types for the focus spec/probe, and adapter public declaration checks passed. **Seven adapter contract/packed-export checks** and **five React/Next SSR/packed-wrapper checks** passed, retaining both overlay subpaths' identity and old/new wrapper compatibility.
+- Desktop/mobile captures were inspected with visible Resume focus, retained scene content, and no horizontal overflow. Existing host tests also assert nonblank WebGL pixels and correct responsive inspector placement. Captures: `.codex/validation/pause-focus-{desktop,mobile}.png`; final browser artifacts: `.codex/validation/pause-focus-final/`.
+- Website diagnostics passed: **44 files, zero errors/warnings/hints**. `git diff --check` passed.
+
+Earlier supplemental runs encountered concurrent shared-dist rebuilds and competing Next integration caches. The final run completed after rebuilding dependencies, using an ignored local config on proof port 5184, Next port 3102 with the separate `.next` cache, and website port 4325. No application workaround or relaxed assertion was added for build interference.
+
+```sh
+URK_WEBSITE_PORT=4325 URK_FOCUS_BASE_URL=http://127.0.0.1:5184 URK_BROWSER_MATRIX=1 \
+  corepack yarn workspace urk-examples exec playwright test \
+  --config ../.codex/validation/pause-focus.playwright.config.ts \
+  --output ../.codex/validation/pause-focus-final \
+  focus-continuity.spec.ts rendering-ui.spec.ts context-recovery.spec.ts v02.spec.ts \
+  --grep '(focus|Next:)'
+```
+
+Coverage is automated browser engines and emulated viewport sizes, not physical devices or assistive technology. Full workspace production builds and unrelated media/core/CLI/touch/DPR suites were not repeated. Dependencies/manifests did not change, so installation was not repeated. Unrelated working-tree changes remain intact; no commit, push, publication, or deployment was performed. Preview: `http://127.0.0.1:5175/v02/`.
+
+Next smallest UI implementation: one nonmodal selection-details panel with a real selected-object action and scoped cleanup. Prove it in the scene, then a DOM-only example before extracting broader UI contracts. Custom panel handles, subscriptions, and a general UI framework remain unimplemented by this slice.
+
+## Selection details and material control - 2026-10-15
+
+The shared playground now opens a native details disclosure when an object is selected. It shows selected-object information and a Wireframe checkbox that changes the actual Three material. Selection opens it without moving focus; hover remains preview-only. Closing preserves selection, and Escape is handled only inside the disclosure and returns focus to its summary. Material settings are per object and per kernel. Pause and graphics loss reject material changes without hiding the information; recovery retains settings, while a fresh kernel resets them. The existing scene owns GPU cleanup; the controller scope removes the two new native listeners. No public adapter/core API, wrapper ownership, dependency, or package change was needed.
+
+Files changed:
+
+- `packages/examples/src/v02/{runtime,scene,styles}.ts`: scoped native disclosure, selected material access, and compact responsive presentation.
+- `examples/tests/browser/selection-details.spec.ts` (new) and `rendering-probe.ts`: real pixel changes, native keys/focus, recovery, independent instances, held shutdown, late events, and listener counts.
+- The playground guide, changelog, and this record: implemented behavior and verification.
+
+Verified with Node **22.22.2** / Yarn **3.8.7**:
+
+- **49 browser checks pass**: 21 new checks across standalone/React/Next and Chromium/Firefox/WebKit; 27 existing Next focus, rendering, recovery, interaction, and touch checks across those engines; one native Chromium touch-scroll/cancellation check. No skips or retries in the final runs. The initial isolation fixture incorrectly matched the viewport's state attribute instead of the checkbox; qualifying its input selector fixed the fixture without an application workaround.
+- Tests inspect both Three material state and changed, nonblank canvas pixels. Hover cannot replace selected details, native checkbox/summary/slider keys remain usable, closing does not clear selection, and pause/recovery retain each object's setting. Completed shutdown leaves zero tracked details listeners, frames, and resize observers; fresh mounts have exactly two details listeners.
+- Affected builds (`node scripts/build.mjs @urk/examples @urk/next`), root TypeScript, strict spec/probe types, and adapter declaration checks pass. **12 SSR/packed-wrapper/adapter compatibility checks** pass, preserving legacy aliases and independent imports. Website diagnostics: **44 files, zero errors/warnings/hints**. `git diff --check` passes.
+- Desktop/mobile screenshots inspected: wireframe visible, focus retained, details below the canvas, no horizontal overflow or control overlap. Artifacts: `.codex/validation/selection-details-{browser,regressions,scroll}/`. The ignored local browser config uses ports 5184/3102/4325 and the separate Next cache. Live standalone/React preview: `http://127.0.0.1:5175/v02/` and `/v02/react.html`.
+
+Coverage uses browser engines, emulated viewport sizes, native WebGL context loss, and Chromium touch injection, not physical devices or assistive technology. Full workspace production builds, installation, and unrelated media/core/CLI suites were not repeated. Unrelated working-tree changes are preserved; nothing was committed, published, or deployed.
+
+Next smallest task: prove selection/details in a DOM-only example before extracting shared panel code. Public custom-panel handles, panel subscriptions, and a UI framework remain outside this implementation.
+
+## 2026-10-15 — UI Overlay instances and selection reuse
+
+Used the installed Node 22.22.2 runtime. The shell initially selected Node 18;
+Playwright and Astro correctly refused it. No dependency or runtime upgrade was
+needed. Checks below were run with the Node 22 bin directory first in PATH.
+
+- `node scripts/build.mjs @urk/examples @urk/next`: passed.
+- `corepack yarn typecheck`: passed.
+- `corepack yarn workspace urk-examples lint`: passed after dependency builds completed.
+- `corepack yarn workspace @urk/adapters test:types`: passed, including typed handles and rejected wrong-kind updates.
+- `node --test packages/adapters/tests/contracts.test.mjs packages/adapters/tests/packaged-exports.test.mjs`: 7 passed. Confirms canonical alias identity, inert factories, packed types, and DOM imports without Three.js.
+- `corepack yarn workspace urk-examples test:browser ui-overlay.spec.ts rendering-ui.spec.ts selection-details.spec.ts`: 17 Chromium cases passed at the initial checkpoint, including 12 existing standalone/React/Next rendering and selection regressions.
+- `URK_BROWSER_MATRIX=1 corepack yarn workspace urk-examples test:browser ui-overlay.spec.ts`: 18 passed across Chromium, Firefox, and WebKit after input isolation and history restoration changes.
+- `URK_BROWSER_MATRIX=1 corepack yarn workspace urk-examples test:browser ui-overlay.spec.ts --grep 'overlay handles'`: 3 passed after preserving inert late legacy writes and explicit determinate zero progress.
+- `corepack yarn workspace urk-examples build`: passed; includes `/selection-details/`.
+- `corepack yarn build:www`: passed; 88 static pages including both selection routes. Build output includes large-chunk and missing 404 documentation-entry warnings.
+- `git diff --check`: passed.
+
+Browser checks cover duplicate IDs, stale handles, immutable/cached snapshots,
+unchanged live-region DOM, observer isolation, cleanup failures, separate kernels,
+legacy status/callouts, late writes, real highlight/feature actions, keyboard
+selection/dismissal/focus, theme changes without remounting, compact host sizing,
+local failure/retry, stale async results, unmount, history restoration, and website
+restart. Closing or destroying a panel during a click cannot activate scene input.
+Desktop and mobile screenshots were visually inspected. The full repository test
+suite was not run, and this is not a performance or accessibility certification.
+
+Preview command: `corepack yarn workspace urk-examples dev --host 127.0.0.1 --port 5176 --strictPort`.
+Preview route: `/selection-details/` (scene and project instances on one page).
+Website routes: `/examples/scene-ui-bridge/` and `/examples/project-selection/`.
+Panel mounts/disposers are synchronous; applications own asynchronous work and its
+cancellation. Snapshots describe managed `open()` instances, not legacy singleton
+status/callouts. Modal dialogs, docking, notifications, and public widget packages
+remain deferred. No publication or deployment was performed.
+
+## 2026-10-15 — Selection loading and focus continuity
+
+Files changed in this continuation:
+
+- `packages/examples/src/selection-details/controller.ts`: preserve an open selection,
+  settle pending loading on close, expose busy state, and keep keyboard focus through
+  retry. The failure demonstration reloads the mounted panel.
+- `packages/adapters/src/ui-overlay/overlays.ts`: restore a control's focus when
+  moving its panel between placement slots, without taking focus from elsewhere.
+- `examples/tests/browser/ui-overlay.spec.ts`: cancellation/status, reopening,
+  repeated selection, native retry keys, pending activation, focus handoff, text
+  selection, and unchanged panel ownership regressions.
+- `docs/RUNTIME_UI_UX_SYSTEM.md`, the UI Widgets compatibility README, and this record:
+  document the implemented behavior and validation.
+
+Verified with Node **22.22.2** / Yarn **3.8.7**:
+
+- The two new Chromium regressions failed against the preceding build at the
+  missing busy state and lost placement focus. After implementation,
+  `URK_BROWSER_MATRIX=1 corepack yarn workspace urk-examples test:browser ui-overlay.spec.ts
+  --output ../.codex/validation/ui-continuity-browser` passed **24 checks** across
+  Chromium, Firefox, and WebKit, including both website routes and their restarts.
+- `node scripts/build.mjs @urk/examples @urk/next`, `corepack yarn typecheck`, and
+  `corepack yarn workspace @urk/adapters test:types` passed.
+- The browser spec passed a separate strict TypeScript check with ES2020, DOM,
+  DOM.Iterable, Node types, and bundler module resolution. Its initial fixture
+  cast needed `typeof window` to include the browser global type; no runtime or
+  test assertion was relaxed.
+- Desktop and mobile captures under `.codex/validation/ui-continuity-browser/`
+  were inspected. The mobile test also checks no horizontal page overflow.
+  `git diff --check` passed.
+
+This continues the accepted overlay/selection scope without changing public API
+signatures. Loading completion means the request finished; the cancellation and
+failure messages distinguish those outcomes from successful content. Production
+site builds and the full repository suite were not repeated in this continuation.
+Physical devices and assistive technology were not tested. Unrelated working-tree
+changes remain intact; no commit, publication, or deployment was performed.
+
+## 2026-10-16 — Portable Experiences: static web export
+
+`urk export [directory]` builds an existing browser project with Vite 5 into
+static HTML, bundled JS/CSS, and assets. Relative output URLs are the default;
+fixed hosting bases are supported. Nonempty destinations require `--overwrite`.
+Builds finish in temporary output before replacement, including when a project
+configures Rollup output directories. Failed builds preserve prior output.
+
+Files changed for this feature:
+
+- CLI: `packages/cli/src/index.ts`, `src/commands/export.ts` (new),
+  `src/commands/create.ts`, `src/templates/create.ts`, `tests/export.test.mjs`
+  (new), `package.json`, and `README.md` (all under `packages/cli/`).
+- Proof: `examples/portable-embed.html` and
+  `examples/tests/browser/portable-export.spec.ts` (new), plus `examples/README.md`.
+- Integration and records: root `package.json`, `yarn.lock`, Yarn's generated
+  install state, `examples/playwright.config.ts`,
+  `examples/tests/browser/gallery.spec.ts`, `apps/www/astro.config.mjs`,
+  `docs/DECISIONS.md`, and this record.
+
+This feature makes no edits to Picking, Core, adapter, or framework source.
+The shared workspace had substantial pre-existing changes and concurrent motion
+work; those changes were preserved. An early dependency build/typecheck observed
+unfinished motion edits. Subsequent dependency builds and root typechecking passed.
+
+Verified on Node **22.22.2**, Yarn **3.8.7**, Vite **5.4.21**:
+
+- `corepack yarn workspace @urk/cli test`: **10 passed**, including eight export/
+  scaffold checks and both existing CLI checks. Covers imported/public assets,
+  custom aliases/plugins, fixed bases, replacement refusal/success, failed-build
+  preservation, source/symlink safety, Rollup output overrides, and unsupported
+  server/library/external/non-browser output.
+- `corepack yarn test:build`: **6 passed**. Root and CLI typechecks, explicit strict
+  TypeScript checking of the browser spec, and `git diff --check` passed.
+- `corepack yarn workspace urk-examples test:browser portable-export.spec.ts`:
+  **5 Chromium checks passed**, including the final run after output hardening.
+  Real exports run through plain HTTP servers at `/`, `/games/picking/`, and a
+  fixed `/fixed/` base. A second origin serves the actual plain HTML embed example.
+  Tests verify nonblank WebGL, pointer selection, keyboard movement, pause/resume,
+  disposal, responsive sizing, and no failed/external/development-server requests.
+  A generated starter loads public JSON under `/starter/`, handles keyboard input,
+  and stops/restarts. Desktop/mobile captures were visually inspected.
+- `corepack yarn export:demo` and `corepack yarn export:demo --overwrite` passed.
+  Output is `examples/picking/dist/`. Python static servers on ports 8080 and 8081
+  successfully serve the exported demo and independent embed page. The sample's
+  Three.js bundle retains Vite's size warning (about 577 kB, 147 kB gzip).
+- `corepack yarn install --immutable --mode=skip-build` passed with the existing
+  Astro/TypeScript peer warning. `npm pack ./packages/cli --dry-run --json` confirmed
+  that the built export command is included. No package was published.
+
+The final `corepack yarn test:integration` run passed **147/147 Chromium tests**
+in 4.1 minutes, including all five portable-export cases. The first run exposed
+three existing test-setup failures, resolved without changing application behavior:
+
+- The gallery test now intercepts only the lazy `gallery.js` module. Its previous
+  `**/gallery*.js*` matcher also held the statically imported `gallery-controller.js`
+  and blocked page startup. The pending-import disposal assertions remain intact.
+- The Astro integration host sets the existing `URK_INTEGRATION_TEST` flag and
+  disables Astro's developer toolbar for that host. The toolbar accessed blocked
+  localStorage without catching the exception; the site's theme handling already
+  caught it. The blocked-storage assertion remains intact, and normal development
+  retains the toolbar.
+
+`corepack yarn workspace urk-examples test:browser brand.spec.ts gallery.spec.ts`
+passed **9/9** targeted checks before the full gate. Root typechecking and
+`git diff --check` also passed again after these adjustments.
+The full repository Node test suite and other browser engines were not rerun.
+
+Artifacts: `.codex/validation/portable-export/` contains the initial and final
+integration logs, targeted host regression log, final typecheck log, and export
+browser screenshots. Full integration output is under
+`.codex/validation/ownership-browser/`.
+Export requires browser HTML and ordinary HTTP hosting, not `file://` or SSR.
+Runtime URL strings, remote assets/services, iframe permissions, and typechecking
+remain application/developer concerns. No production deployment, commit, or push
+was performed.
+
+## 2026-10-17 — Portable Package MVP
+
+The existing CLI now packs compiled Web Export output into a ZIP-compatible
+`.urkpkg`, inspects it without extraction or execution, and safely unpacks it
+into a directly hostable directory. Format 1 adds a generated `urk.json` beside
+the unchanged `index.html` and assets. Experience types are metadata only.
+
+Files changed for this milestone:
+
+- New CLI files: `src/commands/pack.ts`, `src/commands/unpack.ts`,
+  `src/utils/portable-package.ts`, and `tests/portable-package.test.mjs`, all
+  under `packages/cli/`.
+- Existing CLI files: `src/index.ts`, `src/commands/inspect.ts`, `package.json`,
+  and `README.md`; added zip.js 2.24.0, plus lockfile/generated Yarn install state.
+- Extended `examples/tests/browser/portable-export.spec.ts`; updated
+  `examples/README.md`, `docs/DECISIONS.md` (D-023), and this record.
+
+Core, adapters, controllers, and Picking source were not changed by this milestone.
+The existing unrelated working-tree changes were preserved.
+
+Verified using Node 22.22.2 and Yarn 3.8.7:
+
+- `corepack yarn workspace @urk/cli test`: **19 passed** (all 10 existing CLI/export
+  checks and 9 package checks). Covers metadata/defaults/flags, legacy inspection,
+  byte-for-byte HTML/JS/CSS/SVG/JSON/binary round trips, overwrite refusal and failed
+  replacement preservation, missing/source/nonportable entrypoints, manifest
+  validation, corrupt/truncated/encrypted ZIPs, traversal, links, unsafe names,
+  duplicate/case/Unicode/file-directory collisions, symlink destinations, declared
+  and streamed extraction limits, and temporary-output cleanup.
+- `corepack yarn workspace @urk/cli typecheck`, strict standalone TypeScript
+  checking of the portable browser spec, and `git diff --check` passed.
+- `corepack yarn workspace urk-examples test:browser portable-export.spec.ts
+  --output ../.codex/portable/browser`: **6 Chromium checks passed**. Tests retain
+  original root/subpath/fixed-base exports, and add a real CLI pack/inspect/unpack
+  round trip. Unpacked Picking runs at `/packages/picking/` and inside the separate
+  origin's responsive iframe; unpacked starter public JSON, keyboard behavior,
+  and lifecycle controls also work. Checks assert visible WebGL pixels, pointer
+  selection, keyboard movement, pause/resume/disposal, responsive sizing, and no
+  browser errors or failed/development-server asset requests.
+- Direct CLI commands produced `.codex/portable/picking.urkpkg` and extracted
+  `.codex/portable/site/`. The archive contains four files, approximately 151 kB
+  compressed and 587 kB expanded. Python's standard `zipfile` reader opened it,
+  listed its entries, and passed `testzip()` checksum validation.
+
+Limits: 256 MiB archive, 512 MiB expanded, 128 MiB per file, 10,000 entries,
+16 KiB manifest. Inspection reads and validates all file data without extracting.
+Unpack requires an absent or empty destination and writes ordinary file permissions.
+Only stored/deflated, unencrypted ZIP entries are supported; there is no package
+signing or direct browser execution of archives. Root `urk.json` is reserved.
+Entrypoint script/style URL checks do not rewrite arbitrary runtime URLs or replace
+remote services. Existing Vite chunk-size and Astro peer-dependency warnings remain.
+
+Logs and browser captures: `.codex/portable/{cli-tests.log,browser.log,browser/}`.
+Other browser engines, the broad integration gate, and release/deployment checks
+were not rerun for this focused milestone. No commit, push, or publication occurred.
+
+## 2026-10-17 — Web Player MVP
+
+Added optional `@urk/player`, a browser-only Web Component that hosts existing
+compiled exports in separately originated, sandboxed iframes. It has no runtime
+dependencies and does not import Core or adapters. The built module is 9,525 bytes
+(Vite reports 3.35 kB gzip). Applications retain their own lifecycle ownership.
+
+Player milestone files:
+
+- `packages/player/src/index.ts`, `package.json`, `tsconfig.json`,
+  `vite.config.ts`, and `README.md`.
+- `examples/player/index.html` (two independent Players),
+  `examples/player/plain-iframe.html`, `scripts/serve-player-demo.mjs`.
+- `examples/tests/browser/player.spec.ts`, `examples/playwright.player.config.ts`.
+- Root `package.json` workspace/demo/test scripts and integration build prerequisite;
+  `yarn.lock` and generated `.yarn/install-state.gz`.
+- `examples/README.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md` (D-024),
+  and this validation record.
+
+No Core, adapter, controller, Picking, Audio proof, React, or Next implementation
+was changed for this milestone. Prior unrelated working-tree changes remain.
+
+Verified with Node 22.22.2, Yarn 3.8.7, Vite 5.4.21, and Playwright Chromium:
+
+- `corepack yarn test:player`: **14 passed**. Eight new Player checks and six
+  existing portable-export/package checks run against plain static HTTP servers,
+  without the normal Vite/Next/Astro development hosts. The Player tests perform
+  actual CLI export → pack → inspect → unpack before hosting Picking at a subpath.
+- Verified visible WebGL pixels, mouse selection, independent keyboard movement,
+  existing pause/resume controls, reload/unload/play, DOM removal/reconnection,
+  and separate-origin denial of parent document access. Both Players accept touch
+  at 390px width; the host and experience have no horizontal overflow. Desktop
+  and mobile screenshots were visually inspected.
+- Verified optional fullscreen, operation without the optional HEAD check,
+  invalid/same-origin/archive URL rejection, HTTP 404/non-HTML/network errors,
+  retry, a stalled-check timeout, cancellation of pending fetches/timers/document
+  listeners, and synchronous unload from a state-change listener.
+- Exported the existing Audio proof unchanged; retained its `../audio/` static
+  directory layout. WAV requests succeed, an in-frame gesture starts playback,
+  and a real audio element's playback time advances. Unload destroys its frame
+  while the other Picking instance remains ready. No assertion of audible output
+  on physical speakers or asynchronous kernel shutdown is made.
+- Successful browser paths have no uncaught page errors, failed requests, or
+  development-server asset requests. Explicit negative tests intentionally fail
+  requests. A separate smoke run against the documented live demo URL confirmed
+  two ready experiences with no console, page, or request errors.
+- `corepack yarn workspace @urk/cli test`: **19 passed**.
+- `corepack yarn typecheck`, `corepack yarn workspace @urk/player typecheck`,
+  strict standalone checking of the Player spec/config with `--allowJs`, and
+  `git diff --check`: passed.
+- `corepack yarn demo:player`: builds, exports, and serves the HTML host at
+  `http://127.0.0.1:8090/` and experience at `http://127.0.0.1:8091/picking/`.
+  Both respond HTTP 200; the experience HEAD response includes CORS and HTML type.
+
+Initial checks caught and fixed hidden-placeholder layout, duplicate upgrade
+loads, and completion of the optional HEAD response before later cancellation.
+Mobile checks scroll each Player into view to respect native offscreen frame
+throttling. Existing Vite large-chunk and Astro peer warnings remain.
+
+Limits: trusted exports on separate HTTP(S) origins only; same-origin URLs are
+rejected. `loaded` describes iframe navigation, not verified application health.
+`check-src` improves HTTP diagnostics only when CORS HEAD is supported. Framing,
+fullscreen, storage, and audio remain browser/host-policy dependent. Shared-origin
+experiences can share persistent storage. Removal discards a browsing context;
+it does not await kernel shutdown or erase storage/service workers. Hosts must not
+redirect/navigate experiences onto the parent origin. There is no untrusted-package
+containment claim, native filesystem bridge, ZIP mounting, or publication.
+
+Logs: `.codex/portable/player-{tests,cli-tests,typecheck,demo}.log`.
+Screenshots: `.codex/validation/player-browser/`.
+Other browser engines and the broad integration/release gates were not rerun.
+
+## 2026-10-17 — One-command static embed generation
+
+`urk embed <experience-url>` now writes a static Player host, its compiled module,
+a plain iframe fallback, and hosting notes. Options configure title, height,
+fullscreen, and optional CORS HEAD checking. The command copies `@urk/player`
+through installed-package resolution without evaluating browser code in Node,
+fetching the experience, building a project, or deploying anything.
+
+Files changed for this milestone:
+
+- Added `packages/cli/src/commands/embed.ts`, `src/templates/embed.ts`, and
+  `tests/embed.test.mjs`; updated its `src/index.ts`, `package.json`, and README.
+- Updated `scripts/serve-player-demo.mjs` and
+  `examples/tests/browser/player.spec.ts` to serve and exercise generated files.
+- Updated `packages/player/README.md`, `examples/README.md`, D-025 in
+  `docs/DECISIONS.md`, this record, `yarn.lock`, and generated Yarn install state.
+
+No Player runtime, Core, adapter, controller, or existing experience source was
+changed. Unrelated working-tree work remains intact.
+
+Verification (Node 22.22.2, Yarn 3.8.7, Playwright Chromium):
+
+- `corepack yarn workspace @urk/cli test`: **24 passed**, including five new
+  embed tests. Covers defaults/options, byte-identical Player copying, escaped
+  HTML, invalid URLs/arguments/CSS lengths, output preservation, symlinks/unsafe
+  destinations, empty-directory publication, absence of temporary leftovers,
+  relocated installed CLI resolution, and clean missing-build failure.
+- Focused `player.spec.ts`: **9 passed**, including real export → pack → inspect
+  → unpack → embed. Generated pages run under `/generated/` on a separate origin,
+  preserve query/fragment configuration and title text, accept pointer/keyboard
+  input, reload, and link to a working plain iframe fallback. Existing two-player,
+  mobile touch, audio, fullscreen, loading/error, and cleanup checks also passed.
+- Visual inspection caught the generated page overriding the Player's flex layout.
+  Corrected the template CSS, added an iframe-height assertion, then reran all
+  **24 CLI tests** and the focused generated-host browser check (**1 passed**).
+  The corrected screenshot was visually inspected.
+- CLI/root typechecks and strict standalone browser spec/config typechecking
+  passed. `git diff --check` passed.
+- Generated `.codex/portable/embed/` using the existing experience on port 8091;
+  served it through Python's plain HTTP server on port 8093. Both generated pages
+  reach ready without page/request errors. The corrected 75vh host provides a
+  roughly 580px iframe at a 1280×900 viewport, exceeding the 550px smoke threshold.
+
+Logs: `.codex/portable/embed-{cli-tests,browser,generated-browser,install}.log`.
+Corrected screenshot: `.codex/validation/embed-browser/`.
+
+Output requires an absent/empty directory; no overwrite option is provided.
+Trusted separate-origin exports only, with the existing Player's framing,
+audio, fullscreen, and load-detection limits. The plain iframe relies on the
+deployer preserving the origin boundary. Availability is not checked during
+generation. No registry publication, production deployment, broad integration
+gate, or additional browser-engine verification was performed.
+
+## 2026-10-17 — Complete portable workflow using the normal project build
+
+Inspected `thehive/urk-media-video` against both main refs after fetching
+`origin/main`. HEAD and `origin/main` are `f6c1cc5`; local `main` is `64a3da5`
+and two commits behind. Web Export, packaging, Player, and embed generation
+already existed as uncommitted local work. Reused them and preserved unrelated
+working-tree changes.
+
+A fresh standalone project installed from packed local packages built successfully
+with its normal `yarn build`, but emitted root-relative `/assets/` URLs. Set the
+scaffold's Vite `base` to `./` and verified the same build at a hosting subpath.
+The existing build script is unchanged. The prior optional `urk export` remains
+available; the completed workflow does not require it.
+
+Files changed for this completion:
+
+- `packages/cli/src/templates/create.ts` and `packages/cli/README.md`.
+- Added `examples/tests/fixtures/standalone-project.mjs` and
+  `examples/tests/browser/portable-workflow.spec.ts`.
+- `examples/playwright.player.config.ts`, root `package.json`,
+  `examples/README.md`, D-026 in `docs/DECISIONS.md`, and this record.
+
+No Core, adapter, Player implementation, or archive implementation changes were
+needed for this completion.
+
+Verification (Node 22.22.2, Yarn 3.8.7, Vite 5.4.21, Playwright Chromium):
+
+- `corepack yarn test:portable`: **1 ordered end-to-end test passed**. Creates a
+  fresh project, installs real local package archives, runs the unchanged
+  `tsc --noEmit && vite build`, and serves it through static HTTP at a subpath.
+  Verifies rendered CSS, public JSON content, pointer lifecycle controls, keyboard
+  focus/input, and shutdown initiation on parent navigation in an external plain
+  iframe. Then packs, inspects, unpacks, compares every built file byte-for-byte,
+  and opens the extracted manifest entrypoint in the existing Player. Reload and
+  removal detach their previous browsing contexts. No failed HTTP requests,
+  uncaught browser errors, or development-server requests occurred.
+- `corepack yarn workspace @urk/cli test`: **24 passed**, including existing
+  export, package validation/extraction, and embed-generation regression checks.
+- `corepack yarn workspace urk-examples test:browser --config
+  playwright.player.config.ts player.spec.ts --grep 'Audio proof' --output
+  ../.codex/validation/portable-audio`: **1 passed**. Existing real WAV assets play
+  after an in-frame gesture; native audio time advances and unloading detaches
+  the frame while the other Player remains ready.
+- `node scripts/build.mjs @urk/adapters @urk/cli`, CLI/root typechecks, strict
+  standalone typechecking of the new browser spec/config with `--allowJs`, and
+  `git diff --check`: passed.
+- Persistent demo generated under `.codex/portable-complete/`: normal project
+  build → `urk pack` → `urk inspect` → `urk unpack` → `urk embed`. The package
+  contains five files including its manifest, with 17,492 archive bytes and
+  61,593 expanded bytes. Its manifest identifies `Standalone proof`, version
+  `0.1.0`, type `app`, and entrypoint `index.html`.
+- Served extracted files using Python HTTP on port 8095 and the generated host
+  on port 8096. A separate Chromium smoke passed direct-site and plain-iframe
+  loading, Player rendering, pointer/keyboard input, and reload with no browser,
+  request, or HTTP errors. Both the test screenshot and live-demo screenshot
+  were visually inspected.
+
+Logs: `.codex/portable-complete/`. Screenshot: the same directory's `demo.png`;
+ordered-test screenshot: `.codex/validation/player-browser/`.
+
+Limits: local package archives substitute for unpublished registry versions only
+in the test installation. Authoring/building still requires developer tooling;
+recipients receive compiled static files. The starter has no audio, so media was
+checked separately with the existing Audio proof; physical speaker output is not
+asserted. Only Chromium was run. Trusted separate-origin hosting, browser framing
+and activation rules, and Player navigation-detection limits still apply. Cleanup
+initiates the scaffold's shutdown and discards its browsing context; it does not
+await asynchronous shutdown or erase persistent storage. Browsers run extracted
+HTTP content, not `.urkpkg` ZIP files. No publication, deployment, other browser
+engines, or broad integration/release gates were exercised.
+
+
+## 2026-10-17 — Numeric motion and optional audio analysis
+
+Node 22.22.2 / Yarn 3.8.7, local unpublished checkout.
+
+- `node scripts/build.mjs @urk/examples` — passed Core, adapters, and shared example builds.
+- `corepack yarn typecheck` — passed repository source typecheck.
+- `corepack yarn workspace urk-examples lint` — passed proof typecheck, including both new proofs.
+- `corepack yarn workspace @urk/core test:types` and
+  `corepack yarn workspace @urk/adapters test:types` — passed public declaration checks.
+- `node --test packages/core/tests/*.test.mjs packages/adapters/tests/*.test.mjs`
+  — **191 passed**, including packed consumer checks, existing playback/mixer tests,
+  eight analysis tests, numeric motion, and temporary frame demand.
+- `corepack yarn workspace urk-examples build` — passed production proof build.
+- Playwright `audio-analysis.spec.ts motion-playground.spec.ts motion-adapter.spec.ts
+  interactive-motion.spec.ts` with `URK_BROWSER_MATRIX=1` — **27 passed** across
+  Chromium, Firefox, and WebKit. Used the existing config with isolated proof,
+  Next, and website ports 5274/3202/4422. A prior run had one website failure while
+  generated Core files disappeared during another build; the complete rerun passed.
+- Inspected the real Canvas screenshot: waveform, spectrum, all four meters, and
+  coordinated bass/mids/treble visual respond to the original three-band fixture.
+
+Analysis coverage includes lazy acquisition, one context/analyser, reusable arrays,
+normalized values/band boundaries, validation, source reuse/switching, bypass,
+unsupported Web Audio, known non-CORS rejection, late context/play failure, pending
+enable cancellation, and node/context disposal. Browser checks exercise real native
+playback, settings, pause/restart, source switching, runtime pause, and shutdown.
+Motion checks cover timing, property replacement, interruption, reduced motion,
+owner disposal, failure, frame ordering, and fresh runtime ownership.
+
+Changed areas for this continuation:
+
+- `packages/core/src/types.ts`, `packages/core/src/kernel/Kernel.ts`, and
+  `packages/core/tests/frame-work.test.mjs`.
+- `packages/adapters/src/motion/{index,keyframes,playback,timing,tween,types}.ts`,
+  its README, and `packages/adapters/tests/{motion,tween}.test.mjs`.
+- `packages/adapters/src/audio/{index,analysis}.ts`, its README,
+  `packages/adapters/tests/audio-analysis.test.mjs`, public types in
+  `packages/adapters/tests/types/dom.ts`, and `packages/adapters/README.md`.
+- `examples/motion-playground/{index.html,main.ts,styles.css,README.md}`;
+  `examples/audio-proof/{analysis.html,analysis.ts,analysis.css,generate-analysis-audio.py,README.md}`;
+  `examples/public/audio/analysis.wav`; `examples/{index.html,vite.config.ts,tsconfig.json}`;
+  and `examples/tests/browser/{audio-analysis,motion-playground}.spec.ts`.
+- `BUILD_STATUS.md`, `docs/{ARCHITECTURE,DECISIONS,EXAMPLES,MIGRATION_V02,VALIDATION}.md`.
+
+The full root build/test and deployment gates were not run for this focused change.
+No physical mobile-device, remote CORS-server matrix, perceptual loudness, or
+performance benchmark is claimed. Package versions, publication, and deployment
+are unchanged. Other pre-existing working-tree changes were preserved.
+
+## 2026-10-17 — Bounded overlay panels and keyboard scrolling
+
+Completed the panel overflow work started on October 15. Long bottom-aligned
+panels previously placed their headings above the scroll origin. Managed panel
+bodies now scroll within their shells, keeping the heading and Close button
+outside the body scroll area. Narrow or short hosts stack occupied slots, and
+bottom alignment permits multiple panels to overflow in a reachable direction.
+The content group has a named native Tab stop, including when it contains only
+text. Keyboard scrolling, ordinary controls, page navigation, and Escape remain
+native; no new event interception, resize observer, or frame loop was added.
+
+Files changed in this continuation:
+
+- `packages/adapters/src/ui-overlay/styles.ts`: host-relative bounds, scrollable
+  bodies, overflow-safe bottom alignment, and compact layout for short hosts.
+- `packages/adapters/src/ui-overlay/overlays.ts`: focusable, named panel content.
+- `examples/tests/browser/ui-overlay-layout.spec.ts`: long content in wide,
+  narrow, and short hosts; native wheel and keyboard scrolling; offscreen action
+  access; multiple panels; resize identity/focus; and text-only page navigation.
+- `docs/RUNTIME_UI_UX_SYSTEM.md`, `packages/adapters/src/ui-widgets/README.md`,
+  and this record: current behavior, host responsibilities, and evidence.
+
+Verified with the installed Node **22.22.2** runtime:
+
+- The original wide-host and multiple-panel regressions failed with headings
+  above the supplied host. An intermediate run exposed Firefox's native Tab stop
+  for scroll containers. Explicit content focusability now gives each tested
+  engine keyboard access without suppressing its native behavior.
+- The final run passed **39 browser checks** across Chromium, Firefox, and WebKit:
+  15 layout checks and 24 existing ownership, selection, retry, input isolation,
+  focus, and website restart checks. No skips or retries.
+- `corepack yarn workspace @urk/adapters build`, `corepack yarn typecheck`, and
+  `corepack yarn workspace @urk/adapters test:types` passed. Both overlay browser
+  specs passed a separate strict TypeScript check using ES2020, DOM, DOM.Iterable,
+  Node types, and bundler resolution. `git diff --check` passed.
+- Inspected wide Firefox and narrow WebKit long-panel captures and the Chromium
+  mobile selection proof. Close and the focused final action remain visible,
+  long identifiers wrap, and the selection examples retain their presentation.
+  Artifacts: `.codex/validation/ui-layout-final/`.
+
+```sh
+URK_BROWSER_MATRIX=1 corepack yarn workspace urk-examples test:browser \
+  ui-overlay-layout.spec.ts ui-overlay.spec.ts \
+  --output ../.codex/validation/ui-layout-final
+```
+
+Sizing follows CSS container dimensions; implementation references are MDN's
+[size containment guide](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Containment/Container_size_and_style_queries)
+and [container-relative lengths](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length#container_query_length_units).
+Hosts still need enough space for readable headings and controls. Public API
+signatures, legacy aliases, application ownership, and package versions are
+unchanged. Production site builds and the full repository suite were not repeated;
+physical devices and assistive technology were not tested. Unrelated working-tree
+work was preserved. No commit, publication, or deployment was performed.
+
+
+## 2026-10-17 — Shared Audio Lab integration (build-focused follow-up)
+
+Implemented one shared Audio Lab under `packages/examples/src/audio-proof`,
+consumed through the private `@urk/examples/audio-proof` entrypoint by the website
+and standalone analysis host. Added a scoped Three scene and finite Orbit/Row
+motion; retained direct measured audio reactions, Canvas plots, controls, and
+analysis bypass. Reused the media host and inspector, adding audio state to its
+existing diagnostics. Removed the superseded website-only record surface.
+
+Validation was limited at the user's request:
+
+- `node scripts/build.mjs @urk/examples` — passed.
+- `corepack yarn workspace urk-examples lint` — passed.
+- `corepack yarn workspace @urk/www check` — 44 files, zero errors/warnings/hints.
+- `corepack yarn workspace urk-examples build` — passed.
+- `corepack yarn workspace @urk/www build` — passed, 88 pages.
+- `git diff --check` for touched tracked files — passed.
+
+Existing audio browser selectors were adjusted to the shared, host-scoped DOM.
+No test suites, full integration gate, or publication/deployment ran in this follow-up.
+The preceding test results are historical evidence for the adapter/motion slice,
+not a claim that the new shared UI has been through that browser matrix.

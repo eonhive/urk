@@ -4,11 +4,14 @@
  * Purpose: Define the internal unstable contract used by the public site to mount URK runtime examples.
  * Author: Stan Nesi
  * Created: 2026-05-01
- * Updated: 2026-05-01
+ * Updated: 2026-10-12
  * Notes: Vibe coded with Codex.
  */
 
 export type ExampleId =
+  | 'experience-showcase'
+  | 'interactive-media'
+  | 'video-proof'
   | 'audio-proof'
   | 'minimal-runtime'
   | 'adapter-registration'
@@ -16,6 +19,7 @@ export type ExampleId =
   | 'runtime-state'
   | 'event-routing'
   | 'scene-ui-bridge'
+  | 'project-selection'
   | 'pointer-input-overlay'
   | 'embedded-docs-demo';
 
