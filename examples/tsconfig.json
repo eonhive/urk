@@ -8,6 +8,10 @@
     ]
   },
   "include": [
+    "scrollytelling/**/*.ts",
+    "motion-lab/**/*.ts",
+    "motion-widget/**/*.ts",
+    "motion-starter/**/*.ts",
     "motion-playground/**/*.ts",
     "audio-proof/analysis.ts",
     "selection-details/**/*.ts",

@@ -242,3 +242,217 @@ analysis values drive continuous reactions; existing numeric tweens handle finit
 Orbit/Row transitions. Graphics setup uses the existing isolated child-scope
 pattern. Host navigation and page-history cleanup reuse the website media host.
 No additional public runtime API or Core change is needed for this integration.
+
+## D-029 — Compose callback tweens and finite timelines through controller updates
+
+Extend the existing motion adapter instead of adding a package or changing Core.
+Share numeric interpolation between the compatible property-target API and the
+new callback form (`ValueTweenOptions`). Register one explicit motion controller
+to advance callback work with frame deltas. Preserve existing temporary-frame
+property motion and native DOM playback, including their error outcomes. The
+permanent motion controller keeps auto-mode frames active while idle.
+
+Timelines schedule owned value tweens at absolute offsets, supporting sequences,
+parallel work, and overlap without a builder language. Pause retains progress;
+cancel settles children and handles; callbacks fail through existing controller
+fatal-update handling after settlement. System reduction has an explicit adapter
+override. No nested timelines, seeking, repeats, springs, or scene registry.
+
+Motion Lab is one standalone DOM proof with latest-request navigation and a
+generation guard. Application controllers own outgoing/incoming transitions,
+ordered phase commands, visible/focus state, and cancellation restoration. Reconcile
+application commands made during pause after the kernel restores its saved phase
+on resume. Publication and framework-specific integrations remain separate.
+
+D-029 reuse follow-up: migrate the existing standalone Scrollytelling proof to
+public callback tweens for guided scrolling and finite timelines for chapter
+entrances. Latest requests replace from current scroll position; manual input
+and resize cancel guided work. Preserve loading, keyboard/pointer input, overlay
+feedback, operational pause, and fresh-kernel ownership. This second consumer
+requires no Core or motion API expansion and introduces no timeline seeking.
+
+## D-030 — Seek finite timelines without reviving terminal handles
+
+Extend D-029 with a `TimelineHandle` exposing `durationMs`, `currentTimeMs`, and
+`seek(timeMs)`. Clamp finite positions and reject nonfinite inputs. Seeking renders
+repeatable numeric bindings immediately through the shared tween sampler, including
+initial values for future clips on backward seeks. Reset future clips in reverse
+start order, then render started clips in start/authored order. No property blending.
+
+Seeking preserves pause state and does not settle the completion promise or fire
+completion callbacks. Subsequent forward updates commit unreported child
+completions at or behind the playhead; each callback fires at most once per handle.
+Terminal handles stay terminal. Applications create another timeline for replay or
+post-completion scrubbing. A generation invalidates stale frame delivery when a
+callback seeks, while cancellation and error settlement retain existing ownership.
+
+Motion Lab provides a native range input and independent sequence pause/resume.
+Its fully transparent interactive bindings become inert, and navigation/disposal
+release preview work. Keep Core, scheduler behavior, package boundaries, and legacy
+DOM/property tween APIs. Reverse playback, repeats, nesting, and editors remain
+deferred; this is a local implementation change, not package publication.
+
+## D-031 — Keep scroll-driven seeking in the application
+
+Story Flow composes D-030 with native scroll position. Hold one individually
+paused timeline and seek its measured chapter tracks from normalized scroll
+progress. Reuse it at either endpoint, without automatic completion or time-based
+playback. Rebuild after layout changes; cancel on mode replacement, reduction,
+and disposal. Runtime pause suppresses sampling until running again.
+
+Make scroll position the default visual source and retain timed entrances as an
+explicit alternative with replay. Only one source writes visual styles at a time.
+Chapter text remains visible during scroll choreography. The status panel counts
+owned paused bindings and identifies them as scroll-linked. Keep native scrolling,
+navigation policy, preference overrides, and geometry measurement application-owned.
+No Core, adapter API, scheduler, scroll capability, or package changes are needed.
+
+## D-032 — Scale playback within a motion scope
+
+Expose `ScopedMotion.playbackRate` and `setPlaybackRate(rate)`, defaulting to one.
+Require finite positive rates; pause remains the explicit freeze operation.
+Apply speed to current and future work in that group, including delays. Scale
+controller-driven timeline time once at the parent and preserve absolute seek
+positions. Legacy property playback scales its existing timestamp deltas; native
+DOM effects use their playback-rate control. Rate changes preserve individual,
+group, and runtime pause. Finish/reduction/cleanup stay explicit and immediate.
+Motion Lab demonstrates the API with one speed selector. No Core or scheduler
+changes, reverse playback, or global time manager are introduced.
+
+## D-033 — Author presets as ordinary numeric timeline entries
+
+Expose pure `fade`, `slide`, `scale`, and `stagger` helpers through the existing
+motion entrypoint. Presets supply validated numeric defaults and callbacks, while
+applications own rendering and transform composition. Stagger adds index-based
+gaps to authored offsets without mutating entries. Helpers acquire no resources
+and create no playback handles; the existing timeline owns execution, seeking,
+speed, reduction, cancellation, and cleanup. Motion Lab consumes these helpers
+without a separate preset runner, renderer binding layer, or scheduler.
+
+## D-034 — Expand bounded timeline passes onto the existing clock
+
+Add `TimelineOptions.iterations` (total passes, 1–100) and `yoyo`. Expand entries
+into finite offsets rather than introducing another executor. Mirror alternating
+passes' clip offsets, endpoints, easing, and child progress; apply the parent delay
+once. Report and seek the total run duration. Preserve once-per-authored-child
+completion effects and one parent completion. Finish/reduction use the final pass
+pose; pause, speed, cancellation, and cleanup retain their existing owner.
+
+Motion Lab demonstrates one/two/yoyo passes and keeps its per-pass diagram separate
+from total progress. It uses one forward pass under reduced motion so content stays
+visible. Infinite repetition, negative rates, nesting, per-pass events, and repeat
+gaps remain deferred. Core and scheduler behavior do not change.
+
+## D-036 — Bind numeric motion to borrowed DOM styles explicitly
+
+Add an optional `createDomMotionBinding` helper to the existing motion entrypoint.
+Compose numeric opacity, translation, rotation, and uniform scale into two inline
+properties. Keep interpolation, preset definitions, and playback independent of
+DOM binding internals. Applications choose one binding per element and share its
+resource scope with playback; Motion Lab caches bindings across replays.
+
+The binding owns only temporary writes to inline opacity/transform. Save their
+values/priorities before rendering, restore them on scope or explicit disposal,
+and ignore late callback writes. Validate a whole patch before changing the pose.
+Applications retain element lifetime, other styles, focus, inert state, and
+animation cancellation policy. Do not read computed styles, merge arbitrary CSS
+transforms, add an observer/registry, or create a scheduler.
+
+## D-037 — Retarget active callback tweens at their sampled value
+
+Return a `ValueTweenHandle` with `value` and `retarget(to, options?)` from callback
+tweens. Reuse the existing interpolation record, handle, promise, scope, and
+completion callback. Reset segment progress/time without writing immediately,
+reapplying delay, or changing pause/speed. Validate before mutation; terminal
+handles return false and require fresh work. Retargeting preserves position,
+not velocity. Native/property playback and timeline handles keep their interfaces.
+Motion Lab reuses active card-feedback tweens instead of replacing them on every
+input change. No scheduler, target registry, or physics system is introduced.
+
+## D-038 — Compose cancellable actions from existing signals
+
+Use one standard `AbortController` per application action and pass its signal to
+every participating tween/timeline. Aggregate handle results, abort on replacement
+or partial setup failure, and guard status commits with a request generation.
+Keep unrelated work in the same motion scope independent. Motion Lab demonstrates
+this with position, scale, and progress, including paused cancellation and fresh
+restart. Existing operation/scope cleanup supplies ownership; no new public API,
+batch executor, cancellation registry, scheduler, or runtime phase is needed.
+
+## D-039 — Observe effective motion preferences for interactive controls
+
+Expose the motion adapter's existing effective reduced-motion value through a
+readonly getter and a scoped subscription. Register no additional frame work.
+Notify only changes, isolate observer failures, suppress stale reentrant delivery,
+and clear subscriptions on disposal. Keep animation callback errors unchanged.
+Applications can disable timeline scrubbing from the same preference source that
+finishes playback, including host overrides and system preference changes.
+
+The widget's seek helper pauses live timelines and creates a fresh paused preview
+after terminal playback. It reuses the existing absolute seek API and retains
+independent user, visibility, and kernel pause ownership. Core, experience phases,
+and scheduling remain unchanged.
+
+## D-040 — Keep optional widget settings memory in the host
+
+Let the example widget report committed timing/speed changes through an immutable
+callback. Keep browser storage, stable per-widget keys, explicit opt-in, and
+forgetting in a scoped example-host helper. Save settings only on committed
+changes; do not persist drafts, playhead, pause state, DOM, or kernel lifecycle.
+Turning memory off preserves live playback and restores defaults on the next mount.
+
+Validate complete versioned records atomically before restoring them. Corrupt or
+unsupported records use defaults; storage access/write/removal failures report
+locally without breaking motion. Scope disposal releases controls/listeners and
+blocks later writes. No global memory fallback, cross-tab synchronization, new
+storage adapter, or runtime API is introduced.
+
+
+## D-041 — Share temporary frame demand across numeric motion forms
+
+Supersede D-029's permanent controller clock with the existing temporary Core frame
+API. Property tweens, callback tweens, and timelines share one adapter-owned callback;
+operation start/resume wakes it and pause/settlement releases it when no runnable
+work remains. Delayed work keeps demand. Snapshot admission precedes callbacks;
+per-operation timestamp baselines exclude paused intervals and reset on retarget
+or seek. Retain explicit manual advance as an additional synchronous step.
+
+Keep `createMotionController()` as a compatible startup capability check with no
+update method, avoiding double advancement and idle demand. Existing custom frame
+loops should remove routine calls to `advance`. Preserve ordering before application
+render controllers, playback outcomes, speed, reduction, seeking, and scope cleanup.
+Callback errors settle handles before using existing fatal frame handling.
+
+Remove status polling from Motion Lab and the standalone widget host; the private
+widget's optional change callback updates its host. Embedded Docs owns a finite
+loading callback that releases itself when complete. Other updater controllers
+retain their existing scheduling contract. No Core change or new scheduler.
+
+
+## D-042 — Share widget settings through small validated JSON presets
+
+Reuse the widget settings validator and version-1 timing/speed record for manual
+JSON import/export. Keep controls and serialization in the private examples
+package. Validate the whole import before committing both settings and emit one
+settings notification, so opted-in persistence never saves an intermediate pair.
+Limit input to 4,096 characters and present errors locally.
+
+Preserve the active playhead and every pause owner. Apply speed immediately and
+stage timing for the next replay; importing never starts playback. Export no
+drafts, playback state, DOM, storage keys, or saving consent. Clipboard access,
+file pickers, named preset libraries, and a new motion API are not required.
+
+
+## D-043 — Export the canonical widget into a small independent host
+
+Keep one widget implementation in the private examples package. Preview the
+starter through a small repo bridge; replace that bridge with copied canonical
+source when exporting. Include packed Core/adapters builds under relative file
+dependencies so current unpublished changes work outside the workspace and the
+project remains movable. Refuse existing destinations and publish staged output
+only when copying and packing succeed.
+
+Reuse Node 22, Yarn, and the existing TypeScript/Vite scaffold build convention.
+The page owns its kernel and controls; compiled relative-base output can be
+hosted directly or framed. Add no runtime API, package, framework wrapper,
+generic generator, or change to the existing CLI create command.

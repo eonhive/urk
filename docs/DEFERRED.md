@@ -11,3 +11,13 @@ The working v0.2 implementation includes lifecycle/ownership, typed adapter and 
 - New rendering engines, ECS, physics, marketplaces, product identity, monetization, editors, workers, or a wider framework matrix: outside this runtime release.
 
 Package publication, deployment, and creating a release tag are external release actions; changing local manifests does not perform them.
+
+Motion now includes runtime-driven callback tweens, finite offset
+timelines, and the standalone Motion Lab. A subsequent phase adds finite timeline
+seeking, Motion Lab scrubbing, and an application-owned native-scroll binding in
+Story Flow. Later slices add scoped speed, numeric presets, bounded repeat/yoyo,
+and an optional scoped DOM property binding.
+A generic scroll capability is not part of that integration. Nested timelines, infinite repetition,
+springs, property blending, and framework-specific motion wrappers remain deferred.
+Motion now releases temporary frame demand when all operations are paused or settled.
+Application controllers with their own permanent update callbacks still retain demand.

@@ -13,15 +13,38 @@ const curves = {
   'ease-in-out': [0.42, 0.58],
 } as const;
 
-export function validateTiming(options: MotionOptions): void {
-  if (!Number.isFinite(options.durationMs) || options.durationMs < 0 ||
-      !Number.isFinite(options.delayMs ?? 0) || (options.delayMs ?? 0) < 0) {
+export function validateTiming(
+  options: Pick<MotionOptions, 'durationMs' | 'delayMs'> & {
+    easing?: MotionEasing | ((progress: number) => number);
+  },
+  custom = false,
+): void {
+  if (
+    !Number.isFinite(options.durationMs) ||
+    options.durationMs < 0 ||
+    !Number.isFinite(options.delayMs ?? 0) ||
+    (options.delayMs ?? 0) < 0
+  ) {
     throw new RangeError('Motion durationMs and delayMs must be finite and nonnegative.');
   }
-  if (!Object.prototype.hasOwnProperty.call(curves, options.easing ?? 'linear')) throw new TypeError('Unsupported motion easing.');
+  const easing = options.easing ?? 'linear';
+  if (
+    typeof easing === 'function' ? !custom : !Object.prototype.hasOwnProperty.call(curves, easing)
+  ) {
+    throw new TypeError('Unsupported motion easing.');
+  }
 }
 
-export function ease(progress: number, easing: MotionEasing): number {
+export function ease(
+  progress: number,
+  easing: MotionEasing | ((progress: number) => number),
+): number {
+  if (progress === 0 || progress === 1) return progress;
+  if (typeof easing === 'function') {
+    const value = easing(progress);
+    if (!Number.isFinite(value)) throw new RangeError('Motion easing must return a finite number.');
+    return value;
+  }
   if (easing === 'linear' || progress === 0 || progress === 1) return progress;
   const [x1, x2] = curves[easing];
   let low = 0;

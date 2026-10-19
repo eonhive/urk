@@ -139,3 +139,109 @@ policy. An optional child scope reuses Three adapter setup so graphics failure
 stays local. Audio snapshots directly update visual properties; finite layout
 changes use the existing motion capability. Both share Core frame demand.
 The website uses its existing media-host connection/history cleanup path.
+
+Callback value tweens, property tweens, and finite timelines share the same motion
+adapter's temporary frame work. Each operation establishes its timestamp baseline
+on its first runnable frame; pause/resume and explicit retarget/seek reset it.
+One admitted snapshot prevents callback-created work from advancing in that frame.
+Completion, cancellation, pause, reduction, and disposal release demand when no
+runnable motion remains. Delayed playback retains demand through its delay.
+`createMotionController` remains a startup capability check for compatibility,
+without an updater or duplicate advancement. Explicit `advance(deltaMs)` is still
+an additional manual time step; application frame loops should not call it for
+ordinary playback. Callback failures settle handles before following the kernel's
+existing frame failure path. Motion Lab and widget host diagnostics update from
+playback callbacks. Embedded Docs releases its finite loading callback after startup.
+Other application updater controllers retain their existing frame demand.
+Kernel lifecycle, selected view, phase, and playback retain separate ownership.
+
+Story Flow reuses that callback/timeline API in the existing scrollytelling proof.
+Application-local scroll bindings replace native smooth scrolling and finite
+section entrances replace CSS transitions and a frame-counted wave. Wheel/touch
+input and resizing cancel guided work at its rendered position. The application
+retains section selection and input policy; Core and the public motion API need
+no changes. Its selectable scroll mode now binds native position to a paused
+finite timeline through public seeking. Application code maps measured chapter
+ranges onto the normalized playhead, keeps content readable, and rebuilds bindings
+after layout changes. Timed entrances remain a separate selectable mode; switching
+cancels the previous visual owner before restoring styles. Reduced motion releases
+the preview and uses static cards. Runtime pause blocks native sampling, while
+scope cleanup settles endpoint previews that remain available for backward seeks.
+There is no generic scroll subsystem or additional scheduling mechanism.
+
+Finite timeline seeking adds absolute-time sampling to that same capability.
+`TimelineHandle` reports duration/current time and renders a clamped `seek(timeMs)`
+without resuming the clock or committing completion. Timeline-owned child records
+share the tween sampler; callbacks can invalidate an in-flight frame by seeking
+or cancelling. Completion remains once-only and terminal handles cannot revive.
+Motion Lab owns its scrub UI and creates a fresh paused timeline after a prior
+handle settles. Core, scheduler demand, and native/property playback stay unchanged.
+
+Motion scopes now own a finite positive playback rate for their current and future
+operations. Callback tweens and timelines scale controller deltas once; property
+tweens scale their compatible timestamp deltas and native effects use playback-rate
+controls. Absolute seek positions, pause ownership, and immediate cleanup remain
+unchanged. This requires no additional clock or Core behavior (D-032).
+
+Motion presets are pure helpers returning validated numeric timeline entries.
+Fade/slide/scale defaults and index-based stagger offsets reuse the existing
+timeline executor; application callbacks still render values and compose
+properties. They add no runtime ownership or scheduling layer (D-033).
+
+Finite timeline repetition expands 1–100 authored passes into ordinary scheduled
+entries. Yoyo mirrors alternating passes, including easing; the same executor owns
+boundary delivery, total-time seeking, speed, pause, and cleanup. Completion effects
+remain once per authored child and once for the whole timeline (D-034).
+
+An optional DOM property binding composes numeric callbacks into inline opacity
+and one transform. It borrows the element, restores prior inline styles through
+its resource scope, and ignores late writes after disposal. Numeric playback and
+presets retain their renderer-independent implementation; applications own element
+lifetime, focus, inert state, and binding reuse. There is no new ticker or binding
+registry (D-036).
+
+Callback value tweens can retarget a live segment from its sampled value while
+retaining playback ownership and the completion promise. Segment time/progress
+reset, while pause, scoped speed, and terminal settlement remain unchanged.
+Retargeting requires no target registry or additional clock (D-037).
+
+Application action bundles compose existing `AbortSignal` support across handles.
+The controller owns replacement generations and aggregate result/status handling;
+the motion scope retains playback ownership and cleanup. Motion Lab proves
+cancellation without disposing unrelated work or adding a batch runtime (D-038).
+
+Effective reduced-motion mode is readable and observable directly from the motion
+adapter. Preference observers are scope-released, notify only changes, isolate
+failures, and register no frame work. Widget scrubbing uses this source to keep
+controls consistent with the adapter's playback policy. A widget seek reuses a
+live timeline or owns a fresh paused preview after terminal playback; no handle
+is revived and Core, experience phases, and scheduling stay unchanged (D-039).
+
+The reusable motion widget lives in the private examples package and is mounted
+by both the standalone proof and the website's existing Embedded Docs Demo.
+It borrows controller context/scope and appends only its own subtree and styles.
+The website retains its existing lazy mount, local error boundary, lifecycle
+controls, and fresh-kernel restart. Shutdown removes the widget while static docs
+remain readable. This reuse adds no runtime API, framework wrapper, or scheduler.
+Optional widget settings memory remains host-owned: the widget observes committed
+timing/speed changes through an immutable callback, while a scoped host control
+owns opt-in, storage keys, validation, and forgetting. It persists no playback
+position, phase, or pause state and performs no frame-driven writes. Storage
+failures remain local to the preference control (D-040).
+
+
+Portable widget presets reuse that versioned timing/speed validator in the private
+examples package. JSON import validates before one combined settings commit and
+host notification. It preserves live position and pause ownership, applies speed
+immediately, and stages timing for replay. Export excludes playback state and
+persistence consent. The native text editor/control listeners share the widget
+scope; Core, adapters, and scheduling are unchanged (D-042).
+
+
+Motion Embed Starter is a small example host, with a repository exporter that
+copies the canonical widget source and packs current Core/adapters builds into
+relative file dependencies. Its preview bridge is not part of exported projects.
+The independent project has no private example dependency or workspace alias;
+the page explicitly owns kernel creation, scopes, lifecycle controls, and restart.
+Its ordinary TypeScript/Vite build produces a relative-base static site usable in
+an iframe. Existing CLI scaffolds and runtime APIs remain unchanged (D-043).

@@ -6,8 +6,10 @@ The root `@urk/adapters` entrypoint exports the base reference adapters, includi
 the Three scene adapter. Import individual adapters to avoid loading unrelated
 implementations, or retain `@urk/adapters/dom` for the existing DOM composite.
 
-Adapters and core are versioned `0.2.0`, with a `^0.2.0` core peer.
-The manifests describe this implementation; validation does not publish it.
+Adapters are versioned `0.2.1`; Core remains `0.2.0`, with the existing `^0.2.0` peer.
+This local motion release candidate has not been published.
+For the current motion surface, compatibility notes, and the focused packed-package
+gate, see [motion release preparation](https://github.com/eonhive/urk/blob/main/docs/MOTION_RELEASE.md).
 
 Built-in DOM listeners, loading subscriptions, UI roots, audio elements/preload
 listeners, and Three renderer/canvas/resize resources now use component scopes.
@@ -92,7 +94,7 @@ Token-free custom registrations and generic string lookups remain supported.
 
 ## Reference adapters
 
-- `createMotionAdapter()` - scoped finite DOM animations and numeric tweens with playback handles, cancellation, and reduced motion; see [motion usage](src/motion/README.md)
+- `createMotionAdapter()` - scoped DOM animations, demand-driven callback tweens and seekable finite timelines, compatible numeric property tweens, cancellation, and reduced motion; see [motion usage](https://github.com/eonhive/urk/blob/main/packages/adapters/src/motion/README.md)
 - `createVideoAdapter()` - independent native video handles, borrowed ownership, captions, and cancellable playback; see [video usage](src/video/README.md)
 
 - `createAudioAdapter()` - manage browser-native audio transport with optional waveform, spectrum, RMS, and band analysis

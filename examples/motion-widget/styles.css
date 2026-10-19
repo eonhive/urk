@@ -1,0 +1,218 @@
+/*
+Company: EonHive Inc. | Title: Motion Widget Host Styles
+Purpose: Present a responsive host page around independently styled motion widgets.
+Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-17
+Notes: Vibe coded with Codex.
+*/
+:root {
+  color-scheme: dark;
+  font-family: system-ui, sans-serif;
+  color: #e9edf7;
+  background: #0a0d17;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at 0 0, #16263480, transparent 55%);
+}
+.widget-page {
+  width: min(1100px, 100%);
+  margin: auto;
+  padding: 28px 28px 40px;
+}
+nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #252c40;
+}
+a {
+  color: #a2dfe2;
+  text-decoration: none;
+  font-size: 13px;
+}
+a:hover {
+  text-decoration: underline;
+}
+header {
+  padding: 56px 0 32px;
+}
+.eyebrow {
+  color: #7ce8e3;
+  font:
+    10px ui-monospace,
+    monospace;
+  letter-spacing: 2px;
+}
+h1 {
+  font-size: clamp(30px, 5vw, 56px);
+  line-height: 1.12;
+  letter-spacing: -2px;
+  margin: 20px 0;
+}
+h1 span {
+  color: #8996b0;
+}
+header > p:not(.eyebrow) {
+  max-width: 640px;
+  color: #a3afc6;
+  line-height: 1.7;
+  font-size: 14px;
+}
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+.embed-slot {
+  min-width: 0;
+}
+.slot-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 40px;
+}
+.slot-heading span {
+  color: #acb6cb;
+  font:
+    10px ui-monospace,
+    monospace;
+}
+.host-note {
+  color: #8391ab;
+  font-size: 11px;
+  margin: 12px 0 18px;
+}
+.empty-slot {
+  display: grid;
+  place-items: center;
+  min-height: 420px;
+  margin: 0;
+  padding: 24px;
+  border: 1px dashed #46536b;
+  border-radius: 18px;
+  color: #9fadc5;
+  line-height: 1.7;
+  text-align: center;
+}
+[hidden] {
+  display: none !important;
+}
+.runtime-panel {
+  margin-top: 32px;
+  padding: 26px;
+  border: 1px solid #283246;
+  border-radius: 16px;
+  background: #101523;
+}
+.runtime-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.runtime-heading h2 {
+  margin: 0;
+  font-size: 17px;
+}
+.runtime-heading span {
+  color: #8a99b5;
+  font:
+    9px ui-monospace,
+    monospace;
+}
+dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 54px;
+  margin-block: 24px;
+}
+dt {
+  color: #8a99b5;
+  font-size: 11px;
+}
+dd {
+  margin: 7px 0 0;
+  color: #7ce8e3;
+  font:
+    13px ui-monospace,
+    monospace;
+}
+.host-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.host-controls button,
+.slot-heading button {
+  background: #192235;
+  color: #e1e9f7;
+  padding: 10px 12px;
+  border: 1px solid #3a4862;
+  border-radius: 7px;
+  font:
+    12px system-ui,
+    sans-serif;
+  cursor: pointer;
+}
+.slot-heading button {
+  font-size: 10px;
+}
+.host-controls button:hover,
+.slot-heading button:hover {
+  border-color: #7ce8e3;
+}
+.host-controls button:disabled,
+.slot-heading button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #7ce8e3;
+  outline-offset: 4px;
+}
+.reduced {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 24px;
+  font-size: 13px;
+}
+.reduced input {
+  accent-color: #7ce8e3;
+}
+#motion-preference,
+#host-message {
+  color: #8f9db6;
+  font-size: 12px;
+  line-height: 1.6;
+}
+#host-message {
+  min-height: 20px;
+  margin-bottom: 0;
+}
+footer {
+  margin-top: 26px;
+  color: #7d8ca6;
+  font-size: 11px;
+  line-height: 1.7;
+}
+@media (max-width: 760px) {
+  .widget-grid {
+    grid-template-columns: 1fr;
+  }
+  .widget-page {
+    padding: 24px 18px;
+  }
+  header {
+    padding-top: 36px;
+  }
+}

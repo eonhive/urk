@@ -17,12 +17,15 @@ corepack yarn dev
 ## Routes
 
 - `/` - examples index
+- `/motion-lab/` - controller-driven tweens, timelines, and three interruptible DOM views
+- `/motion-widget/` - reusable DOM widgets with independent playback/ownership on one shared runtime
+- `/motion-starter/` - a copy-and-embed host with an independent-project exporter; see `motion-starter/README.md`
 - `/audio-proof/` - DOM-first audio transport proof
 - `/picking/` - DOM plus Three picking proof
 - `/loading-transition/` - staged loading and transition proof
 - `/app-shell/` - DOM-first app shell orchestration proof
 - `/react-starter/` - React wrapper proof
-- `/scrollytelling/` - DOM-first story orchestration proof
+- `/scrollytelling/` - Story Flow: reversible scroll-driven timelines, selectable timed entrances, guided scrolling, and manual interruption
 - `/runtime-inspector/` - runtime inspector proof
 
 Each proof folder contains:

@@ -4,11 +4,12 @@
  * Purpose: Mount the public URK example that proves documentation-embedded runtime islands.
  * Author: Stan Nesi
  * Created: 2026-05-09
- * Updated: 2026-05-09
+ * Updated: 2026-10-18
  * Notes: Vibe coded with Codex.
  */
 
 import { createLoadingAdapter, type LoadingAdapterApi } from '@urk/adapters/dom';
+import { createMotionAdapter } from '@urk/adapters/motion';
 import {
   createKernel,
   type ControllerRegistration,
@@ -22,6 +23,11 @@ import {
   type RuntimePanelElements,
 } from '../runtime-panel.js';
 import type { ExampleMountOptions, ExampleMountResult } from '../types.js';
+import {
+  mountMotionWidget,
+  mountWidgetPreferences,
+  type MotionWidget,
+} from '../motion-widget/index.js';
 
 type DocsEmbedStep =
   | 'static-content'
@@ -41,6 +47,7 @@ type DocsEmbedState = {
 type DocsEmbedSurface = {
   article: HTMLElement;
   island: HTMLElement;
+  widgetHost: HTMLElement;
   status: HTMLElement;
   fallback: HTMLElement;
   stagePills: HTMLElement[];
@@ -71,11 +78,7 @@ const STEP_ORDER: DocsEmbedStep[] = [
 
 const MAX_EVENTS = 20;
 
-function emitDocsEvent(
-  ctx: RuntimeContext,
-  type: string,
-  payload: DocsEmbedEventPayload,
-): void {
+function emitDocsEvent(ctx: RuntimeContext, type: string, payload: DocsEmbedEventPayload): void {
   ctx.events.emit({
     type,
     source: 'docs-embed-controller',
@@ -154,6 +157,7 @@ function createStaticDocsBlock(): HTMLElement {
 
 function createRuntimeIsland(): {
   island: HTMLElement;
+  widgetHost: HTMLElement;
   status: HTMLElement;
   fallback: HTMLElement;
   stagePills: HTMLElement[];
@@ -171,6 +175,8 @@ function createRuntimeIsland(): {
     'Fallback remains local to this island.',
   );
   const stageList = createElement('div', 'embedded-docs-demo__stages');
+  const widgetHost = createElement('div', 'embedded-docs-demo__widget-host');
+  widgetHost.style.marginTop = '18px';
   const stagePills = STEP_ORDER.map((step) => {
     const pill = createElement('span', 'embedded-docs-demo__stage', step.replace(/-/g, ' '));
 
@@ -186,9 +192,9 @@ function createRuntimeIsland(): {
   });
 
   stageList.append(...stagePills);
-  island.append(eyebrow, status, fallback, stageList);
+  island.append(eyebrow, status, fallback, stageList, widgetHost);
 
-  return { island, status, fallback, stagePills };
+  return { island, widgetHost, status, fallback, stagePills };
 }
 
 function prepareDocsEmbedSurface(elements: RuntimePanelElements): {
@@ -200,10 +206,11 @@ function prepareDocsEmbedSurface(elements: RuntimePanelElements): {
   const previousIsolation = elements.previewSurface.style.isolation;
   const article = createElement('article', 'embedded-docs-demo');
   const staticBlock = createStaticDocsBlock();
-  const { island, status, fallback, stagePills } = createRuntimeIsland();
+  const { island, widgetHost, status, fallback, stagePills } = createRuntimeIsland();
   const docsSurface: DocsEmbedSurface = {
     article,
     island,
+    widgetHost,
     status,
     fallback,
     stagePills,
@@ -243,9 +250,7 @@ function prepareDocsEmbedSurface(elements: RuntimePanelElements): {
     panel.style.padding = '14px';
   }
 
-  for (const element of article.querySelectorAll<HTMLElement>(
-    '.embedded-docs-demo__eyebrow',
-  )) {
+  for (const element of article.querySelectorAll<HTMLElement>('.embedded-docs-demo__eyebrow')) {
     element.style.color = '#a5f3fc';
     element.style.fontSize = '11px';
     element.style.fontWeight = '800';
@@ -299,10 +304,106 @@ function createDocsEmbedController(docsSurface: DocsEmbedSurface): ControllerReg
   let elapsedMs = 0;
   let activeStageId: string | null = null;
   let completed = false;
+  let widget: MotionWidget | undefined;
+
+  let releaseLoading: (() => void) | undefined;
+  function advanceLoading(frame: FrameInfo, ctx: RuntimeContext): void {
+    if (completed) {
+      return;
+    }
+
+    const deltaMs = frame.deltaMs === 0 ? 16 : frame.deltaMs;
+    const loading = ctx.adapters.require<LoadingAdapterApi>('loading');
+
+    elapsedMs += deltaMs;
+
+    if (elapsedMs < 650) {
+      if (activeStageId !== 'resolve-docs-host') {
+        activeStageId = 'resolve-docs-host';
+        loading.setStage(
+          'resolve-docs-host',
+          0.28,
+          'Static documentation host is resolved before runtime work starts',
+        );
+      }
+
+      return;
+    }
+
+    if (elapsedMs < 1300) {
+      if (activeStageId !== 'lazy-load-island') {
+        activeStageId = 'lazy-load-island';
+        loading.setStage(
+          'lazy-load-island',
+          0.58,
+          'Client runtime island is lazy-loaded inside the docs shell',
+        );
+        setDocsStep(docsSurface, 'island-loading', 'Runtime island module loaded locally.');
+        emitDocsEvent(ctx, 'docs-embed:island-loading', {
+          message: 'The runtime island loads after the static docs shell.',
+          step: 'island-loading',
+        });
+      }
+
+      return;
+    }
+
+    if (elapsedMs < 1950) {
+      if (activeStageId !== 'mount-runtime') {
+        activeStageId = 'mount-runtime';
+        loading.setStage(
+          'mount-runtime',
+          0.82,
+          'URK owns the live runtime surface inside the documentation page',
+        );
+        setDocsStep(docsSurface, 'runtime-mounted', 'URK runtime mounted inside the island.');
+        emitDocsEvent(ctx, 'docs-embed:runtime-mounted', {
+          message: 'URK owns the live island, not the surrounding documentation shell.',
+          step: 'runtime-mounted',
+        });
+      }
+
+      return;
+    }
+
+    if (elapsedMs < 2450) {
+      if (activeStageId !== 'confirm-fallback') {
+        activeStageId = 'confirm-fallback';
+        loading.setStage(
+          'confirm-fallback',
+          0.92,
+          'Docs content remains available while the runtime island owns its local fallback',
+        );
+        setDocsStep(
+          docsSurface,
+          'fallback-boundary',
+          'Local fallback boundary armed; docs content remains readable.',
+        );
+        emitDocsEvent(ctx, 'docs-embed:fallback-confirmed', {
+          message: 'Runtime failure would stay local to the embedded island.',
+          step: 'fallback-boundary',
+        });
+      }
+
+      return;
+    }
+
+    loading.complete('Embedded docs demo ready: docs shell and runtime island stay separate');
+    emitDocsEvent(ctx, 'docs-embed:ready', {
+      message: 'Embedded docs runtime island reached ready.',
+      step: docsSurface.state.step,
+    });
+    ctx.state.setPhase('ready', 'embedded-docs-demo:ready');
+    completed = true;
+    // Playback starts after boot; the widget borrows this controller's scope and clock.
+    void widget?.replay().catch((error: unknown) => {
+      if (!ctx.signal.aborted) docsSurface.fallback.textContent = String(error);
+    });
+  }
 
   return {
     id: 'docs-embed-controller',
-    start(ctx) {
+    async start(ctx) {
       const loading = ctx.adapters.require<LoadingAdapterApi>('loading');
       const docsHost = ctx.services.require<HTMLElement>('docs:host');
 
@@ -313,99 +414,29 @@ function createDocsEmbedController(docsSurface: DocsEmbedSurface): ControllerReg
         step: 'static-content',
         hostTagName: docsHost.tagName.toLowerCase(),
       });
-    },
-    update(frame: FrameInfo, ctx) {
-      if (completed) {
-        return;
-      }
-
-      const deltaMs = frame.deltaMs === 0 ? 16 : frame.deltaMs;
-      const loading = ctx.adapters.require<LoadingAdapterApi>('loading');
-
-      elapsedMs += deltaMs;
-
-      if (elapsedMs < 650) {
-        if (activeStageId !== 'resolve-docs-host') {
-          activeStageId = 'resolve-docs-host';
-          loading.setStage(
-            'resolve-docs-host',
-            0.28,
-            'Static documentation host is resolved before runtime work starts',
-          );
-        }
-
-        return;
-      }
-
-      if (elapsedMs < 1300) {
-        if (activeStageId !== 'lazy-load-island') {
-          activeStageId = 'lazy-load-island';
-          loading.setStage(
-            'lazy-load-island',
-            0.58,
-            'Client runtime island is lazy-loaded inside the docs shell',
-          );
-          setDocsStep(docsSurface, 'island-loading', 'Runtime island module loaded locally.');
-          emitDocsEvent(ctx, 'docs-embed:island-loading', {
-            message: 'The runtime island loads after the static docs shell.',
-            step: 'island-loading',
-          });
-        }
-
-        return;
-      }
-
-      if (elapsedMs < 1950) {
-        if (activeStageId !== 'mount-runtime') {
-          activeStageId = 'mount-runtime';
-          loading.setStage(
-            'mount-runtime',
-            0.82,
-            'URK owns the live runtime surface inside the documentation page',
-          );
-          setDocsStep(docsSurface, 'runtime-mounted', 'URK runtime mounted inside the island.');
-          emitDocsEvent(ctx, 'docs-embed:runtime-mounted', {
-            message: 'URK owns the live island, not the surrounding documentation shell.',
-            step: 'runtime-mounted',
-          });
-        }
-
-        return;
-      }
-
-      if (elapsedMs < 2450) {
-        if (activeStageId !== 'confirm-fallback') {
-          activeStageId = 'confirm-fallback';
-          loading.setStage(
-            'confirm-fallback',
-            0.92,
-            'Docs content remains available while the runtime island owns its local fallback',
-          );
-          setDocsStep(
-            docsSurface,
-            'fallback-boundary',
-            'Local fallback boundary armed; docs content remains readable.',
-          );
-          emitDocsEvent(ctx, 'docs-embed:fallback-confirmed', {
-            message: 'Runtime failure would stay local to the embedded island.',
-            step: 'fallback-boundary',
-          });
-        }
-
-        return;
-      }
-
-      loading.complete('Embedded docs demo ready: docs shell and runtime island stay separate');
-      emitDocsEvent(ctx, 'docs-embed:ready', {
-        message: 'Embedded docs runtime island reached ready.',
-        step: docsSurface.state.step,
+      const preferences = mountWidgetPreferences(
+        docsSurface.widgetHost,
+        ctx.scope,
+        'urk:motion-widget:docs:signal',
+      );
+      widget = await mountMotionWidget(docsSurface.widgetHost, ctx, {
+        ...preferences.restore(),
+        title: 'Docs signal',
+        onSettingsChange: preferences.changed,
       });
-      ctx.state.setPhase('ready', 'embedded-docs-demo:ready');
-      completed = true;
+      preferences.changed(widget.getSnapshot());
+      ctx.scope.defer(() => releaseLoading?.());
+      releaseLoading = ctx.registerFrameWork(frame => {
+        advanceLoading(frame, ctx);
+        if (completed) { releaseLoading?.(); releaseLoading = undefined; }
+      });
+      // An injected scheduler may deliver synchronously during registration.
+      if (completed) { releaseLoading(); releaseLoading = undefined; }
     },
     onStateChange(next: RuntimeSnapshot, previous: RuntimeSnapshot, ctx) {
       if (next.phase === 'paused') {
-        docsSurface.status.textContent = 'Runtime island paused; static docs content remains visible.';
+        docsSurface.status.textContent =
+          'Runtime island paused; static docs content remains visible.';
         emitDocsEvent(ctx, 'docs-embed:paused', {
           message: 'Runtime island paused without affecting the docs shell.',
           phase: next.phase,
@@ -432,7 +463,8 @@ function createDocsEmbedController(docsSurface: DocsEmbedSurface): ControllerReg
       }
     },
     dispose(ctx) {
-      setDocsStep(docsSurface, 'disposed', 'Runtime island disposed; docs shell teardown restored.');
+      widget = undefined;
+      setDocsStep(docsSurface, 'disposed', 'Runtime island disposed; static docs remain readable.');
       emitDocsEvent(ctx, 'docs-embed:disposed', {
         message: 'Embedded docs runtime island disposed cleanly.',
         step: 'disposed',
@@ -447,7 +479,7 @@ function createKernelInstance(docsSurface: DocsEmbedSurface) {
     services: {
       'docs:host': docsSurface.article,
     },
-    adapters: [createLoadingAdapter()],
+    adapters: [createLoadingAdapter(), createMotionAdapter()],
     controllers: [createDocsEmbedController(docsSurface)],
   });
 }

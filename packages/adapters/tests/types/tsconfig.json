@@ -8,5 +8,5 @@
     "noEmit": true,
     "types": []
   },
-  "files": ["dom.ts", "root.ts"]
+  "files": ["dom.ts", "root.ts", "motion.ts"]
 }

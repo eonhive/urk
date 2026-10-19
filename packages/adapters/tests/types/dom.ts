@@ -9,7 +9,7 @@
  */
 
 import { AdapterRegistry, ResourceScope, type AdapterRegistration } from '@urk/core';
-import { MotionCapability, createMotionAdapter, type MotionAdapterApi, type MotionPlayback } from '@urk/adapters/motion';
+import { MotionCapability, createMotionAdapter, createMotionController, type MotionAdapterApi, type MotionPlayback, type MotionHandle, type TimelineHandle, type ValueTweenOptions } from '@urk/adapters/motion';
 import { VideoCapability, createVideoAdapter, type VideoAdapterApi, type VideoSnapshot, type VideoHandle } from '@urk/adapters/video';
 import { AudioCapability, createAudioAdapter, type AudioAdapterApi } from '@urk/adapters/audio';
 import { InputCapability, createInputAdapter, type InputAdapterApi } from '@urk/adapters/input';
@@ -99,6 +99,19 @@ const point = { x: 0, label: 'point' };
 scopedMotion.tween(point, { x: 1 }, { durationMs: 200, onUpdate() {} });
 // @ts-expect-error Only numeric properties can be tweened.
 scopedMotion.tween(point, { label: 1 }, { durationMs: 200 });
+const numericOptions: ValueTweenOptions = { from: 0, to: 100, durationMs: 300, easing: p => p * p, onUpdate(value, progress) { void [value, progress]; } };
+const valueHandle: MotionHandle = motion.tween(numericOptions);
+const timelineHandle: TimelineHandle = scopedMotion.timeline({ tweens: [{ ...numericOptions, atMs: 200 }] });
+timelineHandle.seek(timelineHandle.durationMs / 2);
+const playhead: number = timelineHandle.currentTimeMs;
+void playhead;
+// @ts-expect-error Timeline positions use numeric milliseconds.
+timelineHandle.seek('50%');
+// @ts-expect-error Standalone value tweens retain their existing handle surface.
+valueHandle.seek(100);
+void [valueHandle.status, valueHandle.progress, timelineHandle.finished, createMotionController()];
+// @ts-expect-error Numeric callbacks receive numbers.
+motion.tween({ ...numericOptions, onUpdate(value: string) { void value; } });
 audio.analysis.configure({ fftSize: 2048, smoothing: 0.8, bands: { bass: [20, 250] } });
 const waveform: Float32Array = audio.analysis.read().waveform;
 const spectrum: Uint8Array = audio.analysis.read().spectrum;

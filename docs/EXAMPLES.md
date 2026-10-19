@@ -29,7 +29,7 @@ Current runnable public examples:
 - `/examples/event-routing/` in `apps/www`
 - `/examples/scene-ui-bridge/` in `apps/www`
 - `/examples/pointer-input-overlay/` in `apps/www`
-- `/examples/embedded-docs-demo/` in `apps/www`
+- `/examples/embedded-docs-demo/` in `apps/www` - shared motion widget with scrubbing, timing, and playback speed inside the existing docs runtime island; also live at `/docs/guides/astro-docs-embed/`
 
 ## Private proof workspace
 
@@ -44,13 +44,16 @@ The public website surfaces the originals as a repo proof lab on `/examples/`, w
 ## Proof routes
 
 - `/audio-proof/analysis.html` - the shared Audio Lab: waveform, spectrum, normalized meters, reactive Three visuals, and finite layout motion
+- `/motion-lab/` - three DOM views, an Explore preset playground, seekable timelines with keyboard scrubbing, interrupted navigation, runtime controls, and fresh-kernel restart
+- `/motion-widget/` - two reusable DOM widgets sharing one runtime, with keyboard/pointer scrubbing, per-instance timing/speed and opt-in settings memory, automatic offscreen suspension, independent sequence pause/replay/cancel, unmount/remount, and shared runtime cleanup
+- `/motion-starter/` - minimal host with a copy-and-embed exporter that produces an independent project using copied widget source and packed local runtimes
 - `/motion-playground/` - numeric/DOM motion, pause, replacement, reduced motion, and idle frame demand
 - `/audio-proof/` - audio transport, staged loading, mute/volume, pause/resume, shutdown
 - `/picking/` - DOM plus Three picking, keyboard movement, storage, overlay feedback
 - `/loading-transition/` - staged loading, transition veil, replayable handoff
 - `/app-shell/` - panel-state orchestration, pointer/input flow, persistence, lifecycle control
 - `/react-starter/` - thin React wrapper around an existing kernel
-- `/scrollytelling/` - section orchestration, internal scroll, pointer/input navigation
+- `/scrollytelling/` - Story Flow: native-scroll timeline seeking, selectable timed entrances, guided navigation/manual takeover, pause/reduced motion, and fresh-kernel restart
 - `/runtime-inspector/` - bounded diagnostics snapshot for runtime, registries, and events
 
 ## Structure rule
@@ -63,3 +66,26 @@ Each proof folder should contain:
 - `main.ts` or `main.tsx`
 
 Shared utilities are allowed only when they remove real duplication without hiding how a proof works.
+
+The standalone `/motion-widget/` proof and the website's Embedded Docs Demo share
+`packages/examples/src/motion-widget/`. Its private `@urk/examples/motion-widget`
+entrypoint exports a borrowed-context mount helper; the host registers the motion
+adapter/controller and retains kernel ownership. Widget styles ship as a scoped
+string in the owned root so compiled mounts need no external CSS copying. Widget
+cleanup removes only its subtree and releases its motion/listeners/observers;
+website shutdown retains static documentation and reset creates a fresh kernel.
+Optional host controls remember only validated timing and speed under separate
+local-storage keys. Saving starts after user opt-in; turning it off forgets saved
+settings without changing live playback. Widget defaults remain unchanged when
+memory is off. See `examples/motion-widget/README.md` for storage failure behavior.
+The shared widget also offers versioned JSON import/export under Share settings.
+It validates the whole record before committing timing/speed, preserves live
+position and pauses, and stages new timing for replay. Presets contain no playback
+state or saving consent; persistence remains an independent host choice.
+
+`scripts/create-motion-starter.mjs <new-directory>` exports the Motion Embed
+Starter without changing CLI scaffolding. It replaces the repo preview bridge
+with canonical widget source and includes Core/adapters archives referenced by
+relative file dependencies. The generated private project uses Node 22, Yarn,
+and the existing standalone TypeScript/Vite build convention. It needs neither
+the checkout nor `@urk/examples` after export. See `examples/motion-starter/README.md`.

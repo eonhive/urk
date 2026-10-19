@@ -1,0 +1,93 @@
+<!--
+Company: EonHive Inc. | Title: Embedded Motion Widgets
+Purpose: Host two reusable motion widgets with independent ownership and shared runtime controls.
+Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-17
+Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0d17" />
+    <title>Motion Widgets · URK</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="widget-page">
+      <nav aria-label="Examples">
+        <a href="../">◈ URK / Examples</a><a href="../motion-lab/">Motion Lab ↗</a>
+      </nav>
+      <header>
+        <p class="eyebrow">MOTION, IN SMALL PLACES</p>
+        <h1>A little momentum.<br /><span>Anywhere on the page.</span></h1>
+        <p>
+          Two independent widgets in an ordinary page. Pause one, replay the other, or unmount
+          either without interrupting its neighbour.
+        </p>
+        <p>
+          Offscreen widgets keep their place. On a narrow window, scroll between the embeds to see
+          motion pause and continue.
+        </p>
+        <div class="host-controls">
+          <button id="replay-widgets" type="button" disabled>Replay both widgets</button>
+        </div>
+      </header>
+      <div class="widget-grid">
+        <section class="embed-slot" aria-label="Signal embed host">
+          <div class="slot-heading">
+            <span>EMBED 01 / SIGNAL</span
+            ><button id="toggle-0" type="button" disabled>Unmount widget</button>
+          </div>
+          <div id="widget-a">
+            <p class="host-note">This caption belongs to the host page.</p>
+            <p class="empty-slot" hidden>Widget unmounted. Your page content stays here.</p>
+          </div>
+        </section>
+        <section class="embed-slot" aria-label="Studio embed host">
+          <div class="slot-heading">
+            <span>EMBED 02 / STUDIO</span
+            ><button id="toggle-1" type="button" disabled>Unmount widget</button>
+          </div>
+          <div id="widget-b">
+            <p class="host-note">Same implementation. A separate lifetime.</p>
+            <p class="empty-slot" hidden>Widget unmounted. Your page content stays here.</p>
+          </div>
+        </section>
+      </div>
+      <section class="runtime-panel" aria-label="Shared runtime controls">
+        <div class="runtime-heading">
+          <h2>One shared runtime</h2>
+          <span>CONTROLLER → MOTION → DOM</span>
+        </div>
+        <dl>
+          <div>
+            <dt>Lifecycle</dt>
+            <dd id="runtime-state">created</dd>
+          </div>
+          <div>
+            <dt>Active animations</dt>
+            <dd id="active-count">0</dd>
+          </div>
+          <div>
+            <dt>Kernel instance</dt>
+            <dd id="instance">00</dd>
+          </div>
+        </dl>
+        <div class="host-controls">
+          <button id="pause-runtime" type="button" disabled>Pause runtime</button
+          ><button id="resume-runtime" type="button" disabled>Resume runtime</button
+          ><button id="dispose-runtime" type="button" disabled>Dispose runtime</button
+          ><button id="restart-runtime" type="button" disabled>Start fresh kernel</button>
+        </div>
+        <label class="reduced"><input id="reduced" type="checkbox" /> Reduced motion</label>
+        <p id="motion-preference">Following your system preference</p>
+        <p id="host-message" role="status">Preparing your widgets.</p>
+      </section>
+      <footer>
+        Built with @urk/core + @urk/adapters/motion. No framework or extra animation clock.
+      </footer>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

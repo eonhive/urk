@@ -19,6 +19,9 @@ export default defineConfig({
     chunkSizeWarningLimit: 650,
     rollupOptions: {
       input: [
+        resolve(__dirname, 'motion-lab/index.html'),
+        resolve(__dirname, 'motion-widget/index.html'),
+        resolve(__dirname, 'motion-starter/index.html'),
         resolve(__dirname, 'motion-playground/index.html'),
         resolve(__dirname, 'selection-details/index.html'),
         resolve(__dirname, 'index.html'),

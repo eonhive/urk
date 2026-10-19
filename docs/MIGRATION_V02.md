@@ -164,3 +164,31 @@ handwritten API mocks must supply it. Real consumers opt in with
 `audio.analysis.enable()` from a gesture and read reusable snapshots in their
 controller. See [analysis API and ownership](../packages/adapters/src/audio/README.md).
 These are local additions, not a package publication or version bump.
+
+
+## Motion frame demand
+
+The motion release candidate is `@urk/adapters@0.2.1`. Core remains `0.2.0`;
+the adapter's `^0.2.0` Core peer and existing entrypoints remain compatible.
+
+Callback tweens and timelines now advance automatically through the same temporary
+frame work as property tweens. `createMotionController()` can stay registered but
+is no longer required and has no updater. Remove custom per-frame calls to
+`motion.advance(...)` to avoid applying an additional time step. Direct manual
+advance remains available for controlled synchronous use.
+
+Idle/paused motion releases its own frames; delayed runnable work keeps them.
+Per-operation baselines begin on the first runnable frame and reset on resume,
+retarget, or seek. Unrelated updater controllers continue to request frames under
+the existing Core contract. See D-041 and the motion README for timing details.
+
+Callback tweens use `ValueTweenOptions`; `TweenOptions` retains the compatible
+property-target API. `ValueTweenHandle` adds sampled-value retargeting, while
+`TimelineHandle` adds absolute seeking. Do not substitute a timeline for a numeric
+entry or expect seeking to revive a terminal handle. Scope speed and reduced-motion
+observation preserve the existing playback/scoped ownership rules.
+
+Motion Lab, widget settings/presets, and the private examples package are application
+proofs rather than new public packages. For external reuse, the Motion Embed
+Starter copies the widget source and packs local runtime builds. See the
+[motion release notes](MOTION_RELEASE.md) for the public surface and focused gate.

@@ -11,6 +11,7 @@ export function createPlayback(element: Element, signal: AbortSignal | undefined
   let terminal = false;
   let paused = false;
   let suspended = false;
+  let playbackRate = 1;
   let pending: (() => void) | undefined;
   let resolve!: (result: MotionResult) => void;
   const finished = new Promise<MotionResult>(done => { resolve = done; });
@@ -57,6 +58,12 @@ export function createPlayback(element: Element, signal: AbortSignal | undefined
 
   return {
     handle,
+    setPlaybackRate(rate: number) {
+      control(() => {
+        playbackRate = rate;
+        animation?.updatePlaybackRate(rate);
+      });
+    },
     suspend(value: boolean) {
       control(() => { suspended = value; syncPause(); });
     },
@@ -82,6 +89,7 @@ export function createPlayback(element: Element, signal: AbortSignal | undefined
         );
         if (terminal) { native.cancel(); return; }
         animation = native;
+        if (playbackRate !== 1) native.updatePlaybackRate(playbackRate);
         if (paused || suspended) native.pause();
       };
       control(syncPause);

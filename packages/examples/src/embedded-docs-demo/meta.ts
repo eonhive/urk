@@ -4,7 +4,7 @@
  * Purpose: Describe the public URK example for documentation-embedded runtime islands.
  * Author: Stan Nesi
  * Created: 2026-05-09
- * Updated: 2026-05-09
+ * Updated: 2026-10-18
  * Notes: Vibe coded with Codex.
  */
 
@@ -14,9 +14,9 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
   id: 'embedded-docs-demo',
   slug: 'embedded-docs-demo',
   title: 'Embedded Docs Demo',
-  purpose: 'Shows URK running inside a documentation page.',
+  purpose: 'Embeds a reusable motion widget inside a documentation runtime island.',
   summary:
-    'A documentation proof for embedding a small URK runtime island inside static Markdown content without making URK own the docs renderer.',
+    'A documentation island with a shared motion widget, keyboard scrubbing, optional saved timing/speed settings, and clean runtime shutdown while static content stays readable.',
   difficulty: 'intro',
   boundary:
     'Static docs shell ownership, isolated client-side runtime island boot, local fallback handling, and clean teardown.',
@@ -26,9 +26,10 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
     'How a docs page can render before a runtime island starts.',
     'How runtime island failures stay local to the island.',
     'How Astro/Starlight stays responsible for static documentation rendering.',
+    'How the same motion widget borrows a standalone or website host runtime.',
   ],
-  adapters: ['loading'],
-  controllers: ['docs-embed-controller'],
+  adapters: ['loading', 'motion'],
+  controllers: ['motion-controller', 'docs-embed-controller'],
   panels: ['source', 'schema', 'state', 'events', 'adapters', 'preview'],
   schemaSource: `{
   "surface": "embedded-docs-demo",
@@ -38,8 +39,9 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
   },
   "runtimeIsland": {
     "owner": "URK",
-    "adapter": "loading",
-    "controller": "docs-embed-controller",
+    "adapters": ["loading", "motion"],
+    "controllers": ["motion-controller", "docs-embed-controller"],
+    "widget": "shared motion-widget",
     "fallback": "local island error state"
   }
 }`,
@@ -61,9 +63,20 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
   services: {
     'docs:host': docsSurface.article,
   },
-  adapters: [createLoadingAdapter()],
+  adapters: [createLoadingAdapter(), createMotionAdapter()],
   controllers: [createDocsEmbedController(docsSurface)],
 });`,
+    },
+    {
+      path: 'packages/examples/src/embedded-docs-demo/mount.ts',
+      label: 'Shared widget',
+      language: 'ts',
+      excerpt: `async start(ctx) {
+  widget = await mountMotionWidget(docsSurface.widgetHost, ctx, {
+    title: 'Docs signal',
+  });
+}
+// After boot, the host replays the sequence. Controller scope owns its cleanup.`,
     },
     {
       path: 'packages/examples/src/embedded-docs-demo/mount.ts',
@@ -77,7 +90,7 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
     },
   ],
   explanation:
-    'The Embedded Docs Demo mounts a small docs-shaped card inside the existing preview panel, then boots a URK kernel as an isolated client island. The controller proves host resolution, lazy island boot, runtime mount, local fallback ownership, visible events, and clean teardown while the website and Starlight remain responsible for static content.',
+    'The Embedded Docs Demo mounts the same motion widget as the standalone proof inside its existing preview panel and kernel. Its motion controller drives staggered entrances and a final reveal; local controls provide scrubbing, speed, timing, and cancellation. Host pause freezes playback, shutdown removes the widget, and reset creates a fresh kernel. Static content and island failure boundaries stay owned by the website and Starlight.',
   relatedDocs: [
     { title: 'Use URK inside Astro docs', href: '/docs/guides/astro-docs-embed/' },
     { title: 'Embed URK in a static website', href: '/docs/guides/static-website-embed/' },

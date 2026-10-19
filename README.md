@@ -85,6 +85,7 @@ Open:
 - `http://localhost:5173/v02/react.html` for the same experience through React
 - `http://localhost:5173/audio-proof/`
 - `http://localhost:5173/picking/`
+- `http://localhost:5173/motion-lab/` — DOM motion, timelines, and interruptible view navigation
 - `http://localhost:5173/loading-transition/`
 - `http://localhost:5173/app-shell/`
 - `http://localhost:5173/react-starter/`

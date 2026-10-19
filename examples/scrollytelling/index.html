@@ -22,9 +22,10 @@
           <div>
             <h1>URK Story Flow</h1>
             <p>
-              DOM-first scrollytelling proof for section orchestration, explicit runtime state,
-              pointer/input navigation, and pause-safe motion control.
+              Four chapters, one motion clock. Follow the story with guided section scrolling,
+              reversible scroll choreography, and pause-safe playback.
             </p>
+            <a class="story-panel__link" href="../motion-lab/">Back to Motion Lab ↗</a>
           </div>
 
           <nav class="story-nav" data-role="story-nav" aria-label="Story sections"></nav>
@@ -42,6 +43,32 @@
             <button type="button" class="story-controls__button" data-role="shutdown-button">
               Shutdown
             </button>
+            <button type="button" class="story-controls__button" data-role="replay-button">
+              Replay entrance
+            </button>
+            <button type="button" class="story-controls__button" data-role="cancel-button">
+              Cancel navigation
+            </button>
+            <button
+              type="button"
+              class="story-controls__button"
+              data-role="restart-button"
+              disabled
+            >
+              Restart runtime
+            </button>
+          </div>
+          <label class="story-preference"
+            ><input type="checkbox" data-role="reduced-input" /> Reduced motion</label
+          >
+          <div class="story-motion-source">
+            <label for="motion-source">Motion source</label>
+            <select id="motion-source" data-role="motion-source" aria-describedby="motion-source-help">
+              <option value="scroll">Scroll position</option>
+              <option value="playback">Timed entrance</option>
+            </select>
+            <p id="motion-source-help">Scroll forward or back to seek the cards. Choose timed entrance to enable replay. Owned animations include the paused scroll bindings.</p>
+            <div class="story-playhead"><span>Scroll playhead</span><output data-role="scroll-time-value">Waiting for story</output></div>
           </div>
 
           <section class="story-help">
@@ -49,9 +76,15 @@
             <ul>
               <li><code>1</code> to <code>4</code> jump to sections directly.</li>
               <li><code>ArrowDown</code> and <code>ArrowUp</code> move section-to-section.</li>
-              <li><code>Pause</code> freezes motion and scroll mutation until <code>Resume</code>.</li>
+              <li>
+                <code>Pause</code> freezes motion and scroll mutation until <code>Resume</code>.
+              </li>
+              <li>
+                Scroll or touch the story to interrupt guided navigation at its current position.
+              </li>
             </ul>
           </section>
+          <div class="story-ui-host" data-role="ui-host"></div>
         </aside>
 
         <section class="story-stage" data-role="story-stage" tabindex="-1">
@@ -59,8 +92,8 @@
             <div class="story-header__title">
               <h2>Scrollytelling orchestration proof</h2>
               <p>
-                One internal scroll surface, one explicit story state, and one overlay bridge that
-                stays kernel-facing instead of drifting into product-shell behavior.
+                Native scroll position seeks one finite timeline. Scroll back to restore a pose,
+                interrupt a guided journey, or choose timed entrances for playback.
               </p>
             </div>
 
@@ -82,8 +115,17 @@
                 <strong data-role="frame-value">0</strong>
               </div>
               <div class="story-metric">
-                <span>Motion Tick</span>
+                <span>Owned animations</span>
                 <strong data-role="motion-value">0</strong>
+              </div>
+              <div class="story-metric">
+                <span>Motion progress</span><strong data-role="motion-progress-value">0%</strong>
+              </div>
+              <div class="story-metric">
+                <span>Playback</span><strong data-role="motion-status-value">idle</strong>
+              </div>
+              <div class="story-metric">
+                <span>Lifecycle</span><strong data-role="lifecycle-value">created</strong>
               </div>
               <div class="story-metric">
                 <span>Latest Action</span>
@@ -102,10 +144,7 @@
                   <span data-role="loading-progress-value">0%</span>
                 </div>
                 <div class="story-progress-card__track">
-                  <div
-                    class="story-progress-card__fill"
-                    data-role="loading-progress-fill"
-                  ></div>
+                  <div class="story-progress-card__fill" data-role="loading-progress-fill"></div>
                 </div>
               </div>
 
@@ -115,16 +154,20 @@
                   <span data-role="section-progress-value">0%</span>
                 </div>
                 <div class="story-progress-card__track">
-                  <div
-                    class="story-progress-card__fill"
-                    data-role="section-progress-fill"
-                  ></div>
+                  <div class="story-progress-card__fill" data-role="section-progress-fill"></div>
                 </div>
               </div>
             </div>
           </header>
 
-          <div class="story-scroll" data-role="scroll-container" data-locked="true"></div>
+          <div
+            class="story-scroll"
+            data-role="scroll-container"
+            data-locked="true"
+            tabindex="0"
+            role="region"
+            aria-label="Story chapters"
+          ></div>
 
           <div class="story-loading-veil" data-role="loading-veil">
             <div class="story-loading-card">
@@ -136,7 +179,6 @@
             </div>
           </div>
 
-          <div class="story-ui-host" data-role="ui-host"></div>
         </section>
       </div>
     </div>

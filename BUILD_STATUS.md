@@ -5,7 +5,7 @@
 URK currently ships:
 
 - `@urk/core` with the kernel, explicit runtime phases, registries, scheduler, event bus, and runtime inspector
-- `@urk/adapters` with seven reference adapters
+- `@urk/adapters` with reference motion, media, input, storage, UI, and rendering adapters
 - `@urk/react-urk` and `@urk/next-urk` as thin wrappers over the kernel
 - `@urk/cli` as publishable developer tooling
 - `@urk/examples` as a private internal examples package consumed by `apps/www`
@@ -35,7 +35,7 @@ URK currently ships:
 
 ## Readiness snapshot
 
-The v0.2 implementation is in the working tree with runtime/tooling manifests at `0.2.0` and compatible `^0.2.0` peers. It adds common typed lookup, borrowed typed services, dependency planning, auto frame mode, scoped built-in cleanup, a React lifecycle hook, and a shared experience across standalone/React/Next/website hosts. The dependency-aware full build, real root static/regression checks, and browser experience checks are recorded in [docs/VALIDATION.md](docs/VALIDATION.md). This updates local code, not npm publication or deployment. Historical results below retain their original dates.
+The v0.2 runtime/tooling manifests remain at `0.2.0`, except for the motion release candidate `@urk/adapters@0.2.1`. The adapter retains its `^0.2.0` Core peer; Core source and package versions are unchanged by this motion release. The candidate adds callback tweens, finite timelines, scoped controls, and reusable DOM proofs. See [motion release notes](docs/MOTION_RELEASE.md) for scheduling migration, source scope, and release gates. This records local source, not npm publication or deployment. Validation below is historical unless its dated entry explicitly covers this candidate.
 
 Build/package/link checks last completed: 2026-05-18 under Node `/Users/nappy.cat/.nvm/versions/node/v22.22.2/bin/node`.
 

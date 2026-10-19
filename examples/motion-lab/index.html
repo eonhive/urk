@@ -1,0 +1,362 @@
+<!--
+Company: EonHive Inc. | Title: URK Motion Lab
+Purpose: Present a standalone, accessible motion and experience transition demo.
+Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-17
+Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0d17" />
+    <title>Motion Lab · URK</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="masthead">
+        <a class="brand" href="../"
+          ><span class="mark" aria-hidden="true">◈</span> URK
+          <span class="brand-divider">/</span>
+          <span class="brand-lab">Motion Lab</span></a
+        >
+        <span class="build-label"
+          ><span class="live-dot"></span> UNIVERSAL RUNTIME KERNEL
+          <span class="version">v0.2</span></span
+        >
+      </header>
+      <main>
+        <section class="intro">
+          <div>
+            <p class="eyebrow">INTERACTIVE EXPERIMENT 01</p>
+            <h1>A little motion.<br /><span>A different experience.</span></h1>
+          </div>
+          <p class="intro-note">
+            Explore, compose, connect.<br />Three worlds. One motion clock.<br /><span
+              >Built with URK. Rendered with the DOM.</span
+            >
+          </p>
+        </section>
+        <div class="workbench">
+          <section class="lab" aria-label="Interactive motion stage">
+            <nav class="view-nav" aria-label="Choose a view">
+              <button data-view="explore" aria-pressed="true">
+                <span>01</span> Explore
+              </button>
+              <button data-view="create" aria-pressed="false">
+                <span>02</span> Create
+              </button>
+              <button data-view="connect" aria-pressed="false">
+                <span>03</span> Connect
+              </button>
+              <span class="canvas-label"
+                >LIVE CANVAS <span aria-hidden="true">↗</span></span
+              >
+            </nav>
+            <div class="stage" id="stage">
+              <div class="cross cross-a" aria-hidden="true">+</div>
+              <div class="cross cross-b" aria-hidden="true">+</div>
+              <section class="view" id="explore" aria-label="Explore view">
+                <div class="view-copy">
+                  <p class="eyebrow">DISCOVER THE POSSIBILITIES</p>
+                  <h2>Ideas in orbit.</h2>
+                  <p>Pick a form. Give it a little attention.</p>
+                </div>
+                <div class="explore-objects">
+                  <div class="explore-item">
+                    <button
+                      class="sample-card cyan"
+                      aria-pressed="false"
+                      aria-label="Select Signal"
+                    >
+                      <span class="object-art"
+                        ><i class="sphere"></i><i class="orbit orbit-one"></i
+                        ><i class="orbit orbit-two"></i></span
+                      ><span class="card-caption"
+                        ><span>Signal<small>Clarity in motion</small></span
+                        ><span aria-hidden="true">↗</span></span
+                      >
+                    </button>
+                  </div>
+                  <div class="explore-item">
+                    <button
+                      class="sample-card violet"
+                      aria-pressed="false"
+                      aria-label="Select Form"
+                    >
+                      <span class="object-art"
+                        ><i class="cube cube-one"></i
+                        ><i class="cube cube-two"></i
+                        ><i class="cube cube-three"></i></span
+                      ><span class="card-caption"
+                        ><span>Form<small>Structure, reimagined</small></span
+                        ><span aria-hidden="true">↗</span></span
+                      >
+                    </button>
+                  </div>
+                  <div class="explore-item">
+                    <button
+                      class="sample-card lime"
+                      aria-pressed="false"
+                      aria-label="Select Field"
+                    >
+                      <span class="object-art field-art"
+                        ><i></i><i></i><i></i><i></i><i></i></span
+                      ><span class="card-caption"
+                        ><span>Field<small>A space to play</small></span
+                        ><span aria-hidden="true">↗</span></span
+                      >
+                    </button>
+                  </div>
+                </div>
+                <p class="stage-hint" id="selection-label">
+                  HOVER OR SELECT A FORM
+                </p>
+              </section>
+              <section
+                class="view"
+                id="create"
+                aria-label="Create view"
+                hidden
+                inert
+              >
+                <div class="view-copy">
+                  <p class="eyebrow">ARRANGE SOMETHING NEW</p>
+                  <h2>Find your rhythm.</h2>
+                  <p>Separate forms. A coordinated composition.</p>
+                </div>
+                <div
+                  class="composition"
+                  aria-label="Animated geometric composition"
+                >
+                  <div class="composition-ring"></div>
+                  <div class="shape shape-square"></div>
+                  <div class="shape shape-circle"></div>
+                  <div class="shape shape-diamond"></div>
+                  <div class="shape shape-small"></div>
+                </div>
+                <button class="stage-action" id="compose">
+                  Recompose <span aria-hidden="true">↗</span>
+                </button>
+              </section>
+              <section
+                class="view"
+                id="connect"
+                aria-label="Connect view"
+                hidden
+                inert
+              >
+                <div class="view-copy">
+                  <p class="eyebrow">BETTER, TOGETHER</p>
+                  <h2>Follow the signal.</h2>
+                  <p>Independent points. Shared momentum.</p>
+                </div>
+                <div class="network">
+                  <svg viewBox="0 0 600 250" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="wire">
+                        <stop stop-color="#62e5e5" />
+                        <stop offset="1" stop-color="#a991ff" />
+                      </linearGradient>
+                    </defs>
+                    <g fill="none" stroke="url(#wire)" stroke-width="1.5">
+                      <path d="M100 155 Q180 40 300 110" />
+                      <path d="M300 110 Q400 220 500 100" />
+                      <path d="M100 155 Q300 280 500 100" />
+                      <path d="M300 110 L380 30" />
+                    </g>
+                  </svg>
+                  <button class="node node-a" aria-label="Pulse input node">
+                    ↗<span>INPUT</span></button
+                  ><button class="node node-b" aria-label="Pulse kernel node">
+                    ◈<span>KERNEL</span></button
+                  ><button class="node node-c" aria-label="Pulse output node">
+                    ✳<span>OUTPUT</span></button
+                  ><button class="node node-d" aria-label="Pulse idea node">
+                    +<span>IDEA</span>
+                  </button>
+                </div>
+                <button class="stage-action" id="send-signal">
+                  Send a signal <span aria-hidden="true">↗</span>
+                </button>
+              </section>
+              <div id="veil" class="veil" aria-hidden="true"></div>
+              <div class="stage-footer">
+                <span>URK / MOTION STUDIES</span
+                ><span id="view-number">01 — 03</span>
+              </div>
+            </div>
+            <div class="transport">
+              <button id="previous" aria-label="Previous view">
+                ← <span>Previous</span></button
+              ><button id="replay">↻ Replay animation</button
+              ><button id="next" class="primary">Next view →</button>
+            </div>
+            <section class="timeline-panel" aria-label="Animation timeline">
+              <div class="timeline-heading">
+                <span class="eyebrow">THE CHOREOGRAPHY</span
+                ><span id="timeline-caption">Stagger → overlap → settle</span>
+              </div>
+              <div class="tracks">
+                <div class="track">
+                  <span id="track-label-0">Signal</span>
+                  <div><i id="track-0"></i></div>
+                </div>
+                <div class="track">
+                  <span id="track-label-1">Form</span>
+                  <div><i id="track-1"></i></div>
+                </div>
+                <div class="track">
+                  <span id="track-label-2">Field</span>
+                  <div><i id="track-2"></i></div>
+                </div>
+                <div class="playhead" id="playhead"></div>
+              </div>
+              <div class="ruler">
+                <span>0 ms</span><span id="timeline-duration">1,180 ms</span>
+              </div>
+              <div class="scrub-heading">
+                <label for="scrubber">Scrub sequence</label>
+                <output id="scrub-time" for="scrubber">0 / 1,180 ms</output>
+              </div>
+              <div class="scrub-controls">
+                <input id="scrubber" type="range" min="0" max="1000" step="1" value="0" aria-describedby="scrub-hint" />
+                <button id="timeline-toggle" type="button">Ⅱ Pause sequence</button>
+              </div>
+              <p id="scrub-hint">Drag or use arrow keys to preview a time. Scrubbing pauses the sequence.</p>
+              <label class="speed-control" for="speed">Playback speed
+                <select id="speed">
+                  <option value="0.5">0.5× · Slow</option>
+                  <option value="1" selected>1× · Normal</option>
+                  <option value="2">2× · Fast</option>
+                </select>
+              </label>
+              <label class="speed-control" for="repeat">Sequence playback
+                <select id="repeat">
+                  <option value="once">Once</option>
+                  <option value="repeat">Twice</option>
+                  <option value="yoyo">Out and back</option>
+                </select>
+              </label>
+              <details class="preset-playground">
+                <summary>Preset playground <span>EXPLORE</span></summary>
+                <p id="preset-hint">Draft changes apply with Apply &amp; replay.</p>
+                <fieldset id="preset-settings" aria-describedby="preset-hint" disabled>
+                  <legend>Explore entrance</legend>
+                  <div class="preset-grid">
+                    <div>
+                      <label for="preset-distance">Distance <output id="preset-distance-value" for="preset-distance">38 px</output></label>
+                      <input id="preset-distance" type="range" min="0" max="80" step="1" value="38" />
+                    </div>
+                    <div>
+                      <label for="preset-duration">Duration <output id="preset-duration-value" for="preset-duration">860 ms</output></label>
+                      <input id="preset-duration" type="range" min="100" max="2000" step="20" value="860" />
+                    </div>
+                    <div>
+                      <label for="preset-stagger">Stagger <output id="preset-stagger-value" for="preset-stagger">160 ms</output></label>
+                      <input id="preset-stagger" type="range" min="0" max="400" step="10" value="160" />
+                    </div>
+                  </div>
+                  <div class="preset-actions">
+                    <output id="preset-preview" for="preset-duration preset-stagger" aria-label="Draft sequence duration">1,180 ms / pass</output>
+                    <button id="preset-apply" type="button">Apply &amp; replay</button>
+                    <button id="preset-reset" type="button">Reset presets</button>
+                  </div>
+                </fieldset>
+              </details>
+            </section>
+          </section>
+          <aside class="inspector" aria-label="Runtime status and controls">
+            <div class="inspector-title">
+              <h2>Under the surface</h2>
+              <span aria-hidden="true">⌘</span>
+            </div>
+            <p class="inspector-copy">
+              Every value below comes from the running experience.
+            </p>
+            <dl class="status-grid">
+              <div>
+                <dt>Current view</dt>
+                <dd id="current-view">explore</dd>
+              </div>
+              <div>
+                <dt>Runtime lifecycle</dt>
+                <dd id="lifecycle">created</dd>
+              </div>
+              <div>
+                <dt>Experience phase</dt>
+                <dd id="phase">boot</dd>
+              </div>
+              <div>
+                <dt>Active animations</dt>
+                <dd id="active-count">0</dd>
+              </div>
+              <div>
+                <dt>Playback</dt>
+                <dd id="playback">pending</dd>
+              </div>
+              <div>
+                <dt>Kernel instance</dt>
+                <dd id="instance">01</dd>
+              </div>
+            </dl>
+            <div class="progress-label">
+              <span>Timeline progress</span
+              ><output id="progress-label">0%</output>
+            </div>
+            <progress
+              id="progress"
+              max="1"
+              value="0"
+              aria-label="Active timeline progress"
+            ></progress>
+            <div class="runtime-controls">
+              <button id="pause">Ⅱ Pause runtime</button
+              ><button id="resume" disabled>▷ Resume runtime</button
+              ><button id="cancel">× Cancel active transition</button>
+            </div>
+            <label class="reduced"
+              ><span
+                ><strong>Reduced motion</strong
+                ><small id="preference-label"
+                  >Follows your system preference</small
+                ></span
+              ><input id="reduced" type="checkbox"
+            /></label>
+            <section class="action-demo" aria-label="Shared cancellation example">
+              <div class="action-heading"><strong>One action, three handles</strong><output id="action-status" aria-live="polite">idle</output></div>
+              <p>Position, scale, and progress share one cancel signal. Run again to replace the action.</p>
+              <div id="action-stage" class="action-stage" aria-hidden="true"><i id="action-orb"></i></div>
+              <progress id="action-progress" max="1" value="0" aria-label="Shared action progress"></progress>
+              <div class="action-buttons"><button id="run-action" type="button">Run action</button><button id="cancel-action" type="button" disabled>Cancel action</button></div>
+            </section>
+            <div class="ownership">
+              <p class="eyebrow">A FRESH START</p>
+              <p>
+                Dispose the runtime. Release its motion. Start again with a new
+                kernel.
+              </p>
+              <div>
+                <button id="dispose">Unmount / dispose</button
+                ><button id="restart" disabled>Restart ↗</button>
+              </div>
+            </div>
+            <p id="message" role="status" aria-live="polite">
+              Preparing the lab.
+            </p>
+            <p class="inspector-foot">
+              KERNEL COORDINATES.<br />YOU CREATE THE EXPERIENCE.
+            </p>
+          </aside>
+        </div>
+        <footer class="page-footer">
+          <span>Small primitives. Expressive possibilities.</span>
+          <a href="../scrollytelling/">Try Story Flow ↗</a>
+          <a href="../">All URK experiments ↗</a>
+        </footer>
+      </main>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

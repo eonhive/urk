@@ -9,9 +9,11 @@ description: Embed live URK examples in Astro and Starlight documentation safely
   Purpose: Explain how the public site embeds URK runtime islands inside docs pages.
   Author: Stan Nesi
   Created: 2026-05-06
-  Updated: 2026-05-09
+  Updated: 2026-10-18
   Notes: Vibe coded with Codex.
 */}
+
+import LiveURKExample from '@/components/urk-runtime/LiveURKExample.astro';
 
 # Use URK inside Astro docs
 
@@ -26,6 +28,30 @@ import LiveURKExample from '@/components/urk-runtime/LiveURKExample.astro';
 ```
 
 Status: current. The runnable public proof is [Embedded Docs Demo](/examples/embedded-docs-demo/).
+
+## Try the embedded widget
+
+This island mounts the same widget as the standalone `/motion-widget/` proof.
+Scrub its sequence, adjust playback speed or timing, and replay. The host's Pause
+and Resume controls preserve motion position. Shutdown removes the widget while
+this documentation stays readable; Reset / restart mounts it with a fresh kernel.
+Reduced motion follows your system preference, and offscreen work suspends automatically.
+Enable **Remember settings on this device** to restore committed timing and speed
+after a reload or fresh runtime restart. Turn it off to forget saved settings;
+current playback stays unchanged. Playback position and pause state are never saved.
+Use **Share settings** to export the current timing/speed as JSON or import a preset
+from another widget. Import preserves position and pauses; new timing starts on
+the next replay. Invalid input leaves the current settings unchanged.
+
+<div className="not-content">
+  <LiveURKExample example="embedded-docs-demo" />
+</div>
+
+The shared implementation lives in `packages/examples/src/motion-widget/`.
+Its `mountMotionWidget(host, ctx, options)` helper borrows a controller's runtime
+context and scope. It creates no kernel and changes no experience phase. The
+private `@urk/examples/motion-widget` subpath is a repository reuse point; copy
+the example into an application rather than relying on it as a stable npm API.
 
 ## Rules
 

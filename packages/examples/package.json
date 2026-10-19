@@ -8,6 +8,10 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./motion-widget": {
+      "types": "./dist/motion-widget/index.d.ts",
+      "import": "./dist/motion-widget/index.js"
+    },
     "./selection-details": {
       "types": "./dist/selection-details/mount.d.ts",
       "import": "./dist/selection-details/mount.js"

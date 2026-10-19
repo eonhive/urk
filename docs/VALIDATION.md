@@ -1614,3 +1614,80 @@ Existing audio browser selectors were adjusted to the shared, host-scoped DOM.
 No test suites, full integration gate, or publication/deployment ran in this follow-up.
 The preceding test results are historical evidence for the adapter/motion slice,
 not a claim that the new shared UI has been through that browser matrix.
+
+## 2026-10-18 — Scoped motion release changeset
+
+Prepared a motion-only source patch against
+`ee4072652e5dfa280f28e87c82af51fcdaa0eaac`. The combined patch, ordered runtime
+and example patches, file/checksum manifest, diffstat, and command log are local
+review artifacts under `.codex/validation/motion-changeset/`.
+
+The selection keeps the motion API, focused tests, Motion Lab, Story Flow, shared
+widget, website island, independent starter/exporter, and canonical motion notes
+together. Shared route/export/type files omit concurrent audio and overlay edits.
+Separate video/audio, desktop notes, and Interactive Media/Showcase preset adoption
+are excluded. Existing baseline features remain present. No Core code, lockfile,
+version, real Git index, branch, commit, or tag changed during preparation.
+
+Validation used Node 22.22.2 in an isolated archive of that base plus the patch.
+Existing installed build dependencies were borrowed; all `@urk` workspace links
+pointed into the isolated tree and its freshly compiled output.
+
+- `git apply --check` against the recorded base — passed.
+- TypeScript builds of Core, adapters, shared examples, and React — passed.
+- Standalone examples TypeScript check with `--noEmit` — passed.
+- `node --test packages/adapters/tests/packaged-exports.test.mjs` — 1 passed;
+  strict packed DOM/motion declarations, no-Three imports, deterministic numeric
+  playback, lifecycle cancellation, and existing root/Three peer boundary passed.
+- Standalone examples Vite production build — passed, including all motion routes.
+- Patch whitespace and ordered patch reconstruction checks — passed.
+
+The isolated check validates the selected source rather than the earlier mixed
+working-tree archives. This gate did not rerun browser tests, the whole test suite,
+website/Astro checks, or a release matrix. The artifacts remain review snapshots;
+version selection, commit, tag, publication, and deployment are separate actions.
+
+## 2026-10-19 — Motion v0.2.1 candidate commit
+
+Applied the previously reviewed motion-only source selection in the managed
+`thehive/urk-motion-v0.2.1` worktree, based on
+`ee4072652e5dfa280f28e87c82af51fcdaa0eaac`. Set only `@urk/adapters` to `0.2.1`;
+Core remains `0.2.0` with the compatible `^0.2.0` peer. Existing public factories,
+entrypoints, and property/native playback signatures remain available. The
+custom-controller scheduling migration is documented in MOTION_RELEASE.md and
+MIGRATION_V02.md.
+
+Included the existing motion exporter's content-digest archive filenames so
+unpublished same-version builds cannot share stale Yarn file-dependency cache
+identities. Newer audio/video, overlay-host, framework-panel, shared theme, and
+media-stage work remains in the original development checkout. No Core source,
+lockfile, third-party dependency, tag, push, publication, or deployment changed.
+
+Validation with Node 22.22.2 and Yarn 3.8.7 in the candidate worktree:
+
+- `corepack yarn install --immutable` — passed; lockfile unchanged. The existing
+  Astro language-server TypeScript peer warning and native build notices remain.
+- `node scripts/build.mjs @urk/examples @urk/react` — passed Core, adapters,
+  shared examples, and React builds.
+- `corepack yarn workspace urk-examples lint` — passed the examples typecheck.
+- `node --test packages/adapters/tests/packaged-exports.test.mjs` — 1 passed;
+  94 Core / 126 adapter packed files. Strict DOM/motion types, inert imports and
+  deterministic numeric playback work without Three; existing root/Three imports
+  work with the peer.
+- `corepack yarn workspace urk-examples build` — passed, including the motion
+  routes; Vite built 185 modules without a chunk-size warning.
+- `corepack yarn workspace urk-examples test:browser --config
+  playwright.motion-starter.config.ts --project chromium` — 1 passed. The actual
+  exported project moved outside the checkout, installed and built independently,
+  ran under a static subpath, paused/resumed, disposed/restarted, respected reduced
+  motion and mobile width, and worked inside an external-page iframe. No page
+  errors were recorded. Review artifacts are retained in this worktree under
+  `.codex/validation/motion-starter/`.
+- Inspected the smoke test's exported archives: each filename matches its SHA-256;
+  packaged metadata is `@urk/core@0.2.0` / `@urk/adapters@0.2.1`.
+- Explicit-path staging and whitespace checks passed; generated install state
+  and browser/build output were excluded from the source commit.
+
+The existing broader CI workflow, website/Astro checks, complete runtime suite,
+and browser matrix were not repeated. This is a local candidate commit, not a
+publication-readiness claim. The original checkout and its index remain intact.
