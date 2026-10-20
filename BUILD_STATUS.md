@@ -1,5 +1,32 @@
 # Build Status
 
+## Audio/motion integration — 2026-10-20
+
+`thehive/urk-audio-integration` refreshes the scoped audio follow-ups directly onto
+motion commit `04ee90a837aa841dc5a733c34dac3663a0d4ba03`. Adapters stay `0.2.1` and
+Core stays `0.2.0`. Both widget exports, the docs host, starter routes/exporter, and
+API guides remain aligned. Appended validation history was the only patch conflict;
+motion release records and earlier audio evidence are both retained.
+
+Immutable install, focused Core/adapters/React/shared examples builds, root/proof
+typechecks, proof production build, website diagnostics (44 files, zero issues),
+and a fresh exported audio starter install/build pass. The existing language-server
+TypeScript peer warning remains. Generated tracked install metadata was restored
+to its base and is excluded from review. The four focused browser flows also
+passed: playback/source changes and controlled pending-play cancellation,
+runtime pause/resume, widget removal/remount and URL/context cleanup, and
+preference save/restore/reset/forget. Simulated visibility events passed; actual
+native tab background/restore remains unverified because the in-app browser does
+not background its automated documents. No runtime fix was required. No suites,
+website production build, or full release matrix ran. See docs/AUDIO_RELEASE.md
+and the integration manifest for evidence and remaining checks.
+
+Core, motion, analysis implementation, overlay/video code, dependency versions,
+and lockfile are unchanged from the motion candidate. The main development tree
+and original motion release checkout remain separate. The scoped audio commit
+and stacked draft target the unmerged motion branch. No tag, publication, or
+deployment is performed.
+
 ## Current state
 
 URK currently ships:

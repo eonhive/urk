@@ -1691,3 +1691,124 @@ Validation with Node 22.22.2 and Yarn 3.8.7 in the candidate worktree:
 The existing broader CI workflow, website/Astro checks, complete runtime suite,
 and browser matrix were not repeated. This is a local candidate commit, not a
 publication-readiness claim. The original checkout and its index remain intact.
+
+
+## 2026-10-19 — Scoped audio review candidate
+
+Prepared audio transport/widget/starter changes over the recorded base and the
+recorded motion review prerequisite. See `docs/AUDIO_RELEASE.md` and the ignored
+`.codex/validation/audio-changeset/manifest.json` for exact checksums and scope.
+The real index/HEAD remain unchanged. A synchronous native preload load failure
+now releases temporary media/abort listeners before rejecting.
+
+Isolated validation used Node 22.22.2, existing installed external dependencies,
+and workspace aliases pointing into the candidate:
+
+- Direct TypeScript builds of Core, adapters, shared examples, and React — passed.
+- Standalone proof TypeScript noEmit and Vite production build — passed.
+- Astro diagnostics — 44 files, zero errors/warnings/hints. Initial tooling
+  lookups were corrected to the installed Astro CLI and workspace-local dependencies.
+- A starter exported from the isolated builds, followed by a fresh Yarn install
+  and normal TypeScript/Vite build — passed at
+  `/tmp/urk-audio-candidate-export.lbltrN/widget`.
+- Packed Core/audio files match the isolated compiled output, and archive
+  filenames match their SHA-256 contents — passed.
+- Combined/ordered patch application, reverse check, tree reconstruction,
+  selected-file hashes, and patch whitespace — passed.
+
+Exact logs and archive checksums live in `.codex/validation/audio-changeset/`.
+Earlier mixed-checkout starter exports are not this candidate's release archives.
+The candidate used existing dependencies; no immutable install was repeated there.
+No test suites, browser playback/codecs, pending source/seek interactions, measured
+object-URL cleanup, preference restore/forget/storage-failure interactions, audio
+hardware checks, website production build, or broader release gate ran. These
+runtime paths were inspected in code. The preload exception cleanup fix is build-
+checked and inspected, not exercised in a browser or behavior test in this phase.
+
+Only final validation documentation changed after these builds; the manifest pins
+the exact validated code tree. The real index/HEAD remain unchanged. No version
+bump, commit, tag, publication, or deployment was performed.
+
+
+## 2026-10-20 — Audio integration on the committed motion candidate
+
+Refreshed the recorded 42-file audio selection onto motion commit
+`04ee90a837aa841dc5a733c34dac3663a0d4ba03` in the managed
+`thehive/urk-audio-integration` worktree. The only patch conflict was appended
+validation history: committed motion release records were retained, then the
+earlier audio evidence was appended. Both widget exports, docs composition,
+starter configuration, and exporter remain present. Updated release notes,
+README version wording, NEXT_STEPS, and BUILD_STATUS describe this integration.
+
+No new runtime code was needed. The selected audio implementation matches the
+earlier reviewed source; Core, motion, baseline analysis, overlay/video code,
+dependency versions, and lockfile are unchanged from the motion candidate.
+Adapters remain 0.2.1 and Core 0.2.0; the main development checkout's newer theme,
+onset/state, Media FX Lab, and unrelated UI work are excluded.
+
+Validation with Node 22.22.2 / Yarn 3.8.7 in this integration worktree:
+
+- `corepack yarn install --immutable` — passed with the existing language-server
+  TypeScript peer warning and native dependency build notices.
+- `node scripts/build.mjs @urk/examples @urk/react` — passed, including Core/adapters.
+- `corepack yarn typecheck` — passed.
+- `corepack yarn workspace urk-examples lint` — passed.
+- `corepack yarn workspace urk-examples build` — passed.
+- `corepack yarn workspace @urk/www check` — 44 files, zero errors/warnings/hints.
+- Starter export from this worktree, fresh install, and normal TypeScript/Vite
+  build — passed at `/tmp/urk-audio-integration-export.uV6QXu/widget`.
+- Archive content/name identity, source scope, base replay/reverse/tree checks,
+  and review diff whitespace — recorded in the integration manifest.
+
+The install-regenerated tracked `.yarn/install-state.gz` was restored from this
+worktree's base after checks and is excluded from the review diff. Logs and the
+single refreshed patch live in `.codex/validation/audio-integration/`. The original
+audio and motion patch artifacts remain historical evidence; this patch applies
+directly to the committed motion base and needs no separate motion patch.
+
+No test suites, browser interactions, hardware playback, website production build,
+or broader release gates ran. Remaining browser checks are demo/local-file codecs,
+runtime/tab pause policy, pending source replacement/seek cancellation, widget
+removal/restart and URL/context cleanup, preference opt-in/restore/forget/reset,
+invalid/quota-limited storage, and no callbacks after removal. Build/type success
+does not establish those runtime behaviors. No commit, tag, publication, deployment,
+or staging of either working checkout was performed.
+
+
+## 2026-10-20 — Four focused audio browser flows
+
+Exercised the isolated integration candidate in the macOS in-app Chromium browser
+at `127.0.0.1:5184`. No runtime code change was required.
+
+1. Demo audio and repository WAVs selected through the native file picker played
+   with nonzero normalized level/band meters. Seeking and local replacement worked.
+   An ignored UI diagnostic retained a real native play result, then forced a late
+   native start on release. A seek or source change cancelled it with `AbortError`
+   and left native audio paused; the later seek stayed near one second rather than
+   resetting. This deliberately controlled race is not a browser/codec matrix.
+2. Runtime pause stopped playback and disabled controls. Resume restored controls
+   without starting sound. Simulated `document.hidden`/`visibilitychange` controls
+   paused native playback, and returning did not autoplay. Hiding the in-app
+   surface or opening another automated tab did not background the document;
+   actual native tab background/restore therefore remains unverified.
+3. Removing a playing local-file widget preserved the host caption, paused audio,
+   and revoked its URL. Replacement held one URL, demo reset held zero. Remounting
+   reused the existing context (one created, none closed); shutdown closed it
+   (one created, one closed). Fresh startup remained idle without a new context.
+   Starter Dispose removed widget/preferences; Restart created instance 2 idle.
+4. Opt-in and a committed 200% Bass pulse value survived reload. Reset persisted
+   the 100% defaults. Forget retained the live 200% Mids color setting while reload
+   returned defaults with memory off. Memory was left off at completion.
+
+No warnings/errors were captured from the starter console. Evidence lives in
+ignored `.codex/validation/audio-integration/browser-results.json`, its local UI
+diagnostic, final state, and `audio-browser-proof.png`. The diagnostic is not part
+of the shipped examples or review diff. Runtime sources still match the reviewed
+candidate; the prior successful build/typechecks remain applicable. Only docs
+and ignored evidence changed in this pass; diff/integrity checks were refreshed.
+
+Not run: hardware speaker audition, additional codecs/browsers, invalid records,
+unavailable/quota-limited storage, retained-control callbacks after removal,
+automated suites, website production build, and broader release gates. The audio
+commit/draft is stacked on the unmerged motion prerequisite; no tag, package
+publication, or deployment occurs in this phase.

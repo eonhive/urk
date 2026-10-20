@@ -26,13 +26,13 @@ export const audioProofMeta: ExampleMeta = {
     'Start sound from a user gesture and surface playback failures locally.',
     'Combine direct audio reactivity with finite scene-layout tweens and scoped cleanup.',
   ],
-  adapters: ['audio', 'motion', 'three (optional scene)'],
+  adapters: ['audio', 'motion', 'ui-overlay', 'three (optional scene)'],
   controllers: ['audio-analysis-controller'],
   panels: ['preview', 'state', 'events', 'adapters', 'source', 'schema'],
   schemaSource: JSON.stringify(
     {
       surface: 'audio-proof',
-      adapters: ['audio', 'motion', 'three (optional scene)'],
+      adapters: ['audio', 'motion', 'ui-overlay', 'three (optional scene)'],
       controllers: ['audio-analysis-controller'],
       tracks: ['analysis', 'bed', 'pulse', 'confirm'],
       autoplay: false,

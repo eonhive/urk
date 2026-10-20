@@ -9,7 +9,7 @@ description: One audio source drives real waveform, spectrum, frequency meters, 
   Purpose: Explain shared audio analysis, reactive visuals, and lifecycle ownership.
   Author: Stan Nesi
   Created: 2026-09-21
-  Updated: 2026-10-17
+  Updated: 2026-10-19
   Notes: Vibe coded with Codex.
 */}
 
@@ -22,8 +22,20 @@ mount the same implementation from the private `@urk/examples/audio-proof` entry
    RMS level, and bass/mids/treble meters respond to the same sound.
 2. Bass scales the Three sculpture, mids change its color, and treble changes
    satellite size. Choose **Orbit** or **Row** for a finite layout transition.
-3. Change the source, volume, FFT size, or smoothing. Pause holds the audio
+   Under **Visual response**, tune overall intensity or each band's response from
+   0% to 200%. **Reset reactions** returns all four to 100%. These controls affect
+   only the scene; volume, waveform, spectrum, and meters keep their measured values.
+   **Remember visual response on this device** opts into saving just these four
+   values. Turning it off forgets them without changing the current scene.
+3. Choose **Audio settings** for volume, analysis enablement, FFT size, or smoothing.
+   Closing the panel preserves these values and keeps sound playing. Change the
+   source beside the transport controls. Pause holds the audio
    position; Stop rewinds it; Restart plays from the beginning.
+   **Choose audio file** selects a local file on the study's existing element,
+   paused until Play. **Use demo audio** restores the study, also paused.
+   After Play or file selection selects a source and metadata loads, **Audio position**
+   shows elapsed/duration. Drag it or use arrow keys/Home/End to seek. A paused
+   track stays paused; seeking during a pending play cancels that activation.
 4. Disable analysis to keep playback with zeroed measurements. Re-enable it to
    resume the visual response. Reduced motion holds reactive geometry still.
 5. Pause the runtime, then resume and press Play. Hidden tabs also pause audio.
@@ -34,6 +46,10 @@ mount the same implementation from the private `@urk/examples/audio-proof` entry
 If WebGL is unavailable, audio, plots, and meters remain usable. If Web Audio
 analysis is unavailable, disable analysis to use ordinary playback.
 
+Chosen files play locally and are not uploaded or saved. Replacement, reset,
+shutdown, and unmount release the control's object URL. Browser codec support
+determines which files play. Other presets keep their existing sources.
+
 ## How URK is used
 
 `AudioCapability` owns transport and optional analysis. The controller reads one
@@ -43,10 +59,29 @@ properties directly; discrete layout transitions use `MotionCapability` tweens.
 The existing Three adapter owns its renderer, and the scene scope owns geometry,
 materials, and subscriptions. The host owns navigation and the mount lifetime.
 
+The UI Overlay adapter owns the settings shell. A private helper shared with
+Video Proof mounts the existing native controls and parks them when closed.
+Opening settings does not acquire a new analyser or change playback. Runtime
+pause disables settings while keeping Close available; a fresh kernel restores
+the default values. Escape returns focus to Audio settings.
+
 Defaults are FFT 2048, smoothing 0.8, bass 20–250 Hz, mids 250–2000 Hz, and treble
 2000–20000 Hz (clipped at Nyquist). Level is normalized RMS amplitude; frequency
 values are normalized spectrum magnitudes. These are not beat detection or
 perceptual loudness measurements.
+
+Visual response settings scale each measured band by overall intensity and its
+individual response, clamping the result to 1 before applying it to the scene.
+At zero, the property stays at its base appearance. Defaults preserve the original
+visual response. Settings survive source changes within this mount, reset on a
+fresh runtime unless settings memory is enabled, and respect reduced motion.
+
+Settings memory is host-owned and off by default. Valid saved values restore
+without starting sound; committed slider changes and Reset update the saved
+record. Reset preserves the opt-in and saves the baseline. Invalid records use
+defaults, and storage failures stay local to the memory control. Audio files,
+URLs, volume, analysis settings, playback position, and pause/play state are never
+saved. Hosts choose distinct stable keys; no cross-tab synchronization is added.
 
 ## Source and scope
 
@@ -57,3 +92,38 @@ perceptual loudness measurements.
 The original `/audio-proof/` remains the broader pointer/input/loading proof.
 The shared analysis route is `/audio-proof/analysis.html` in the local examples
 server. No new public package, media editor, BPM estimator, or DSP framework is added.
+
+## Reuse a Canvas embed
+
+The local `/audio-starter/` route demonstrates a smaller audio widget mounted with
+an existing runtime context. It reuses Audio Lab's Canvas plots and temporary
+analysis reads, with a coordinated bass/mids/treble pulse and transport/settings
+controls. The host owns its kernel and registered track. Widget removal releases
+its child scope; full runtime shutdown closes the audio adapter's context.
+The widget and independent export include the same Visual response controls and
+reset, with settings owned separately by each widget.
+The starter also demonstrates opt-in memory. Other hosts can supply initial
+`reactions`, observe committed `onReactionsChange` snapshots, and read a frozen
+copy through `getReactionSettings()` without enabling storage. The docs island
+keeps its audio widget local to each mount.
+
+From the repository root, using Node 22:
+
+```bash
+node scripts/build.mjs @urk/adapters
+node scripts/create-audio-starter.mjs /tmp/my-audio-widget
+cd /tmp/my-audio-widget
+corepack yarn install
+corepack yarn dev
+```
+
+Choose a new destination. The export includes widget source, the original
+synthetic study, and packed runtime dependencies. Its regular build emits a
+static site with relative assets that can be hosted on its own or in an iframe.
+See `examples/audio-starter/README.md` for existing-runtime mounting and hosting.
+No Three.js or private example package is required by the generated project.
+
+The [Astro docs island](/docs/guides/astro-docs-embed/) also offers **Add audio
+widget** beside its motion example. It mounts this Canvas widget in the existing
+kernel. Removing it stops audio while motion and static docs remain available;
+Shutdown releases the entire runtime. Adding the widget never starts playback.

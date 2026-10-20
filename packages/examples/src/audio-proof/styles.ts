@@ -1,11 +1,11 @@
 /**
  * Company: EonHive Inc. | Title: Shared Audio Lab Styles
  * Purpose: Scope the same responsive audio controls and visual surfaces to either host.
- * Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-17
+ * Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-19
  * Notes: Vibe coded with Codex.
  */
 export const audioLabStyles = `
-.urk-audio-lab { color-scheme: dark; font: 15px/1.5 system-ui,sans-serif; color:#e7edf9; background:#0b1020; padding:clamp(20px,4vw,36px); border:1px solid #24344f; border-radius:18px; min-width:0; }
+.urk-audio-lab { --urk-ui-background:#111a2d; --urk-ui-foreground:#e7edf9; --urk-ui-border:#394762; --urk-ui-focus:#b0a8ff; color-scheme: dark; font: 15px/1.5 system-ui,sans-serif; color:#e7edf9; background:#0b1020; padding:clamp(20px,4vw,36px); border:1px solid #24344f; border-radius:18px; min-width:0; }
 .urk-audio-lab * { box-sizing:border-box; }
 .urk-audio-lab [hidden] { display:none!important; }
 .urk-audio-lab h2 { font-size:clamp(30px,4vw,48px); letter-spacing:-.04em; margin:10px 0; line-height:1.1; color:inherit; }
@@ -33,6 +33,14 @@ export const audioLabStyles = `
 .urk-audio-lab [data-audio=status] { min-height:1.5em; color:#e7edf9; }
 .urk-audio-lab .audio-foot { display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; color:#94a9c9; font-size:12px; }
 .urk-audio-lab .audio-note { font-size:12px; }
+.urk-audio-lab .audio-plots-wrap { position:relative; min-width:0; min-height:300px; }
+.urk-audio-lab .media-settings-host { position:absolute; inset:0; pointer-events:none; }
+.urk-audio-lab .media-settings-host [data-overlay-status]:empty { display:none; }
+.urk-audio-lab .audio-settings { display:grid; gap:14px; min-width:0; margin:0; padding:4px; border:0; }
+.urk-audio-lab .audio-settings legend { font-size:12px; padding:0; margin-bottom:12px; }
+.urk-audio-lab .audio-settings label { justify-content:space-between; }
+.urk-audio-lab .audio-settings .audio-check { justify-content:flex-start; }
+.urk-audio-lab .audio-settings input[type=range] { width:55%; }
 @media(max-width:760px) { .urk-audio-lab .audio-visuals { grid-template-columns:1fr; } .urk-audio-lab .audio-scene-wrap { min-height:280px; } }
 @media(max-width:440px) { .urk-audio-lab .audio-meters { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 `;

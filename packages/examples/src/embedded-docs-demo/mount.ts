@@ -10,6 +10,7 @@
 
 import { createLoadingAdapter, type LoadingAdapterApi } from '@urk/adapters/dom';
 import { createMotionAdapter } from '@urk/adapters/motion';
+import { createAudioAdapter } from '@urk/adapters/audio';
 import {
   createKernel,
   type ControllerRegistration,
@@ -28,6 +29,7 @@ import {
   mountWidgetPreferences,
   type MotionWidget,
 } from '../motion-widget/index.js';
+import { mountDocsAudio } from './audio.js';
 
 type DocsEmbedStep =
   | 'static-content'
@@ -48,6 +50,7 @@ type DocsEmbedSurface = {
   article: HTMLElement;
   island: HTMLElement;
   widgetHost: HTMLElement;
+  audioHost: HTMLElement;
   status: HTMLElement;
   fallback: HTMLElement;
   stagePills: HTMLElement[];
@@ -158,6 +161,7 @@ function createStaticDocsBlock(): HTMLElement {
 function createRuntimeIsland(): {
   island: HTMLElement;
   widgetHost: HTMLElement;
+  audioHost: HTMLElement;
   status: HTMLElement;
   fallback: HTMLElement;
   stagePills: HTMLElement[];
@@ -176,6 +180,7 @@ function createRuntimeIsland(): {
   );
   const stageList = createElement('div', 'embedded-docs-demo__stages');
   const widgetHost = createElement('div', 'embedded-docs-demo__widget-host');
+  const audioHost = createElement('div', 'embedded-docs-demo__audio-host');
   widgetHost.style.marginTop = '18px';
   const stagePills = STEP_ORDER.map((step) => {
     const pill = createElement('span', 'embedded-docs-demo__stage', step.replace(/-/g, ' '));
@@ -192,9 +197,9 @@ function createRuntimeIsland(): {
   });
 
   stageList.append(...stagePills);
-  island.append(eyebrow, status, fallback, stageList, widgetHost);
+  island.append(eyebrow, status, fallback, stageList, widgetHost, audioHost);
 
-  return { island, widgetHost, status, fallback, stagePills };
+  return { island, widgetHost, audioHost, status, fallback, stagePills };
 }
 
 function prepareDocsEmbedSurface(elements: RuntimePanelElements): {
@@ -206,11 +211,12 @@ function prepareDocsEmbedSurface(elements: RuntimePanelElements): {
   const previousIsolation = elements.previewSurface.style.isolation;
   const article = createElement('article', 'embedded-docs-demo');
   const staticBlock = createStaticDocsBlock();
-  const { island, widgetHost, status, fallback, stagePills } = createRuntimeIsland();
+  const { island, widgetHost, audioHost, status, fallback, stagePills } = createRuntimeIsland();
   const docsSurface: DocsEmbedSurface = {
     article,
     island,
     widgetHost,
+    audioHost,
     status,
     fallback,
     stagePills,
@@ -425,6 +431,7 @@ function createDocsEmbedController(docsSurface: DocsEmbedSurface): ControllerReg
         onSettingsChange: preferences.changed,
       });
       preferences.changed(widget.getSnapshot());
+      mountDocsAudio(docsSurface.audioHost, ctx);
       ctx.scope.defer(() => releaseLoading?.());
       releaseLoading = ctx.registerFrameWork(frame => {
         advanceLoading(frame, ctx);
@@ -476,10 +483,14 @@ function createDocsEmbedController(docsSurface: DocsEmbedSurface): ControllerReg
 function createKernelInstance(docsSurface: DocsEmbedSurface) {
   return createKernel({
     id: 'urk-www-embedded-docs-demo',
+    frameMode: 'auto',
     services: {
       'docs:host': docsSurface.article,
     },
-    adapters: [createLoadingAdapter(), createMotionAdapter()],
+    adapters: [
+      createLoadingAdapter(), createMotionAdapter(),
+      ...(typeof Audio === 'undefined' ? [] : [createAudioAdapter()]),
+    ],
     controllers: [createDocsEmbedController(docsSurface)],
   });
 }

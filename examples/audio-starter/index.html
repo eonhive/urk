@@ -1,0 +1,40 @@
+<!--
+Company: EonHive Inc. | Title: Audio Embed Starter
+Purpose: Provide ordinary page content around one reusable audio-reactive widget.
+Author: Stan Nesi | Created: 2026-10-18 | Updated: 2026-10-18
+Notes: Vibe coded with Codex.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101725" />
+    <title>URK Audio Embed Starter</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="starter">
+      <header>
+        <p class="eyebrow">URK / AUDIO EMBED STARTER</p>
+        <h1>One source.<br />A visible signal.</h1>
+        <p>A waveform, a spectrum, and a small pulse driven by the same sound.</p>
+      </header>
+      <section class="host-controls" aria-label="Embed runtime controls">
+        <div class="buttons">
+          <button id="pause" type="button" disabled>Pause runtime</button>
+          <button id="resume" type="button" disabled>Resume runtime</button>
+          <button id="dispose" type="button" disabled>Dispose runtime</button>
+          <button id="restart" type="button" disabled>Restart runtime</button>
+        </div>
+        <p>Runtime: <strong id="lifecycle">created</strong> · Instance: <span id="instance">0</span></p>
+        <p id="message" role="status">Preparing your widget.</p>
+      </section>
+      <div id="audio-host">
+        <p class="host-caption">This caption belongs to your page. Removing the widget leaves it here.</p>
+      </div>
+      <noscript>Enable JavaScript to use the audio widget.</noscript>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -89,3 +89,5 @@ with canonical widget source and includes Core/adapters archives referenced by
 relative file dependencies. The generated private project uses Node 22, Yarn,
 and the existing standalone TypeScript/Vite build convention. It needs neither
 the checkout nor `@urk/examples` after export. See `examples/motion-starter/README.md`.
+
+- `/audio-starter/` - borrowed-runtime Canvas audio widget, original fixture, and independent-project exporter; see `examples/audio-starter/README.md`

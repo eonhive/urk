@@ -14,6 +14,7 @@
     "motion-starter/**/*.ts",
     "motion-playground/**/*.ts",
     "audio-proof/analysis.ts",
+    "audio-starter/**/*.ts",
     "selection-details/**/*.ts",
     "v02/**/*.ts",
     "v02/**/*.tsx",

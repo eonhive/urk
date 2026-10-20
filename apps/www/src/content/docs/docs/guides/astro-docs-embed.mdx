@@ -9,7 +9,7 @@ description: Embed live URK examples in Astro and Starlight documentation safely
   Purpose: Explain how the public site embeds URK runtime islands inside docs pages.
   Author: Stan Nesi
   Created: 2026-05-06
-  Updated: 2026-10-18
+  Updated: 2026-10-19
   Notes: Vibe coded with Codex.
 */}
 
@@ -29,9 +29,9 @@ import LiveURKExample from '@/components/urk-runtime/LiveURKExample.astro';
 
 Status: current. The runnable public proof is [Embedded Docs Demo](/examples/embedded-docs-demo/).
 
-## Try the embedded widget
+## Try the embedded widgets
 
-This island mounts the same widget as the standalone `/motion-widget/` proof.
+This island mounts the same motion widget as the standalone `/motion-widget/` proof.
 Scrub its sequence, adjust playback speed or timing, and replay. The host's Pause
 and Resume controls preserve motion position. Shutdown removes the widget while
 this documentation stays readable; Reset / restart mounts it with a fresh kernel.
@@ -43,6 +43,25 @@ Use **Share settings** to export the current timing/speed as JSON or import a pr
 from another widget. Import preserves position and pauses; new timing starts on
 the next replay. Invalid input leaves the current settings unchanged.
 
+Choose **Add audio widget** below the motion controls to mount the Canvas study
+from `/audio-starter/` in the same runtime. Press its **Play** control for sound,
+waveform, spectrum, band meters, and a reactive pulse. Adding it never starts
+playback. **Remove audio widget** stops its sound and releases its widget scope;
+the motion widget and surrounding docs remain available. Add it again without
+creating another kernel. The host registers the study only on the first addition.
+
+Once Play selects the study and metadata is available, **Audio position** provides
+native-event progress and pointer/keyboard seeking. Seeking a paused track keeps
+it paused. Unknown durations and runtime pause disable the scrubber.
+
+Host Pause freezes motion and pauses audio; Resume leaves audio paused until you
+press Play. Hidden tabs also pause sound. Shutdown removes both widgets and closes
+the audio adapter's captured context; Reset / restart begins with no audio widget
+mounted. If native audio is unavailable, the audio addition stays disabled while
+motion remains available. A widget setup error is shown beside its Add control.
+No audio element or Web Audio context is acquired before opting in. Each widget
+uses temporary frame work, and the host uses `frameMode: 'auto'`.
+
 <div className="not-content">
   <LiveURKExample example="embedded-docs-demo" />
 </div>
@@ -52,6 +71,12 @@ Its `mountMotionWidget(host, ctx, options)` helper borrows a controller's runtim
 context and scope. It creates no kernel and changes no experience phase. The
 private `@urk/examples/motion-widget` subpath is a repository reuse point; copy
 the example into an application rather than relying on it as a stable npm API.
+
+The optional audio composition lives in `packages/examples/src/embedded-docs-demo/audio.ts`.
+It mounts `mountAudioWidget(host, ctx, { trackId })` from the private
+`@urk/examples/audio-widget` example. The host owns track registration and final
+adapter disposal. Removing the widget stops its track and disables analysis;
+the adapter retains its source/context binding for reuse until runtime shutdown.
 
 ## Rules
 

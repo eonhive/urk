@@ -8,6 +8,10 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./audio-widget": {
+      "types": "./dist/audio-widget/index.d.ts",
+      "import": "./dist/audio-widget/index.js"
+    },
     "./motion-widget": {
       "types": "./dist/motion-widget/index.d.ts",
       "import": "./dist/motion-widget/index.js"
