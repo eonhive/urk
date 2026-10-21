@@ -14,9 +14,9 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
   id: 'embedded-docs-demo',
   slug: 'embedded-docs-demo',
   title: 'Embedded Docs Demo',
-  purpose: 'Embeds a reusable motion widget inside a documentation runtime island.',
+  purpose: 'Embeds reusable motion and optional audio widgets inside one documentation runtime island.',
   summary:
-    'A documentation island with a shared motion widget, keyboard scrubbing, optional saved timing/speed settings, and clean runtime shutdown while static content stays readable.',
+    'A documentation island with a shared motion widget, optional Canvas audio study, independent widget removal, and clean runtime shutdown while static content stays readable.',
   difficulty: 'intro',
   boundary:
     'Static docs shell ownership, isolated client-side runtime island boot, local fallback handling, and clean teardown.',
@@ -27,9 +27,10 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
     'How runtime island failures stay local to the island.',
     'How Astro/Starlight stays responsible for static documentation rendering.',
     'How the same motion widget borrows a standalone or website host runtime.',
+    'How an opt-in audio widget shares that kernel and can be removed without stopping motion.',
   ],
-  adapters: ['loading', 'motion'],
-  controllers: ['motion-controller', 'docs-embed-controller'],
+  adapters: ['loading', 'motion', 'audio (optional widget)'],
+  controllers: ['docs-embed-controller'],
   panels: ['source', 'schema', 'state', 'events', 'adapters', 'preview'],
   schemaSource: `{
   "surface": "embedded-docs-demo",
@@ -39,9 +40,11 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
   },
   "runtimeIsland": {
     "owner": "URK",
-    "adapters": ["loading", "motion"],
-    "controllers": ["motion-controller", "docs-embed-controller"],
-    "widget": "shared motion-widget",
+    "adapters": ["loading", "motion", "audio (when supported)"],
+    "controllers": ["docs-embed-controller"],
+    "widgets": ["motion-widget", "audio-widget (opt-in)"],
+    "frameMode": "auto",
+    "audioAutoplay": false,
     "fallback": "local island error state"
   }
 }`,
@@ -60,10 +63,14 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
       language: 'ts',
       excerpt: `const kernel = createKernel({
   id: 'urk-www-embedded-docs-demo',
+  frameMode: 'auto',
   services: {
     'docs:host': docsSurface.article,
   },
-  adapters: [createLoadingAdapter(), createMotionAdapter()],
+  adapters: [
+    createLoadingAdapter(), createMotionAdapter(),
+    ...(typeof Audio === 'undefined' ? [] : [createAudioAdapter()]),
+  ],
   controllers: [createDocsEmbedController(docsSurface)],
 });`,
     },
@@ -79,6 +86,18 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
 // After boot, the host replays the sequence. Controller scope owns its cleanup.`,
     },
     {
+      path: 'packages/examples/src/embedded-docs-demo/audio.ts',
+      label: 'Optional audio widget',
+      language: 'ts',
+      excerpt: `// The Add audio widget button registers the study once, then mounts it.
+const widget = await mountAudioWidget(widgetHost, ctx, {
+  trackId: 'docs-study', title: 'Docs audio signal',
+});
+// Removing it releases its scope; the shared runtime keeps running.
+await widget.teardown();
+// Sound starts only from the widget's Play control.`,
+    },
+    {
       path: 'packages/examples/src/embedded-docs-demo/mount.ts',
       label: 'Local failure boundary',
       language: 'ts',
@@ -90,7 +109,7 @@ export const embeddedDocsDemoMeta: ExampleMeta = {
     },
   ],
   explanation:
-    'The Embedded Docs Demo mounts the same motion widget as the standalone proof inside its existing preview panel and kernel. Its motion controller drives staggered entrances and a final reveal; local controls provide scrubbing, speed, timing, and cancellation. Host pause freezes playback, shutdown removes the widget, and reset creates a fresh kernel. Static content and island failure boundaries stay owned by the website and Starlight.',
+    'The Embedded Docs Demo mounts the shared motion widget inside its existing preview panel and kernel. Local controls provide scrubbing, speed, timing, and cancellation. Add audio widget mounts the same Canvas audio widget as the standalone starter, without creating another kernel. Remove stops that study while motion remains available. Host pause freezes motion and pauses audio; resume never starts sound. Shutdown releases both widgets, and reset creates a fresh kernel. Static content and island failure boundaries stay owned by the website and Starlight.',
   relatedDocs: [
     { title: 'Use URK inside Astro docs', href: '/docs/guides/astro-docs-embed/' },
     { title: 'Embed URK in a static website', href: '/docs/guides/static-website-embed/' },

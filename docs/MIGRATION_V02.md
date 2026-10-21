@@ -192,3 +192,31 @@ Motion Lab, widget settings/presets, and the private examples package are applic
 proofs rather than new public packages. For external reuse, the Motion Embed
 Starter copies the widget source and packs local runtime builds. See the
 [motion release notes](MOTION_RELEASE.md) for the public surface and focused gate.
+
+## Audio position and seeking
+
+Audio snapshots now include `currentTime: number` and `duration: number | null`
+in seconds; duration can be `Infinity` for an unbounded source. Custom snapshot
+fixtures should initialize them to `0` and `null`. Implementations typed as
+`AudioAdapterApi` also need the new `seek(seconds): void` method; the factory and
+mixer channels supply it. Existing playback call signatures are unchanged.
+
+Seek requires an active track and loaded metadata. It rejects invalid/out-of-range
+times, never starts playback, and leaves a pending play cancelled and paused.
+Subscriptions now also observe native metadata/time/seek changes. Do not treat
+every snapshot notification as a new transport action or add a frame loop for
+progress. See the audio adapter README for the native seeking contract.
+
+## Audio source replacement
+
+`AudioAdapterApi` implementations now also provide `setSource(trackId, src): void`.
+The factory and mixer channels supply it. Unlike registering another track,
+replacement reuses the element and its Web Audio source binding. It selects the
+target paused, stops prior playback, cancels the replaced source's preloads with
+`AbortError`, and clears its loaded cache. It never calls play. Source selection
+can therefore make metadata/seek available before the first Play.
+
+Callers supplying blob URLs own their revocation. The example widget can opt in
+with `localFiles: { defaultSource }`; its scope manages URL replacement/reset and
+restores that source on early removal. Default widget hosts keep their existing
+host-registered source policy. Remote replacements retain the registered CORS mode.

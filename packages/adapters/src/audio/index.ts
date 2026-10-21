@@ -4,7 +4,7 @@
  * Purpose: Provide a small browser-native audio transport capability for URK.
  * Author: Stan Nesi
  * Created: 2026-04-23
- * Updated: 2026-10-17
+ * Updated: 2026-10-19
  * Notes: Vibe coded with Codex.
  */
 
@@ -27,6 +27,9 @@ export type AudioPlaybackStatus = 'idle' | 'loading' | 'ready' | 'playing' | 'pa
 export interface AudioTransportSnapshot {
   activeTrackId: string | null;
   status: AudioPlaybackStatus;
+  currentTime: number;
+  /** Seconds; null until known, Infinity for an unbounded source. */
+  duration: number | null;
   muted: boolean;
   volume: number;
   loadedTrackIds: string[];
@@ -38,10 +41,14 @@ export type AudioListener = (snapshot: AudioTransportSnapshot) => void;
 export interface AudioAdapterApi {
   readonly analysis: AudioAnalysisApi;
   registerTrack(track: AudioTrackDefinition): void;
+  /** Replace a registered source on its existing element and select it paused. */
+  setSource(trackId: string, src: string): void;
   preload(trackId: string): Promise<void>;
   play(trackId?: string): Promise<void>;
   pause(): void;
   stop(): void;
+  /** Seek the active track after metadata loads; never starts playback. */
+  seek(seconds: number): void;
   setMuted(next: boolean): void;
   setVolume(next: number): void;
   getSnapshot(): AudioTransportSnapshot;
@@ -53,6 +60,7 @@ type RegisteredTrack = {
   element: HTMLAudioElement;
   onEnded: () => void;
   onError: () => void;
+  source: AbortController;
 };
 
 function clampVolume(value: number): number {
@@ -71,6 +79,8 @@ function createEmptySnapshot(): AudioTransportSnapshot {
   return {
     activeTrackId: null,
     status: 'idle',
+    currentTime: 0,
+    duration: null,
     muted: false,
     volume: 1,
     loadedTrackIds: [],
@@ -117,7 +127,8 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
       };
       const cancelPlayback = () => {
         invalidate();
-        analysis.stop();
+        // Settle gesture-blocked enables before controller cleanup may await them.
+        analysis.api.disable();
         for (const record of tracks.values()) {
           record.element.muted = true;
           record.element.pause();
@@ -125,6 +136,17 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
       };
       ctx.signal.addEventListener('abort', cancelPlayback, { once: true });
       ctx.scope.defer(() => ctx.signal.removeEventListener('abort', cancelPlayback));
+
+      const readPosition = (trackId: string | null) => {
+        const element = trackId ? tracks.get(trackId)?.element : undefined;
+        const time = element?.currentTime;
+        const duration = element?.duration;
+        return {
+          currentTime: typeof time === 'number' && Number.isFinite(time) ? Math.max(0, time) : 0,
+          duration: typeof duration === 'number' && !Number.isNaN(duration) && duration >= 0
+            ? duration : null,
+        };
+      };
 
       const publish = (
         partial: Partial<AudioTransportSnapshot> = {},
@@ -138,6 +160,7 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
         snapshot = {
           ...snapshot,
           ...partial,
+          ...readPosition(partial.activeTrackId === undefined ? snapshot.activeTrackId : partial.activeTrackId),
           loadedTrackIds: [...loadedTrackIds],
         };
 
@@ -210,6 +233,7 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
 
       const preloadElement = async (record: RegisteredTrack): Promise<void> => {
         if (ctx.signal.aborted) throw new Error('Audio adapter is disposed.');
+        const source = record.source.signal;
         if (loadedTrackIds.has(record.definition.id) || record.element.readyState >= 3) {
           loadedTrackIds.add(record.definition.id);
           return;
@@ -229,17 +253,19 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
 
           const onAbort = (): void => {
             cleanup();
-            reject(new Error('Audio preload cancelled.'));
+            reject(new DOMException('Audio preload cancelled.', 'AbortError'));
           };
 
           const cleanup = (): void => {
             ctx.signal.removeEventListener('abort', onAbort);
+            source.removeEventListener('abort', onAbort);
             record.element.removeEventListener('canplaythrough', onReady);
             record.element.removeEventListener('loadeddata', onReady);
             record.element.removeEventListener('error', onError);
           };
 
           ctx.signal.addEventListener('abort', onAbort, { once: true });
+          source.addEventListener('abort', onAbort, { once: true });
           record.element.addEventListener('canplaythrough', onReady, {
             once: true,
           });
@@ -247,7 +273,13 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
             once: true,
           });
           record.element.addEventListener('error', onError, { once: true });
-          record.element.load();
+          try {
+            record.element.load();
+          } catch (error) {
+            // No native event will settle a failed load call and release these listeners.
+            cleanup();
+            reject(error);
+          }
         });
       };
 
@@ -256,6 +288,7 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
         shouldSetLoading: boolean,
       ): Promise<void> => {
         const started = generation;
+        const source = record.source;
         if (shouldSetLoading) {
           publish({
             status: 'loading',
@@ -264,7 +297,9 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
         }
 
         try {
+          if (source !== record.source) throw cancelled();
           await preloadElement(record);
+          if (source !== record.source) throw cancelled();
           if (started !== generation) {
             publish();
             return;
@@ -277,7 +312,7 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
             errorMessage: undefined,
           });
         } catch (error) {
-          if (ctx.signal.aborted || started !== generation) throw error;
+          if (ctx.signal.aborted || source !== record.source || started !== generation) throw error;
           const message =
             error instanceof Error ? error.message : formatTrackError(record.definition, 'preload');
 
@@ -320,7 +355,7 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
           element.preload = 'auto';
 
           const onEnded = (): void => {
-            if (snapshot.activeTrackId !== track.id) {
+            if (ctx.signal.aborted || snapshot.activeTrackId !== track.id || !element.ended) {
               return;
             }
 
@@ -339,7 +374,18 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
             );
           };
 
+          const onPosition = () => {
+            if (!ctx.signal.aborted && snapshot.activeTrackId === track.id) publish();
+          };
+          // Native media events keep progress useful even when analysis requests no frames.
+          for (const event of ['loadedmetadata', 'durationchange', 'timeupdate', 'seeking', 'seeked', 'emptied']) {
+            ctx.scope.defer(() => element.removeEventListener(event, onPosition));
+            element.addEventListener(event, onPosition);
+          }
+
           const onError = (): void => {
+            // load() clears native errors; ignore queued errors from a replaced source.
+            if (ctx.signal.aborted || element.error === null) return;
             const message = formatTrackError(track, 'playback');
 
             if (snapshot.status === 'error' && snapshot.errorMessage === message) {
@@ -371,14 +417,43 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
             element,
             onEnded,
             onError,
+            source: new AbortController(),
           };
 
+          ctx.scope.defer(() => record.source.abort());
           ctx.scope.defer(() => element.removeEventListener('ended', onEnded));
           ctx.scope.defer(() => element.removeEventListener('error', onError));
           element.addEventListener('ended', onEnded);
           element.addEventListener('error', onError);
           applyElementSettings(record);
           tracks.set(track.id, record);
+        },
+        setSource(trackId, src) {
+          if (ctx.signal.aborted) throw new Error('Audio adapter is disposed.');
+          if (!src.trim()) throw new TypeError('Audio source must not be empty.');
+          const record = requireTrack(trackId);
+          const previous = snapshot.activeTrackId && tracks.get(snapshot.activeTrackId);
+          invalidate();
+          record.source.abort();
+          record.source = new AbortController();
+          analysis.stop();
+          if (previous && previous !== record) {
+            if (nativePlays.has(previous.definition.id)) previous.element.muted = true;
+            stopElement(previous);
+          }
+          record.element.muted = true;
+          record.element.pause();
+          loadedTrackIds.delete(trackId);
+          record.definition.src = src;
+          try {
+            // Reuse the element: captured Web Audio source nodes cannot be rebound.
+            record.element.src = src;
+            record.element.load();
+            applyElementSettings(record);
+            if (nativePlays.has(trackId)) record.element.muted = true;
+          } finally {
+            publish({ activeTrackId: trackId, status: 'paused', errorMessage: undefined });
+          }
         },
         async preload(trackId) {
           const record = requireTrack(trackId);
@@ -447,7 +522,12 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
               () => {
                 if (ctx.signal.aborted || current !== generation) {
                   // A stale result must not pause a newer request for the same element.
-                  if (requestedTrack !== nextTrackId || ctx.signal.aborted) stopElement(record);
+                  if (requestedTrack !== nextTrackId || ctx.signal.aborted) {
+                    // Pausing a cancelled active request must preserve a later seek.
+                    if (!ctx.signal.aborted && snapshot.activeTrackId === nextTrackId)
+                      record.element.pause();
+                    else stopElement(record);
+                  }
                   throw cancelled();
                 }
                 loadedTrackIds.add(nextTrackId);
@@ -546,6 +626,32 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
             errorMessage: undefined,
           });
         },
+        seek(seconds) {
+          if (ctx.signal.aborted) throw new Error('Audio adapter is disposed.');
+          if (!Number.isFinite(seconds) || seconds < 0)
+            throw new RangeError('Seek time must be finite and nonnegative.');
+          if (!snapshot.activeTrackId)
+            throw new DOMException('Select an audio track before seeking.', 'InvalidStateError');
+          const { element } = requireTrack(snapshot.activeTrackId);
+          if (element.readyState === 0)
+            throw new DOMException('Load audio metadata before seeking.', 'InvalidStateError');
+          if (Number.isFinite(element.duration) && seconds > element.duration)
+            throw new RangeError('Seek time exceeds audio duration.');
+
+          const interrupted = snapshot.status === 'loading' && Boolean(pendingPlay);
+          if (interrupted) {
+            // A late native play result must not make a scrub start sound unexpectedly.
+            invalidate();
+            element.muted = true;
+            element.pause();
+          }
+          try {
+            element.currentTime = seconds;
+          } finally {
+            // Report cancellation even if the browser refuses the native seek.
+            publish({ status: interrupted ? 'paused' : snapshot.status, errorMessage: undefined });
+          }
+        },
         setVolume(next) {
           if (ctx.signal.aborted) return;
           const volume = clampVolume(next);
@@ -560,7 +666,7 @@ export function createAudioAdapter(id = 'audio-adapter'): AdapterRegistration<Au
           });
         },
         getSnapshot() {
-          return cloneSnapshot(snapshot);
+          return cloneSnapshot({ ...snapshot, ...readPosition(snapshot.activeTrackId) });
         },
         subscribe(listener) {
           if (ctx.signal.aborted) throw new Error('Audio adapter is disposed.');

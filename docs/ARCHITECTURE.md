@@ -245,3 +245,13 @@ The independent project has no private example dependency or workspace alias;
 the page explicitly owns kernel creation, scopes, lifecycle controls, and restart.
 Its ordinary TypeScript/Vite build produces a relative-base static site usable in
 an iframe. Existing CLI scaffolds and runtime APIs remain unchanged (D-043).
+
+## Audio follow-up
+
+Audio transport now exposes native position/seek and registered source replacement.
+The shared private widget borrows its host runtime, reads one snapshot per temporary
+frame, and releases controls/frames through its child scope. Audio Lab shares plots,
+position, local-file, and reaction helpers; the existing docs motion host can add
+the widget in the same kernel. Opt-in host memory saves only four visual responses.
+The independent starter copies source and content-named runtime archives. See
+[audio release preparation](AUDIO_RELEASE.md) for API, ownership, scope, and limits.

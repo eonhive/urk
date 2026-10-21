@@ -243,6 +243,62 @@ Orbit/Row transitions. Graphics setup uses the existing isolated child-scope
 pattern. Host navigation and page-history cleanup reuse the website media host.
 No additional public runtime API or Core change is needed for this integration.
 
+D-028 embed follow-up: extract Canvas plots and temporary analysis frame reads
+into the private Audio Widget example. Mount it with a borrowed host/context and
+one host-registered track on the existing audio adapter. Keep track registration,
+kernel lifetime, and final context disposal host-owned. Widget removal stops its
+track and releases its child scope without shutting down the runtime. Analysis
+remains opt-in through the Play gesture; unavailable analysis leaves ordinary
+playback usable. Share those helpers with Audio Lab while retaining its optional
+Three scene. A thin starter and exporter copy source, the original fixture, and
+packed runtime builds into an independent project; no new public package or
+runtime API is introduced.
+
+D-028 docs integration: reuse the existing Embedded Docs Demo kernel for the
+optional Audio Widget alongside motion. Register the audio adapter only where
+native audio is supported, and register its study on the first explicit Add.
+Add/remove controls and setup errors stay local to the audio host helper. Removal
+stops that widget without shutting down motion; the parent keeps final adapter
+cleanup. Audio playback still requires Play. Use the existing auto frame mode
+for finite loading, motion, and audio reads; no additional kernel or scheduler.
+
+D-028 transport follow-up: expose active-track `currentTime`, `duration`, and
+`seek(seconds)` through the existing audio API, matching video's seconds/null/live
+duration convention. Native progress notifications require no polling or analysis.
+Reject invalid or unready seeks before changing playback; cancel pending
+activation on a valid seek and preserve its requested position when a stale play
+settles. Share a scoped native range control across Audio Lab and the Audio Widget.
+Retain one source graph, existing runtime media policy, and adapter-owned cleanup.
+No timeline editor, Core change, new context, or scheduler is introduced.
+
+D-028 source follow-up: add `setSource(trackId, src)` to the existing audio
+transport. Select the registered track paused, preserve its element/source-node
+binding and settings, and invalidate old play/preload work before loading new
+media. Clear its loaded cache and let native load reset timing. The example's
+optional file control owns one object URL, restores its configured default on
+early removal, and revokes old URLs through its scope. No upload, saved file,
+audio editor, new context per file, or Core change. Apply the audio exporter's
+content-based archive identity to the motion exporter as well.
+
+D-028 reaction controls: keep visual tuning in the private examples layer. Share
+one scoped control between Audio Lab and the Canvas widget, with overall intensity
+and separate band responses from zero to two (default one). Renderers clamp the
+scaled response to one without mutating measured snapshots, plots, or meters.
+Input redraws the latest snapshot; it does not read analysis or schedule frames.
+Reset changes only reactions. Each mount owns its values and restores defaults on
+fresh setup; no persistence, public adapter API, DSP, or Core change is introduced.
+
+D-028 settings memory follow-up: extend the private widget with validated initial
+reaction values, immutable committed change callbacks, and a copied settings
+getter. Following D-040, an optional scoped host helper owns explicit consent,
+stable storage keys, versioned whole-record validation, forgetting, and local
+failure reporting. Audio Lab and the starter demonstrate it; docs embeds remain
+local by default. Save only the four visual responses on native change/reset,
+skip duplicate writes, and prevent writes after scope/abort. Restoring never plays
+audio. Forgetting preserves live settings; Reset retains consent and saves the
+baseline. No persisted source/file, playback/analysis state, global fallback,
+cross-tab synchronization, Core change, or new storage adapter is introduced.
+
 ## D-029 — Compose callback tweens and finite timelines through controller updates
 
 Extend the existing motion adapter instead of adding a package or changing Core.

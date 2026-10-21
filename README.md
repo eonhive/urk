@@ -13,7 +13,9 @@ URK is the public, open-source runtime kernel for interactive browser experience
 - React adds `useLifecycleSnapshot()` alongside explicit provider ownership.
 - One shared experience runs in standalone, React, Next, and the public website, with loading, selection, pause/resume, diagnostics, cleanup, and fresh-kernel recovery.
 
-All runtime/tooling package manifests are `0.2.0`; dependent public peers use `^0.2.0`. This checkout contains the implementation; npm publication and deployment are separate actions.
+The integration candidate keeps `@urk/adapters` at `0.2.1` and Core/other runtime
+and tooling packages at `0.2.0`; dependent public peers use `^0.2.0`. This checkout
+contains the implementation; npm publication and deployment are separate actions.
 
 ```bash
 corepack yarn dev:v02
@@ -180,3 +182,5 @@ See [packages/cli/README.md](./packages/cli/README.md) for the full command refe
 - `docs/DEPLOYMENT.md`
 
 `docs/07_URK/` remains draft and reference material. The top-level docs above are the canonical entry points.
+
+- `http://localhost:5173/audio-starter/` — Canvas audio embed; export with `node scripts/create-audio-starter.mjs <new-directory>`

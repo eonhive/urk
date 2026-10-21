@@ -27,6 +27,7 @@ export default defineConfig({
         resolve(__dirname, 'index.html'),
         resolve(__dirname, 'audio-proof/index.html'),
         resolve(__dirname, 'audio-proof/analysis.html'),
+        resolve(__dirname, 'audio-starter/index.html'),
         resolve(__dirname, 'video-proof/index.html'),
         resolve(__dirname, 'interactive-media/index.html'),
         resolve(__dirname, 'experience-showcase/index.html'),

@@ -1,0 +1,21 @@
+/*
+Company: EonHive Inc. | Title: Audio Starter Host Styles
+Purpose: Style the standalone page without owning widget presentation.
+Author: Stan Nesi | Created: 2026-10-18 | Updated: 2026-10-18
+Notes: Vibe coded with Codex.
+*/
+:root { color-scheme:dark; font-family:system-ui,sans-serif; background:#0a101b; color:#ecf0fb; }
+body { margin:0; }
+.starter { width:min(720px,calc(100% - 32px)); margin:auto; padding:36px 0; }
+.starter header { padding-bottom:20px; }
+.starter h1 { font-size:clamp(32px,7vw,54px); line-height:1.1; letter-spacing:-2px; margin:18px 0; }
+.starter header p,.host-caption { color:#a4afc3; line-height:1.6; }
+.starter .eyebrow { color:#7ce8e3; font:11px ui-monospace,monospace; letter-spacing:2px; }
+.host-controls { margin-bottom:24px; padding:18px; border:1px solid #364258; border-radius:12px; }
+.host-controls .buttons { display:flex; flex-wrap:wrap; gap:10px; }
+.host-controls button { padding:10px 12px; border:1px solid #46536a; border-radius:7px; background:#1a2537; color:#e9f1fc; cursor:pointer; font:inherit; font-size:12px; }
+.host-controls button:focus-visible { outline:2px solid #7ce8e3; outline-offset:3px; }
+.host-controls button:disabled { opacity:.4; cursor:default; }
+.host-controls p,.host-caption { font-size:12px; }
+.host-controls strong { color:#7ce8e3; }
+#message { min-height:36px; margin-bottom:0; }

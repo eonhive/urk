@@ -9,14 +9,74 @@ Provides browser-native audio transport orchestration for URK.
 ## Exposes
 
 - `registerTrack(...)`
+- `setSource(trackId, src)`
 - `preload(...)`
 - `play(...)`
 - `pause()`
 - `stop()`
+- `seek(seconds)`
 - `setMuted(...)`
 - `setVolume(...)`
 - `getSnapshot()`
 - `subscribe(...)`
+
+## Playback position and seeking
+
+`getSnapshot()` includes `currentTime` in seconds and `duration` in seconds
+(`null` until known, `Infinity` for an unbounded source), following the video
+adapter's convention. Before a track is active, position is zero and duration is
+unknown. `getSnapshot()` reads the active element's current clock; subscribers
+also receive native metadata, duration, time-update, and seek changes. These
+updates require no render loop and continue when analysis is disabled or muted.
+Inactive-track timing events do not replace the active track's snapshot.
+
+```ts
+// After play has selected a track and its metadata is available:
+audio.pause();
+audio.seek(2.5); // Remains paused. A playing track remains playing.
+const { currentTime, duration } = audio.getSnapshot();
+```
+
+Seek rejects non-finite/negative times, positions beyond a known finite duration,
+missing active tracks, and unloaded metadata. It does not call play or enable
+analysis. Seeking during a pending native play cancels that activation and leaves
+the track paused; a late play result cannot rewind the requested position or
+start sound. Mixer channels inherit the same API. Native seeking/progress is not
+sample-accurate; browsers determine seek completion and event frequency.
+
+Both Audio Lab and the reusable Audio Widget provide the same keyboard-accessible
+position control. It stays disabled until an active source has a positive finite
+duration, and while the runtime is paused. Live/unknown durations have no finite
+scrubber. Its listeners and subscriptions use the owning resource scope.
+
+## Replace a source
+
+`setSource(trackId, src)` replaces a registered track's URL on its existing audio
+element, selects that track, and leaves it paused. It stops the previous active
+track, clears the replaced track's loaded cache, resets timing through native
+`load()`, and detaches analysis until playback. It preserves track identity,
+loop/volume settings, CORS mode, and the existing context/source-node binding.
+It creates no new element or Web Audio context and never calls play.
+
+```ts
+audio.setSource('music', '/another-track.wav');
+// New source is selected and paused; Play remains an explicit user action.
+```
+
+Unknown tracks and empty URLs reject before changing playback. Pending play is
+invalidated; pending preloads for the replaced source reject with `AbortError`
+and release their listeners. A stale result cannot mark the new source loaded
+or restart it. Native load/decode failures remain ordinary transport errors.
+Remote sources must satisfy the registered track's CORS mode and analysis rules.
+Callers own any object URLs they pass and revoke them after replacement or final
+cleanup. The local-file controls below manage that ownership for the examples.
+
+Audio Lab and Audio Embed Starter offer Choose audio file and Use demo audio.
+The picker holds one object URL, reuses the registered study track, and revokes
+the previous URL on replacement/reset/removal. Early widget removal restores
+the configured demo source; runtime shutdown clears the element through the
+adapter scope. Chosen files are not uploaded or persisted. Unsupported codecs
+surface as native media errors. Analysis and seek keep using the same APIs.
 
 ## Example
 
@@ -116,4 +176,4 @@ rejects enable; ordinary HTML audio playback remains available.
 
 The focused proof is `/audio-proof/analysis.html`; see
 [run instructions](../../../../examples/audio-proof/README.md). No microphone,
-BPM/beat tracking, worklet DSP, rendering API, or extra package is introduced.
+tempo/beat-grid tracking, worklet DSP, rendering API, or extra package is introduced.

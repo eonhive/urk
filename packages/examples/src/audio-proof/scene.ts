@@ -1,7 +1,7 @@
 /**
  * Company: EonHive Inc. | Title: Audio Reactive Scene
  * Purpose: Map measured audio to a borrowed Three scene and tween discrete layout changes.
- * Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-17
+ * Author: Stan Nesi | Created: 2026-10-17 | Updated: 2026-10-19
  * Notes: Vibe coded with Codex.
  */
 import * as THREE from 'three';
@@ -9,6 +9,7 @@ import type { RuntimeContext } from '@urk/core';
 import type { AudioAnalysisSnapshot } from '@urk/adapters/audio';
 import { MotionCapability } from '@urk/adapters/motion';
 import { createThreeAdapter, type ThreeContextEventPayload } from '@urk/adapters/three';
+import { scaleAudioReaction, type AudioReactionSettings } from '../audio-widget/reactions.js';
 
 export async function mountAudioScene(ctx: RuntimeContext, redraw: () => void, status: HTMLElement) {
   const three = await createThreeAdapter('audio-lab-scene').setup(ctx);
@@ -57,12 +58,15 @@ export async function mountAudioScene(ctx: RuntimeContext, redraw: () => void, s
   resize();
   status.textContent = 'Bass scales the sculpture. Mids color it. Treble shapes the satellites.';
   return {
-    render(snapshot: AudioAnalysisSnapshot, reduced: boolean) {
+    render(snapshot: AudioAnalysisSnapshot, reduced: boolean, reactions: Readonly<AudioReactionSettings>) {
       if (ctx.signal.aborted) return;
-      core.scale.setScalar(1 + (reduced ? 0 : snapshot.bass * 0.5));
+      const bass = scaleAudioReaction(snapshot.bass, reactions.intensity, reactions.bass);
+      const mids = scaleAudioReaction(snapshot.mids, reactions.intensity, reactions.mids);
+      const treble = scaleAudioReaction(snapshot.treble, reactions.intensity, reactions.treble);
+      core.scale.setScalar(1 + (reduced ? 0 : bass * 0.5));
       core.position.y = layout.blend * 0.3;
-      material.color.setHSL(0.46 + snapshot.mids * 0.34, 0.65, 0.58);
-      const size = 1 + (reduced ? 0 : snapshot.treble * 3);
+      material.color.setHSL(0.46 + mids * 0.34, 0.65, 0.58);
+      const size = 1 + (reduced ? 0 : treble * 3);
       for (let i = 0; i < satellites.length; i++) {
         const angle = i * Math.PI / 4;
         satellites[i].position.set(

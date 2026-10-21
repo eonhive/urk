@@ -178,3 +178,5 @@ directory includes the compiled Player and `HOSTING.txt`; it needs no developmen
 server. For another generation, choose a new/empty output directory. Replace the
 experience URL with its deployment URL for production, and keep the host on a
 separate origin. Default generation needs no CORS configuration or network access.
+
+- `/audio-starter/` - reusable Canvas audio widget and independent-project exporter; see `audio-starter/README.md`

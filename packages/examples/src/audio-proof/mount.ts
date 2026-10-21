@@ -4,14 +4,21 @@
  * Purpose: Share audio analysis, reactive visuals, and runtime ownership across standalone and website hosts.
  * Author: Stan Nesi
  * Created: 2026-09-21
- * Updated: 2026-10-17
+ * Updated: 2026-10-19
  * Notes: Vibe coded with Codex.
  */
 import { createKernel, ResourceScope } from '@urk/core';
 import { AudioCapability, createAudioAdapter } from '@urk/adapters/audio';
 import { createMotionAdapter } from '@urk/adapters/motion';
+import { createUiOverlayAdapter } from '@urk/adapters/ui-overlay';
 import { mountMediaInspector } from '../media/inspector.js';
+import { mountMediaSettings } from '../media/settings-panel.js';
 import { createAudioView } from './view.js';
+import { observeAudioFrames } from '../audio-widget/frames.js';
+import { mountAudioPosition } from '../audio-widget/position.js';
+import { mountAudioFiles } from '../audio-widget/files.js';
+import { mountAudioReactions } from '../audio-widget/reactions.js';
+import { mountAudioPreferences } from '../audio-widget/preferences.js';
 import type { mountAudioScene } from './scene.js';
 
 export interface AudioLabOptions { assetBaseUrl?: string }
@@ -24,6 +31,8 @@ export function mountAudioProof(host: HTMLElement, options: AudioLabOptions = {}
   const enabled = get<HTMLInputElement>('enabled');
   const preference = matchMedia('(prefers-reduced-motion: reduce)');
   const mountEvents = new AbortController();
+  const settingsHost = document.createElement('div');
+  settingsHost.className = 'media-settings-host';
   const base = new URL(options.assetBaseUrl ?? '/audio/', document.baseURI);
   let closed = false;
   let restarting = false;
@@ -32,16 +41,19 @@ export function mountAudioProof(host: HTMLElement, options: AudioLabOptions = {}
   function makeKernel() {
     return createKernel({
       id: 'urk-audio-lab', frameMode: 'auto',
-      services: { 'three:host': get('scene') },
-      adapters: [createAudioAdapter(), createMotionAdapter()],
+      services: { 'three:host': get('scene'), 'ui:host': settingsHost },
+      adapters: [createAudioAdapter(), createMotionAdapter(), createUiOverlayAdapter()],
       controllers: [{
         id: 'audio-analysis-controller',
         async start(ctx) {
+          mountMediaSettings(ctx, settingsHost)({ id: 'audio-settings', title: 'Audio settings',
+            button: get<HTMLButtonElement>('settings'), surface: get('settings-surface'), content: get('settings-content') });
           const audio = ctx.require(AudioCapability);
           for (const name of ['analysis', 'bed', 'pulse', 'confirm']) audio.registerTrack({
             id: name, label: name, src: new URL(`${name}.wav`, base).href, loop: name !== 'confirm',
           });
           track.value = 'analysis';
+          track.options[0].textContent = 'Three-band study';
           enabled.checked = true;
           get<HTMLSelectElement>('fft').value = '2048';
           get<HTMLInputElement>('smoothing').value = '0.8';
@@ -51,35 +63,30 @@ export function mountAudioProof(host: HTMLElement, options: AudioLabOptions = {}
           audio.analysis.configure();
           let scene: Awaited<ReturnType<typeof mountAudioScene>> | undefined;
           let latest = audio.analysis.read();
-          let releaseFrame: (() => void) | undefined;
           let request = 0;
+          let transportMessage: string | undefined;
+          const preferences = mountAudioPreferences(get('reactions'), ctx, 'urk:audio-lab:reactions');
+          const reactions = mountAudioReactions(get('reactions'), ctx, settings => {
+            scene?.render(latest, preference.matches, settings);
+          }, { initial: preferences.restore(), onChange: preferences.changed });
+          preferences.changed(reactions);
           const drawScene = () => {
-            scene?.render(latest, preference.matches);
+            scene?.render(latest, preference.matches, reactions);
             get('frames').textContent = ctx.scheduler.isRunning() ? 'running' : 'idle';
           };
-          const render = () => {
-            latest = audio.analysis.read();
+          const sync = observeAudioFrames(ctx, snapshot => {
+            latest = snapshot;
             view.render(latest);
             drawScene();
-            get('frames').textContent = ctx.scheduler.isRunning() ? 'running' : 'idle';
-          };
-          const sync = () => {
-            const transport = audio.getSnapshot();
-            const active = ctx.getLifecycleSnapshot().state === 'running' && !ctx.signal.aborted;
-            if (active && transport.status === 'playing' && audio.analysis.enabled) {
-              releaseFrame ??= ctx.registerFrameWork(render);
-            } else {
-              releaseFrame?.();
-              releaseFrame = undefined;
+          });
+          ctx.scope.defer(audio.subscribe(transport => {
+            const message = transport.errorMessage ?? `Audio ${transport.status}.`;
+            if (transportMessage !== message) {
+              status.textContent = message;
+              transportMessage = message;
             }
             get('mute').textContent = transport.muted ? 'Unmute' : 'Mute';
             get('mute').setAttribute('aria-pressed', String(transport.muted));
-            render();
-          };
-          ctx.scope.defer(() => releaseFrame?.());
-          ctx.scope.defer(audio.subscribe(transport => {
-            status.textContent = transport.errorMessage ?? `Audio ${transport.status}.`;
-            sync();
           }));
           ctx.scope.defer(ctx.subscribeLifecycle(state => {
             if (state.state !== 'running') { request++; audio.pause(); }
@@ -90,6 +97,15 @@ export function mountAudioProof(host: HTMLElement, options: AudioLabOptions = {}
             status.textContent = error instanceof Error ? error.message : String(error);
             sync();
           };
+          mountAudioPosition(get('position'), ctx, report);
+          mountAudioFiles(get('files'), ctx, {
+            trackId: 'analysis', defaultSource: new URL('analysis.wav', base).href,
+            onChange(file) {
+              request++;
+              track.value = 'analysis';
+              track.options[0].textContent = file ? `Local: ${file.name}` : 'Three-band study';
+            },
+          }, report);
           const on = (target: EventTarget, event: string, action: () => void | Promise<void>) => {
             target.addEventListener(event, () => {
               try {
@@ -129,7 +145,7 @@ export function mountAudioProof(host: HTMLElement, options: AudioLabOptions = {}
               if (!ctx.signal.aborted) { enabled.checked = audio.analysis.enabled; sync(); }
             }
           });
-          on(get('fft'), 'change', () => { audio.analysis.configure(settings()); render(); });
+          on(get('fft'), 'change', () => { audio.analysis.configure(settings()); sync(); });
           on(get('smoothing'), 'input', () => audio.analysis.configure(settings()));
           on(get('layout'), 'change', () => {
             scene?.setLayout(get<HTMLSelectElement>('layout').value);
