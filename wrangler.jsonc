@@ -1,5 +1,5 @@
 {
-  "name": "urk-work",
+  "name": "urk-worker",
   "compatibility_date": "2026-06-05",
   "assets": {
     "directory": "./apps/www/dist",
